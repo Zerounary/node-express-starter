@@ -1,6 +1,10 @@
 const HyperExpress = require('hyper-express');
 const webserver = new HyperExpress.Server();
 
+const pino = require('pino')
+const dest = pino.destination('./logs.log')
+const logger = pino(dest)
+
 const api_v1_router = new HyperExpress.Router();
 const api_v2_router = new HyperExpress.Router();
 
@@ -16,6 +20,11 @@ api_v2_router.get('/', (request, response) => {
 
 api_v2_router.get('/hi', (request, response) => {
     response.send('hi2');
+    logger.info({
+        message: 'hi2',
+        client: 'abc',
+        page: '/pages/home/index',
+    })
 })
 
 webserver.use('/api/v1', api_v1_router);

@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "hyper-express": "^6.16.4"
+    "hyper-express": "^6.16.4",
+    "pino": "^9.4.0"
   }
 }
