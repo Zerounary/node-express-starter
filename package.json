@@ -7,12 +7,14 @@
     "dev": "nodemon --watch src/ -e js src/index.js",
     "db": "node tests/db.js",
     "wsc": "node tests/wsc.js",
+    "crypto": "node tests/crypto.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "crypto-js": "^4.2.0",
     "hyper-express": "^6.16.4",
     "oracledb": "^6.6.0",
     "pino": "^9.4.0",
