@@ -17,4 +17,9 @@ api_v1_router.post("/", async (req, res) => {
   res.send("ok");
 });
 
+api_v1_router.get("/orc", async (req, res) => {
+  logger.info(req.query);
+  res.send("ok");
+});
+
 module.exports = api_v1_router;
