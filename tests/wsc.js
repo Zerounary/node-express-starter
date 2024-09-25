@@ -1,7 +1,7 @@
 const WebSocket = require("ws");
 
 const url = "ws://localhost:90/ws/connect";
-
+let client_id = ''
 const ws = new WebSocket(url, {
   perMessageDeflate: false,
 });
@@ -23,6 +23,7 @@ ws.on("message", function message(data) {
   let resp = JSON.parse(data);
   console.log("received: ", resp);
   if(resp.event == 'init') {
+    client_id = resp.data.client_id
     send({
         event: 'query',
         clent_id: resp.data.client_id,

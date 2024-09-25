@@ -1,6 +1,7 @@
 const HyperExpress = require("hyper-express");
 const logger = require("../../logger");
 const oracledb = require("oracledb");
+const {v4: uuid} = require('uuid')
 
 const ws_router = new HyperExpress.Router();
 
@@ -41,7 +42,7 @@ ws_router.ws(
       }
     });
 
-    let client_id = "123";
+    let client_id = uuid();
 
     const conn = await oracledb.getConnection({
       user: "bosnds3",
