@@ -2,8 +2,10 @@ const HyperExpress = require("hyper-express");
 const webserver = new HyperExpress.Server();
 
 const api_v1_router = require("./router/api/v1");
+const ws_router = require("./router/api/ws");
 
 webserver.use("/api/v1", api_v1_router);
+webserver.use("/ws", ws_router);
 
 // Activate webserver by calling .listen(port, callback);
 const port = 90;
