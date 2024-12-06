@@ -20,14 +20,17 @@ ws.on("open", function open() {
 ws.on("error", console.error);
 
 ws.on("message", function message(data) {
+  console.log("received: ", data.toString());
   let resp = JSON.parse(data);
-  console.log("received: ", resp);
   if(resp.event == 'init') {
     client_id = resp.data.client_id
     send({
         event: 'query',
         client_id: resp.data.client_id,
+        customer: 'customer_test',
         sql: 'select sysdate from dual'
     })
+  } else if(resp.event == 'data') {
+    console.log("received: ", resp);
   }
 });

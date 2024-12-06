@@ -4,8 +4,11 @@ const oracledb = require("oracledb");
 const { v4: uuid } = require("uuid");
 
 let pool = {};
+let clients = {};
+let clientNames = {};
+let sqlData = {};
 
-const query = async (client, params) => {
+const queryLocalDB = async (client, params) => {
   let client_id = params.client_id;
   if (pool[client_id]) {
     let db = pool[client_id];
@@ -21,15 +24,69 @@ const query = async (client, params) => {
       rows: res.rows,
     });
   } else {
-    logger.info('没有客户端')
+    logger.info("没有客户端");
   }
 };
 
+const query = async (client, params) => {
+  let client_id = params.client_id;
+  let target_id = clientNames[params.customer];
+  console.log('客户的链接id', target_id)
+  if (clients[target_id]) {
+    let target_client = clients[target_id];
+    send(target_client, {
+      event: "query",
+      data: {
+        sql: params.sql,
+      },
+    });
+    // 记录hash结果
+    sqlData[`${target_id}:${params.sql}`] = {
+      client_id,
+      data: null,
+    };
+  } else {
+    logger.info(clientNames);
+  }
+};
+
+const data = async (client, params) => {
+  let client_id = params.client_id;
+  console.log('client_id', params)
+  console.log(sqlData)
+  let target_id = sqlData[`${client_id}:${params.sql}`]?.client_id;
+  logger.info('data target_id = ', target_id)
+  if (clients[target_id]) {
+    let target_client = clients[target_id];
+    send(target_client, {
+      event: "data",
+      data: {
+        sql: params.sql,
+        data: params.data,
+      },
+    });
+  } else {
+    console.log('没有客户端')
+  }
+};
+
+const myname = async (client, params) => {
+  let client_id = params.client_id;
+  clientNames[client_id] = params.name;
+  clientNames[params.name] = client_id;
+};
+
 const dispatch = async (socket, params) => {
-  logger.info(params?.event)
+  logger.info(params?.event);
   switch (params?.event) {
+    case "myname":
+      await myname(socket, params);
+      break;
     case "query":
       await query(socket, params);
+      break;
+    case "data":
+      await data(socket, params);
       break;
     default:
       break;
@@ -46,6 +103,7 @@ const initSocket = async (client) => {
   });
 
   pool[client_id] = conn;
+  clients[client_id] = client;
 
   send(client, {
     event: "init",
@@ -59,7 +117,6 @@ const initSocket = async (client) => {
 const onSocketClose = (socket) => {
   logger.info(socket.ip + " has now disconnected!");
 };
-
 
 module.exports = {
   dispatch,
