@@ -26,7 +26,7 @@ ws.on("message", function message(data) {
     client_id = resp.data.client_id
     send({
         event: 'query',
-        clent_id: resp.data.client_id,
+        client_id: resp.data.client_id,
         sql: 'select sysdate from dual'
     })
   }
