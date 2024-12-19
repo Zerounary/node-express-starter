@@ -30,6 +30,7 @@ const queryLocalDB = async (client, params) => {
 
 const query = async (client, params) => {
   let client_id = params.client_id;
+  let request_id = params.request_id;
   let target_id = clientNames[params.customer];
   console.log('客户的链接id', target_id)
   if (clients[target_id]) {
@@ -37,11 +38,12 @@ const query = async (client, params) => {
     send(target_client, {
       event: "query",
       data: {
+        request_id,
         sql: params.sql,
       },
     });
     // 记录hash结果
-    sqlData[`${target_id}:${params.sql}`] = {
+    sqlData[`${target_id}:${params.request_id}`] = {
       client_id,
       data: null,
     };
@@ -54,19 +56,20 @@ const data = async (client, params) => {
   let client_id = params.client_id;
   console.log('client_id', params)
   console.log(sqlData)
-  let target_id = sqlData[`${client_id}:${params.sql}`]?.client_id;
+  let target_id = sqlData[`${client_id}:${params.request_id}`]?.client_id;
   logger.info('data target_id = ', target_id)
   if (clients[target_id]) {
     let target_client = clients[target_id];
     send(target_client, {
       event: "data",
       data: {
+        request_id: params.request_id,
         sql: params.sql,
         data: params.data,
       },
     });
   } else {
-    console.log('没有客户端')
+    console.log('data:没有客户端')
   }
 };
 
