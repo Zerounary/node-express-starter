@@ -1,12 +1,19 @@
-const User = require("../../../db/models/user");
+import User from '@/db/models/user'
+import db from '@/db'
 
-module.exports = (api) => {
+export default (api) => {
+  api.get('/sync', async(req, res) => {
+    await db.sync();
+    res.send("ok");
+  })
   api.post("/user", async (req, res) => {
-    console.log(req.body);
-    let user = new User({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-    });
-    res.send(user.id);
+    let body = await req.json();
+    console.log('🚀 ~ api.post ~ body:', body)
+    let user = await User.create({
+      firstName: body.firstName,
+      lastName: body.lastName,
+    })
+    console.log('🚀 ~ api.post ~ user:', user)
+    res.send("ok");
   });
 };

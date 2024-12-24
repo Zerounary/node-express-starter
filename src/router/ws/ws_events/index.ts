@@ -1,7 +1,7 @@
-const { decode, send } = require("../../../utils/protocol");
-const logger = require("../../../logger");
-const oracledb = require("oracledb");
-const { v4: uuid } = require("uuid");
+import { decode, send } from '@/utils/protocol'
+import logger from '@/logger'
+import oracledb from 'oracledb'
+import { v4 as uuid } from 'uuid'
 
 let pool = {};
 let clients = {};
@@ -79,7 +79,7 @@ const myname = async (client, params) => {
   clientNames[params.name] = client_id;
 };
 
-const dispatch = async (socket, params) => {
+export const dispatch = async (socket, params) => {
   logger.info(params?.event);
   switch (params?.event) {
     case "myname":
@@ -96,7 +96,7 @@ const dispatch = async (socket, params) => {
   }
 };
 
-const initSocket = async (client) => {
+export const initSocket = async (client) => {
   let client_id = uuid();
 
   const conn = await oracledb.getConnection({
@@ -117,12 +117,6 @@ const initSocket = async (client) => {
   });
 };
 
-const onSocketClose = (socket) => {
+export const onSocketClose = (socket) => {
   logger.info(socket.ip + " has now disconnected!");
-};
-
-module.exports = {
-  dispatch,
-  initSocket,
-  onSocketClose,
 };

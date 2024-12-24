@@ -1,5 +1,5 @@
-const sequelize = require('../index')
-const { DataTypes } = require('sequelize');
+import { DataTypes } from 'sequelize';
+import db from '../index'
 
 const User = db.define(
   'User',
@@ -19,4 +19,4 @@ const User = db.define(
   },
 );
 
-module.exports = User;
+export default User;

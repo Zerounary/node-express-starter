@@ -3,4 +3,4 @@ const pino = require("pino");
 // const logger = pino(dest);
 const logger = pino();
 
-module.exports = logger;
+export default logger;

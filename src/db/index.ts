@@ -5,4 +5,4 @@ const db = new Sequelize('hed', 'hed', 'hed123', {
   dialect: 'mysql' /* one of 'mysql' | 'postgres' | 'sqlite' | 'mariadb' | 'mssql' | 'db2' | 'snowflake' | 'oracle' */
 });
 
-module.exports = db;
+export default db;
