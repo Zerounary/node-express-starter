@@ -6,6 +6,11 @@ export default (api) => {
     await db.sync();
     res.send("ok");
   })
+  api.get('/user', async(req, res) => {
+    const users = await User.findAll();
+    // console.log("🚀 ~ api.get ~ users:", users.length)
+    res.send(JSON.stringify(users, null, 2));
+  })
   api.post("/user", async (req, res) => {
     let body = await req.json();
     console.log('🚀 ~ api.post ~ body:', body)

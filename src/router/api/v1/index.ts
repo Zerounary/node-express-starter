@@ -4,6 +4,10 @@ import userController from './userController'
 
 const api_v1_router = new HyperExpress.Router();
 
+api_v1_router.get("/test", async (req, res) => {
+  res.send("ok");
+});
+
 api_v1_router.get("/", async (req, res) => {
   logger.info(req.query);
   res.send("ok");
