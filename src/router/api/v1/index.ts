@@ -1,5 +1,5 @@
 const HyperExpress = require("hyper-express");
-const logger = require("../../logger");
+const logger = require("../../../logger");
 
 const api_v1_router = new HyperExpress.Router();
 
@@ -22,5 +22,7 @@ api_v1_router.get("/orc", async (req, res) => {
   res.send("ok");
 });
 
+
+require('./userController')(api_v1_router)
 
 module.exports = api_v1_router;

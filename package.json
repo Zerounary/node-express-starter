@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --watch src/ -e js src/index.js",
+    "dev": "nodemon",
     "db": "node tests/db.js",
     "wsc": "node tests/wsc.js",
     "crypto": "node tests/crypto.js",
@@ -16,9 +16,19 @@
   "dependencies": {
     "crypto-js": "^4.2.0",
     "hyper-express": "^6.16.4",
+    "mysql2": "^3.12.0",
     "oracledb": "^6.6.0",
     "pino": "^9.4.0",
+    "sequelize": "^6.37.5",
     "uuid": "^10.0.0",
     "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.2",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.7.2"
   }
 }
