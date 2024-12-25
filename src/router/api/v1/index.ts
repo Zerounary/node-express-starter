@@ -1,10 +1,7 @@
 import HyperExpress from "hyper-express";
 import logger from "@/logger";
 import userController from "./userController";
-import { JWT_TOKEN_KEY } from "@/utils/protocol";
-import { createVerifier } from "fast-jwt";
-
-const verifySync = createVerifier({ key: JWT_TOKEN_KEY, cache: true });
+import { verifySync } from "@/utils/protocol";
 
 const api_v1_router = new HyperExpress.Router();
 

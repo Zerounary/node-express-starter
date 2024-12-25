@@ -1,11 +1,8 @@
 import HyperExpress from "hyper-express";
 import logger from "@/logger";
-import { JWT_TOKEN_KEY } from "@/utils/protocol";
-import { createSigner } from "fast-jwt";
+import { signSyc } from "@/utils/protocol";
 
 const pub_router = new HyperExpress.Router();
-
-const signSyc = createSigner({ key: JWT_TOKEN_KEY})
 
 pub_router.post("/login", async (req, res, next) => {
   let { email, password } = await req.json();
