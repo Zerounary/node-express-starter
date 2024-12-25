@@ -1,5 +1,6 @@
 import User from '@/db/models/user'
 import db from '@/db'
+var cache = require('memory-cache');
 
 export default (api) => {
   api.get('/sync', async(req, res) => {
@@ -7,9 +8,16 @@ export default (api) => {
     res.send("ok");
   })
   api.get('/user', async(req, res) => {
-    const users = await User.findAll();
     // console.log("🚀 ~ api.get ~ users:", users.length)
-    res.send(JSON.stringify(users, null, 2));
+    if(cache.get('users')) {
+      let result = cache.get('users');
+      res.send(result);
+    } else {
+      const users = await User.findAll();
+      let result = JSON.stringify(users, null, 2);
+      cache.put('users', result, 1000 * 60 * 60 * 24);
+      res.send(result);
+    }
   })
   api.post("/user", async (req, res) => {
     let body = await req.json();
