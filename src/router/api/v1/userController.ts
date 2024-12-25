@@ -3,10 +3,12 @@ import db from '@/db'
 var cache = require('memory-cache');
 
 export default (api) => {
+
   api.get('/sync', async(req, res) => {
     await db.sync();
     res.send("ok");
   })
+
   api.get('/user', async(req, res) => {
     // console.log("🚀 ~ api.get ~ users:", users.length)
     if(cache.get('users')) {
@@ -19,6 +21,7 @@ export default (api) => {
       res.send(result);
     }
   })
+
   api.post("/user", async (req, res) => {
     let body = await req.json();
     console.log('🚀 ~ api.post ~ body:', body)

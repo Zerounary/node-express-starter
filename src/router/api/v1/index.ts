@@ -1,10 +1,12 @@
-import HyperExpress from 'hyper-express'
-import logger from '@/logger'
-import userController from './userController'
+import HyperExpress from "hyper-express";
+import logger from "@/logger";
+import userController from "./userController";
+import jwt, { TokenExpiredError } from "jsonwebtoken";
 
 const api_v1_router = new HyperExpress.Router();
 
 api_v1_router.get("/test", async (req, res) => {
+  logger.info(req.locals.auth);
   res.send("ok");
 });
 
@@ -28,6 +30,26 @@ api_v1_router.get("/orc", async (req, res) => {
 });
 export default api_v1_router;
 
+api_v1_router.use(async (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1] || "";
+  if (!token) {
+    res.status(401).json({
+      success: false,
+      message: "Error!Token was not provided.",
+    });
+    return;
+  }
+  try {
+    const decodedToken = jwt.verify(token, "secretkeyappearshere");
+    req.locals.auth = decodedToken;
+    next();
+  } catch (e) {
+    res.status(401).json({
+      success: false,
+      message: "Error!Token was expired.",
+    });
+    return;
+  }
+});
 
-userController(api_v1_router)
-
+userController(api_v1_router);

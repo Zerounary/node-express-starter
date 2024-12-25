@@ -1,9 +1,11 @@
 import HyperExpress from 'hyper-express'
 const webserver = new HyperExpress.Server();
 
+import pub_api from '@/router/api/pub'
 import api_v1_router from '@/router/api/v1'
 import ws_router from '@/router/ws'
 
+webserver.use("/", pub_api);
 webserver.use("/api/v1", api_v1_router);
 webserver.use("/ws", ws_router);
 
