@@ -8,7 +8,7 @@
     "db": "node tests/db.js",
     "wsc": "node tests/wsc.js",
     "crypto": "node tests/crypto.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -w"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +27,7 @@
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.2",
+    "mocha": "^11.0.1",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
