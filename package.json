@@ -15,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "crypto-js": "^4.2.0",
+    "fast-jwt": "^5.0.2",
     "hyper-express": "^6.16.4",
     "jsonwebtoken": "^9.0.2",
     "memory-cache": "^0.2.0",

@@ -1,3 +1,5 @@
+export const JWT_TOKEN_KEY = "secretkeyappearshere123";
+
 export const decode = (code: string) => {
   return JSON.parse(code);
 };

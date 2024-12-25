@@ -1,12 +1,15 @@
 import HyperExpress from "hyper-express";
 import logger from "@/logger";
 import userController from "./userController";
-import jwt, { TokenExpiredError } from "jsonwebtoken";
+import { JWT_TOKEN_KEY } from "@/utils/protocol";
+import { createVerifier } from "fast-jwt";
+
+const verifySync = createVerifier({ key: JWT_TOKEN_KEY, cache: true });
 
 const api_v1_router = new HyperExpress.Router();
 
 api_v1_router.get("/test", async (req, res) => {
-  logger.info(req.locals.auth);
+  // logger.info(req.locals.auth);
   res.send("ok");
 });
 
@@ -40,7 +43,7 @@ api_v1_router.use(async (req, res, next) => {
     return;
   }
   try {
-    const decodedToken = jwt.verify(token, "secretkeyappearshere");
+    const decodedToken = verifySync(token);
     req.locals.auth = decodedToken;
     next();
   } catch (e) {
