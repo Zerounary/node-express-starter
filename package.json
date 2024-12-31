@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon",
+    "start": "nodemon",
     "db": "node tests/db.js",
     "wsc": "node tests/wsc.js",
     "crypto": "node tests/crypto.js",
