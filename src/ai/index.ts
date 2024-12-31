@@ -10,18 +10,13 @@ export const REQ = Axios.create({
   },
 });
 
-REQ.interceptors.request.use((config) => {
-  console.info(config);
-  return config;
-});
+// REQ.interceptors.request.use((config) => {
+//   return config;
+// });
 
 export const AI = (data = []) => {
   return REQ({
     method: "post",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer acb14591ee5e30a9894f1a9c942d5b1b.191TVNj35UPld7Kn`,
-    },
     data: {
       model: "glm-4",
       messages: [
