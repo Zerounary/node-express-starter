@@ -7,13 +7,18 @@ import { AI } from "@/ai";
 const api_v1_router = new HyperExpress.Router();
 
 api_v1_router.get("/ai", async (req, res) => {
-  let aiRsp = await AI([
-    {
-      role: "user",
-      content: "你好",
-    },
-  ]);
-  res.json(aiRsp.data);
+  let text = req.query.text;
+  try{
+    let aiRsp = await AI([
+      {
+        role: "user",
+        content: text,
+      },
+    ]);
+    res.json(aiRsp.data);
+  } catch(e) {
+    res.json(e);
+  }
 });
 
 api_v1_router.get("/test", async (req, res) => {
