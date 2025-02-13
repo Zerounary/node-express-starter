@@ -16,7 +16,7 @@ const LiveAssets = new LiveDirectory('./assets/', {
     filter: {
         keep: {
             // Something like below can be used to only serve images, css, js, json files aka. most common web assets ONLY
-            extensions: ['css', 'js', 'json', 'png', 'jpg', 'jpeg', 'html', 'htm']
+            extensions: ['css', 'js', 'json', 'png', 'jpg', 'jpeg', 'html', 'htm', 'zip']
         },
     },
 });
