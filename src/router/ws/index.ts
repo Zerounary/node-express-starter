@@ -20,7 +20,7 @@ ws_router.ws(
     });
 
     // 关闭连接
-    socket.on("close", onSocketClose);
+    // socket.on("close", onSocketClose);
 
     await initSocket(socket);
   }

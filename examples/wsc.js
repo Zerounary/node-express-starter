@@ -42,7 +42,7 @@ ws.on("message", function message(data) {
         target_id: '1abad9f6-79b1-4862-9d6e-db0d5a542f61',
         api: "download",
         params: {
-          url: 'https://foyi.j-k.one/live.html',
+          url: 'http://localhost:910/cloudhappy-erp.zip',
         }
     })
   } else if(resp.event == 'data') {

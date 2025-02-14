@@ -61,7 +61,7 @@ const request = async (client, params) => {
       event: params.api,
       data: {
         request_id,
-        ...(params?.params || {})
+        ...(params?.params || {}),
       },
     });
     // 记录hash结果
@@ -71,6 +71,13 @@ const request = async (client, params) => {
     });
   } else {
     logger.info(`when request, no client with id = ${target_id}`);
+    send(client, {
+      event: response,
+      data: {
+        request_id,
+        error: "no client with id = " + target_id,
+      },
+    });
   }
 };
 
@@ -94,6 +101,13 @@ const response = async (client, params) => {
     });
   } else {
     logger.info(`when response, no client with id = ${target_id}`);
+    send(client, {
+      event: response,
+      data: {
+        request_id: params.request_id,
+        error: "no client with id = " + target_id,
+      },
+    });
   }
 };
 
@@ -102,6 +116,9 @@ const myname = async (client, params) => {
   let version = params.version;
   client.id = client_id;
   client.version = version;
+  client.on("close", () => {
+    onSocketClose(client_id);
+  });
   clients.set(client_id, client);
   // clientNames[client_id] = params.name;
   // clientNames[params.name] = client_id;
@@ -138,6 +155,8 @@ export const initSocket = async (client) => {
   });
 };
 
-export const onSocketClose = (socket) => {
-  logger.info(socket.ip + " has now disconnected!");
+export const onSocketClose = (client_id) => {
+  clients.delete(client_id);
+  logger.info(client_id + " has now disconnected!");
+  logger.info("now clients size " + clients.size);
 };
