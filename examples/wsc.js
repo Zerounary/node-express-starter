@@ -38,11 +38,47 @@ ws.on("message", function message(data) {
     //       sql: 'select sysdate from dual'
     //     }
     // })
+    // send({
+    //     target_id: '1abad9f6-79b1-4862-9d6e-db0d5a542f61',
+    //     api: "download",
+    //     params: {
+    //       // url: 'http://localhost:910/image-compress.zip',
+    //       url: 'http://localhost:910/latest.json',
+    //     }
+    // })
+    // send({
+    //     target_id: '1abad9f6-79b1-4862-9d6e-db0d5a542f61',
+    //     api: "install_app",
+    //     params: {
+    //       app_name: 'image-compress',
+    //     }
+    // })
+    // send({
+    //     target_id: '1abad9f6-79b1-4862-9d6e-db0d5a542f61',
+    //     api: "start_app",
+    //     params: {
+    //       app_name: 'image-compress',
+    //     }
+    // })
+    // send({
+    //     target_id: '1abad9f6-79b1-4862-9d6e-db0d5a542f61',
+    //     api: "stop_app",
+    //     params: {
+    //       app_name: 'image-compress',
+    //     }
+    // })
+    // send({
+    //     target_id: '1abad9f6-79b1-4862-9d6e-db0d5a542f61',
+    //     api: "uninstall_app",
+    //     params: {
+    //       app_name: 'image-compress',
+    //     }
+    // })
     send({
         target_id: '1abad9f6-79b1-4862-9d6e-db0d5a542f61',
-        api: "download",
+        api: "query_app_status",
         params: {
-          url: 'http://localhost:910/cloudhappy-erp.zip',
+          app_name: 'image-compress',
         }
     })
   } else if(resp.event == 'data') {
