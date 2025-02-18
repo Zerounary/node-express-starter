@@ -143,6 +143,9 @@ export const dispatch = async (socket, params) => {
       logger.info(params);
       await response(socket, params);
       break;
+    case "heartbeat":
+      // logger.info(params);
+      break;
     default:
       break;
   }

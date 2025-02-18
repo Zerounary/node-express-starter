@@ -31,6 +31,8 @@ ws.on("message", function message(data) {
   console.log("received: ", data.toString());
   let resp = JSON.parse(data);
   if(resp.event == 'init') {
+    // let target_id = '8cafa326-0c89-4885-b7b6-44b6365e1647'
+    let target_id = '1abad9f6-79b1-4862-9d6e-db0d5a542f61'
     // send({
     //     target_id: '1abad9f6-79b1-4862-9d6e-db0d5a542f61',
     //     api: "query",
@@ -38,14 +40,15 @@ ws.on("message", function message(data) {
     //       sql: 'select sysdate from dual'
     //     }
     // })
-    // send({
-    //     target_id: '1abad9f6-79b1-4862-9d6e-db0d5a542f61',
-    //     api: "download",
-    //     params: {
-    //       // url: 'http://localhost:910/image-compress.zip',
-    //       url: 'http://localhost:910/latest.json',
-    //     }
-    // })
+    send({
+        target_id,
+        api: "download",
+        params: {
+          // url: 'http://localhost:910/image-compress.zip',
+          url: 'http://localhost:910/config.zip',
+          // app_name: 'apps/image-compress',
+        }
+    })
     // send({
     //     target_id: '1abad9f6-79b1-4862-9d6e-db0d5a542f61',
     //     api: "install_app",
@@ -74,13 +77,14 @@ ws.on("message", function message(data) {
     //       app_name: 'image-compress',
     //     }
     // })
-    send({
-        target_id: '1abad9f6-79b1-4862-9d6e-db0d5a542f61',
-        api: "query_app_status",
-        params: {
-          app_name: 'image-compress',
-        }
-    })
+    // target_id = '1abad9f6-79b1-4862-9d6e-db0d5a542f61'
+    // send({
+    //     target_id,
+    //     api: "query_app_status",
+    //     params: {
+    //       app_name: 'image-compress',
+    //     }
+    // })
   } else if(resp.event == 'data') {
     console.log("received: ", resp);
   }

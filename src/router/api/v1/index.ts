@@ -2,22 +2,51 @@ import HyperExpress from "hyper-express";
 import logger from "@/logger";
 import userController from "./userController";
 import { verifySync } from "@/utils/protocol";
-import { AI } from "@/ai";
+import { AI, AI_Stream } from "@/ai";
 
 const api_v1_router = new HyperExpress.Router();
 
 api_v1_router.get("/ai", async (req, res) => {
   let text = req.query.text;
-  try{
+  try {
     let aiRsp = await AI([
       {
         role: "user",
         content: text,
       },
     ]);
-    res.json(aiRsp.data);
-  } catch(e) {
+    res.json(aiRsp);
+  } catch (e) {
     res.json(e);
+  }
+});
+
+api_v1_router.get("/ai-stream", async (req, res) => {
+  let text = req.query.text;
+  try {
+    // 设置响应头以支持流式传输
+    // 设置编码为 utf-8
+    res.setHeader("Content-Type", "text/event-stream;charset=utf-8");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    // res.flushHeaders();
+
+    let stream = await AI_Stream([
+      {
+        role: "user",
+        content: text,
+      },
+    ]);
+
+    for await (const part of stream) {
+      let text = part.choices[0]?.delta?.content || ''
+      res.write(text);
+    }
+    res.end();
+
+  } catch (e) {
+    console.error("Error creating chat completion:", e);
+    res.status(500).send("Error creating chat completion");
   }
 });
 

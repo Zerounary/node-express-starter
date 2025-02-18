@@ -1,8 +1,10 @@
 import Axios from "axios";
+import exp from "constants";
+import OpenAI from "openai";
 
 const OPENAI_API_KEY = "acb14591ee5e30a9894f1a9c942d5b1b.191TVNj35UPld7Kn";
 
-export const REQ = Axios.create({
+export const ZHIPU_AI_REQ = Axios.create({
   baseURL: "https://open.bigmodel.cn/api/paas/v4/chat/completions",
   headers: {
     "Content-Type": "application/json",
@@ -10,9 +12,8 @@ export const REQ = Axios.create({
   },
 });
 
-
-export const AI = (data = []) => {
-  return REQ({
+export const get_zhipu_ai_req = (data) => {
+  return ZHIPU_AI_REQ({
     method: "post",
     data: {
       model: "glm-4",
@@ -49,4 +50,62 @@ export const AI = (data = []) => {
       ],
     },
   });
+};
+
+let doubao_ai_key = "67db776c-5c43-4723-ba12-492ec1c0f258";
+
+export const openai = new OpenAI({
+  apiKey: doubao_ai_key,
+  baseURL: "https://ark.cn-beijing.volces.com/api/v3",
+});
+
+export const get_doubao_image_req = (data) => {
+  return openai.chat.completions.create({
+    messages: [
+      {
+        role: 'user',
+        content: [
+          { type: 'text', text: '这是哪里？' },
+          {
+            type: 'image_url',
+            image_url: {
+              url: 'https://ark-project.tos-cn-beijing.ivolces.com/images/view.jpeg',
+            },
+          },
+        ],
+      },
+    ],
+    model: 'ep-20250218135757-5bfts',
+  })
+};
+
+export const get_doubao_text_req = (data = []) => {
+  return openai.chat.completions.create({
+    messages: [
+      { role: 'system', content: '你是豆包，是由字节跳动开发的 AI 人工智能助手' },
+      ...data,
+    ],
+    model: 'ep-20250218142946-gzqkp',
+  })
+};
+
+export const get_doubao_text_stream_req = (data = []) => {
+  return openai.chat.completions.create({
+    messages: [
+      { role: 'system', content: '你是豆包，是由字节跳动开发的 AI 人工智能助手' },
+      ...data,
+    ],
+    model: 'ep-20250218142946-gzqkp',
+    stream: true,
+  })
+};
+
+export const AI = (data = []) => {
+  // return get_zhipu_ai_req(data);
+  return get_doubao_text_req(data)
+};
+
+export const AI_Stream = (data = []) => {
+  // return get_zhipu_ai_req(data);
+  return get_doubao_text_stream_req(data)
 };
