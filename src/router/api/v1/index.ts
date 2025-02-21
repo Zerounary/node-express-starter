@@ -3,6 +3,7 @@ import logger from "@/logger";
 import userController from "./userController";
 import { verifySync } from "@/utils/protocol";
 import { AI, AI_Stream } from "@/ai";
+import clientController from "./clientController";
 
 const api_v1_router = new HyperExpress.Router();
 
@@ -104,3 +105,4 @@ api_v1_router.use(async (req, res, next) => {
 });
 
 userController(api_v1_router);
+clientController(api_v1_router);
