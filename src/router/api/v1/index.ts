@@ -3,6 +3,7 @@ import logger from "@/logger";
 import userController from "./userController";
 import { verifySync } from "@/utils/protocol";
 import { AI, AI_Stream } from "@/ai";
+import { ok, fail, ERROR_CODE } from "@/router/api/index";
 import clientController from "./clientController";
 
 const api_v1_router = new HyperExpress.Router();
@@ -16,9 +17,9 @@ api_v1_router.get("/ai", async (req, res) => {
         content: text,
       },
     ]);
-    res.json(aiRsp);
+    res.json(ok(aiRsp));
   } catch (e) {
-    res.json(e);
+    res.json(fail(ERROR_CODE.COMMON, e));
   }
 });
 
