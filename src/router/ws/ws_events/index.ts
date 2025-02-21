@@ -2,6 +2,8 @@ import { decode, send } from "@/utils/protocol";
 import logger from "@/logger";
 import oracledb from "oracledb";
 import { v4 as uuid } from "uuid";
+import Client from "@/db/models/client";
+import { where } from "sequelize";
 
 let clients = new Map();
 let requests = new Map();
@@ -120,6 +122,14 @@ const myname = async (client, params) => {
     onSocketClose(client_id);
   });
   clients.set(client_id, client);
+  Client.findOrCreate({
+    where: {
+      id: client_id
+    },
+    defaults: {
+      id: client_id
+    }
+  })
   // clientNames[client_id] = params.name;
   // clientNames[params.name] = client_id;
 };

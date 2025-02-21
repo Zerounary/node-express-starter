@@ -1,23 +1,24 @@
 import { DataTypes } from 'sequelize';
 import db from '../index'
 
-const User = db.define(
-  'User',
+const Client = db.define(
+  'Client',
   {
     // Model attributes are defined here
-    firstName: {
+    id: {
       type: DataTypes.STRING,
       allowNull: false,
+      primaryKey: true
     },
-    lastName: {
+    name: {
       type: DataTypes.STRING,
       // allowNull defaults to true
     },
   },
   {
     // Other model options go here
-    tableName: 'BPM_USER',
+    tableName: 'BPM_CLIENT',
   },
 );
 
-export default User;
+export default Client;

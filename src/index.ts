@@ -6,6 +6,23 @@ const webserver = new HyperExpress.Server();
 import pub_api from '@/router/api/pub'
 import api_v1_router from '@/router/api/v1'
 import ws_router from '@/router/ws'
+import { request } from 'http';
+import { response } from 'express';
+
+// 跨域设置
+webserver.use((req, res, next) => {
+    // 允许所有来源的跨域请求
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    // 允许的请求方法
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    // 允许的请求头
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    // 允许携带凭证（如 cookies）
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+    next();
+});
+
 
 webserver.use("/", pub_api);
 webserver.use("/api/v1", api_v1_router);
@@ -20,6 +37,10 @@ const LiveAssets = new LiveDirectory('./assets/', {
         },
     },
 });
+
+webserver.get('/', (request, response) => {
+    return response.redirect('/assets/index.html')
+})
 
 // Create static serve route to serve frontend assets
 webserver.get('/assets/*', (request, response) => {
