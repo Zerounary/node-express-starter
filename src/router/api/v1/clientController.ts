@@ -12,9 +12,7 @@ export default (api) => {
   api.post("/client", async (req, res) => {
     let body = await req.json();
     console.log('🚀 ~ api.post ~ body:', body)
-    const [affectedRows] = await Client.update({
-      name: body.name
-    }, {
+    const [affectedRows] = await Client.update(body.data, {
       where: {
         id: body?.id
       }
