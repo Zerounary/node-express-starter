@@ -14,6 +14,11 @@ const Client = db.define(
       type: DataTypes.STRING,
       // allowNull defaults to true
     },
+    online: {
+      type: DataTypes.STRING,
+      defaultValue: 'N'
+      // allowNull defaults to true
+    },
   },
   {
     // Other model options go here

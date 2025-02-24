@@ -12,5 +12,4 @@ const db = new Sequelize('testorcl', 'bosnds3', 'abc123', {
   port: 22990,
   dialect: 'oracle' /* one of 'mysql' | 'postgres' | 'sqlite' | 'mariadb' | 'mssql' | 'db2' | 'snowflake' | 'oracle' */
 });
-
 export default db;

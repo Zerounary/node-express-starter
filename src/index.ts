@@ -8,6 +8,7 @@ import api_v1_router from '@/router/api/v1'
 import ws_router from '@/router/ws'
 import { request } from 'http';
 import { response } from 'express';
+import db from './db';
 
 // 跨域设置
 webserver.use((req, res, next) => {
@@ -64,9 +65,14 @@ webserver.get('/assets/*', (request, response) => {
     return response.type(extension).send(file.content);
 });
 
+
 // Activate webserver by calling .listen(port, callback);
 const port = 90;
 webserver
   .listen(port)
-  .then(() => console.log(`Webserver started on port ${port}`))
+  .then(async () => {
+    console.log(`Webserver started on port ${port}`)
+    // 自动同步数据库
+    await db.sync({ alter: true });
+  })
   .catch(() => console.log(`Failed to start webserver on port ${port}`));

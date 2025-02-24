@@ -1,12 +1,12 @@
 import Client from '@/db/models/client';
 var cache = require('memory-cache');
+import { ok, fail, ERROR_CODE } from "@/router/api/index";
 
 export default (api) => {
 
   api.get('/clients', async(req, res) => {
     const clients = await Client.findAll();
-    let result = JSON.stringify(clients, null, 2);
-    res.send(result);
+    res.json(ok(clients));
   })
 
   api.post("/client", async (req, res) => {
@@ -19,6 +19,6 @@ export default (api) => {
         id: body?.id
       }
     })
-    res.send(affectedRows);
+    res.json(ok(affectedRows));
   });
 };

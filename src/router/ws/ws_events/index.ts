@@ -122,7 +122,7 @@ const myname = async (client, params) => {
     onSocketClose(client_id);
   });
   clients.set(client_id, client);
-  Client.findOrCreate({
+  const [row] = await Client.findOrCreate({
     where: {
       id: client_id
     },
@@ -130,6 +130,10 @@ const myname = async (client, params) => {
       id: client_id
     }
   })
+  row.set({
+    online: 'Y'
+  })
+  await row.save();
   // clientNames[client_id] = params.name;
   // clientNames[params.name] = client_id;
 };
@@ -168,8 +172,13 @@ export const initSocket = async (client) => {
   });
 };
 
-export const onSocketClose = (client_id) => {
+export const onSocketClose = async (client_id) => {
   clients.delete(client_id);
+  await Client.update({online: 'N'}, {
+    where: {
+      id: client_id
+    }
+  })
   logger.info(client_id + " has now disconnected!");
   logger.info("now clients size " + clients.size);
 };
