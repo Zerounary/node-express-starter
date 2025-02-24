@@ -23,6 +23,16 @@ api_v1_router.get("/ai", async (req, res) => {
   }
 });
 
+api_v1_router.post("/ai", async (req, res) => {
+  let body = await req.json();
+  try {
+    let aiRsp = await AI(body);
+    res.json(ok(aiRsp));
+  } catch (e) {
+    res.json(fail(ERROR_CODE.COMMON, e));
+  }
+});
+
 api_v1_router.get("/ai-stream", async (req, res) => {
   let text = req.query.text;
   try {
@@ -39,6 +49,30 @@ api_v1_router.get("/ai-stream", async (req, res) => {
         content: text,
       },
     ]);
+
+    for await (const part of stream) {
+      let text = part.choices[0]?.delta?.content || ''
+      res.write(text);
+    }
+    res.end();
+
+  } catch (e) {
+    console.error("Error creating chat completion:", e);
+    res.status(500).send("Error creating chat completion");
+  }
+});
+
+api_v1_router.post("/ai-stream", async (req, res) => {
+  let body = await req.json();
+  try {
+    // 设置响应头以支持流式传输
+    // 设置编码为 utf-8
+    res.setHeader("Content-Type", "text/event-stream;charset=utf-8");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    // res.flushHeaders();
+
+    let stream = await AI_Stream(body);
 
     for await (const part of stream) {
       let text = part.choices[0]?.delta?.content || ''
