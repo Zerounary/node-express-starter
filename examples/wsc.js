@@ -38,14 +38,15 @@ ws.on("message", function message(data) {
     // let target_id = '51898dc3-d000-4a33-b02b-668f910c8090';
 
     // download(target_id);
-    db_query(target_id);
+    // db_query(target_id);
+    query_apps(target_id);
   } else if (resp.event == "data") {
     console.log("received: ", resp);
   }
 });
 
 const db_query = (target_id) => {
-  let request_id = uuid()
+  let request_id = uuid();
   send({
     request_id,
     target_id,
@@ -57,13 +58,13 @@ const db_query = (target_id) => {
 };
 
 const db_import = (target_id) => {
-  let request_id = uuid()
+  let request_id = uuid();
   send({
     request_id,
     target_id,
     api: "import",
     params: {
-      opt: 'bosnds3/abc123@app.burgeonerp.cn:22990/orclsxcs',
+      opt: "bosnds3/abc123@app.burgeonerp.cn:22990/orclsxcs",
       sql: `
       SET SQLFORMAT JSON;
 
@@ -75,7 +76,7 @@ select t.id,t.description, t.name, t.emp_name, t.store_sql, t.is_unsubmit, t.cre
 SPOOL OFF;
 
 exit
-      `
+      `,
       // sql: "select t.id,t.description, t.name, t.emp_name, t.store_sql, t.is_unsubmit, t.creationdate, t.c_store_filter from mb_users t where t.id = 161",
     },
   });
@@ -152,5 +153,13 @@ const query_status = (target_id) => {
     params: {
       app_name: "image-compress",
     },
+  });
+};
+
+const query_apps = (target_id) => {
+  send({
+    target_id,
+    api: "query_apps",
+    params: {},
   });
 };
