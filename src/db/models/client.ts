@@ -6,6 +6,12 @@ const Client = db.define(
   {
     // Model attributes are defined here
     id: {
+      type: DataTypes.NUMBER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    client_id: {
       type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true

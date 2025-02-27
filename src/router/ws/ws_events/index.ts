@@ -124,10 +124,10 @@ const myname = async (client, params) => {
   clients.set(client_id, client);
   const [row] = await Client.findOrCreate({
     where: {
-      id: client_id
+      client_id
     },
     defaults: {
-      id: client_id
+      client_id
     }
   })
   row.set({
@@ -176,7 +176,7 @@ export const onSocketClose = async (client_id) => {
   clients.delete(client_id);
   await Client.update({online: 'N'}, {
     where: {
-      id: client_id
+      client_id
     }
   })
   logger.info(client_id + " has now disconnected!");
