@@ -114,7 +114,7 @@ export default api_v1_router;
 
 let is_jwt_check = false;
 
-api_v1_router.use(async (req, res, next) => {
+api_v1_router.use((req, res, next) => {
   if (is_jwt_check) {
     const token = req.headers.authorization?.split(" ")[1] || "";
     if (!token) {

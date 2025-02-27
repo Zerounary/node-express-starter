@@ -16,6 +16,16 @@ const App = db.define(
       type: DataTypes.STRING,
       // allowNull defaults to true
     },
+    app_name: {
+      type: DataTypes.STRING,
+      // allowNull defaults to true
+    },
+    app_type: {
+      type: DataTypes.NUMBER,
+      defaultValue: 1,
+      comment: '1: 服务。 2: 工具'
+      // allowNull defaults to true
+    },
     url: {
       type: DataTypes.STRING,
       // allowNull defaults to true
