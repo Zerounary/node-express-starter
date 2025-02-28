@@ -76,7 +76,7 @@ webserver.get("/assets/*", (request, response) => {
 });
 
 // Activate webserver by calling .listen(port, callback);
-const port = 22989;
+const port = 22987;
 webserver
   .listen(port)
   .then(async () => {
