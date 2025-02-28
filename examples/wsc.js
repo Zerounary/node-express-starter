@@ -39,11 +39,24 @@ ws.on("message", function message(data) {
 
     // download(target_id);
     // db_query(target_id);
-    query_apps(target_id);
+    // query_apps(target_id);
+    db_test(target_id)
   } else if (resp.event == "data") {
     console.log("received: ", resp);
   }
 });
+const db_test = (target_id) => {
+  let request_id = uuid();
+  send({
+    request_id,
+    target_id,
+    api: "query",
+    params: {
+      sql: "select 1 from dual",
+      db: 'bosnds3/abc123@app.burgeonerp.cn:22990/testorcl'
+    },
+  });
+};
 
 const db_query = (target_id) => {
   let request_id = uuid();
