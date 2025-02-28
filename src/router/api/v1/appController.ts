@@ -33,7 +33,7 @@ export default (api) => {
       res.json(fail(ERROR_CODE.COMMON, 'name already exists'));
       return;
     }
-    if(body.url) {
+    if(body.url && !body.app_name) {
       body.app_name = get_app_name(body.url)
     }
     const newRecord = await App.create(body)

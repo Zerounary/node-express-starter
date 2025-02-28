@@ -18,12 +18,14 @@ const storage = multer.diskStorage({
 // 创建上传实例
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 1024 * 1024 * 5 }, // 限制5MB
+  limits: { fileSize: 1024 * 1024 * 300, }, // 限制300MB
 });
 
 export default (api) => {
   // 单文件上传路由
   api.post("/upload", upload.single("file"), (req, res) => {
+    console.log("uploading");
+
     if (!req.file) {
       return res.status(400).send("No file uploaded");
     }

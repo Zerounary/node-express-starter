@@ -1,7 +1,10 @@
 import HyperExpress from "hyper-express";
 import LiveDirectory from "live-directory";
 import path from "path";
-const webserver = new HyperExpress.Server();
+const webserver = new HyperExpress.Server({
+  max_body_buffer: 1024 * 1,
+  max_body_length: 1024 * 1024 * 300,
+});
 
 import pub_api from "@/router/api/pub";
 import api_v1_router from "@/router/api/v1";
@@ -9,8 +12,6 @@ import ws_router from "@/router/ws";
 import { request } from "http";
 import { response } from "express";
 import db from "./db";
-
-
 
 // 跨域设置
 webserver.use((req, res, next) => {
@@ -26,6 +27,7 @@ webserver.use((req, res, next) => {
 
   if (req.method.toLocaleLowerCase() == "options") {
     res.send("");
+    next();
   } else {
     next();
   }
@@ -37,6 +39,9 @@ webserver.use("/ws", ws_router);
 
 const LiveAssets = new LiveDirectory("./assets/", {
   // Optional: Configure filters to ignore or include certain files, names, extensions etc etc.
+  cache: {
+    max_file_size: 1024 * 1024 * 300, // 300MB
+  },
   filter: {
     // keep: {
     //     // Something like below can be used to only serve images, css, js, json files aka. most common web assets ONLY

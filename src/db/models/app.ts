@@ -21,9 +21,9 @@ const App = db.define(
       // allowNull defaults to true
     },
     app_type: {
-      type: DataTypes.NUMBER,
-      defaultValue: 1,
-      comment: '1: 服务。 2: 工具'
+      type: DataTypes.STRING,
+      defaultValue: 'Service',
+      comment: 'Service: 服务。 Tool: 工具'
       // allowNull defaults to true
     },
     url: {
