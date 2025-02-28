@@ -44,8 +44,8 @@ const LiveAssets = new LiveDirectory("./assets/", {
   },
   filter: {
     // keep: {
-    //     // Something like below can be used to only serve images, css, js, json files aka. most common web assets ONLY
-    //     extensions: ['css', 'js', 'json', 'png', 'jpg', 'jpeg', 'html', 'htm', 'zip']
+        // Something like below can be used to only serve images, css, js, json files aka. most common web assets ONLY
+        // extensions: ['css', 'js', 'json', 'png', 'jpg', 'jpeg', 'html', 'htm', 'zip', '']
     // },
   },
 });
@@ -62,6 +62,10 @@ webserver.get("/assets/*", (request, response) => {
   // Retrieve the LiveFile instance for this asset
   const asset = LiveAssets.get(path);
   if (!asset) return response.status(404).send("Not Found");
+
+   const fileParts = asset.path.split(".");
+   const extension = fileParts[fileParts.length - 1]
+   response.type(extension);
 
   // Send the asset content as response depending on if the file is cached
   if (asset.cached) {
