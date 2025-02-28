@@ -1,6 +1,7 @@
 import HyperExpress from "hyper-express";
 import logger from "@/logger";
 import { signSyc } from "@/utils/protocol";
+import uploadController from "./uploadController";
 
 const pub_router = new HyperExpress.Router();
 
@@ -22,5 +23,7 @@ pub_router.post("/login", async (req, res, next) => {
     }
   });
 });
+
+uploadController(pub_router)
 
 export default pub_router;

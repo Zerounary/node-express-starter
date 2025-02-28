@@ -40,7 +40,8 @@ ws.on("message", function message(data) {
     // download(target_id);
     // db_query(target_id);
     // query_apps(target_id);
-    db_test(target_id)
+    // db_test(target_id)
+    db_import(target_id)
   } else if (resp.event == "data") {
     console.log("received: ", resp);
   }
