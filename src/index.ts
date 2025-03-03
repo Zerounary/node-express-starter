@@ -14,24 +14,23 @@ import { response } from "express";
 import db from "./db";
 
 // 跨域设置
-webserver.use((req, res, next) => {
-  // 允许所有来源的跨域请求
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  // 允许的请求方法
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  // 允许的请求头
-  res.setHeader("Access-Control-Allow-Headers", "*");
-  // 允许携带凭证（如 cookies）
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  console.log("options");
+// webserver.use((req, res, next) => {
+//   // 允许所有来源的跨域请求
+//   res.setHeader("Access-Control-Allow-Origin", "*");
+//   // 允许的请求方法
+//   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+//   // 允许的请求头
+//   res.setHeader("Access-Control-Allow-Headers", "*");
+//   // 允许携带凭证（如 cookies）
+//   res.setHeader("Access-Control-Allow-Credentials", "true");
+//   console.log("options");
 
-  if (req.method.toLocaleLowerCase() == "options") {
-    res.send("");
-    next();
-  } else {
-    next();
-  }
-});
+//   if (req.method.toLocaleLowerCase() == "options") {
+//     res.send("");
+//   } else {
+//     next();
+//   }
+// });
 
 webserver.use("/", pub_api);
 webserver.use("/api/v1", api_v1_router);
@@ -79,13 +78,12 @@ webserver.get("/assets/*", (request, response) => {
   }
 });
 
-// Activate webserver by calling .listen(port, callback);
-const port = 22987;
-webserver
-  .listen(port)
-  .then(async () => {
-    console.log(`Webserver started on port ${port}`);
-    // 自动同步数据库
-    await db.sync({ alter: true });
-  })
-  .catch(() => console.log(`Failed to start webserver on port ${port}`));
+db.sync({ alter: true }).then(res => {
+  const port = 22987;
+  webserver
+    .listen(port)
+    .then(async () => {
+      console.log(`Webserver started on port ${port}`);
+    })
+    .catch(() => console.log(`Failed to start webserver on port ${port}`));
+}).catch(() => console.log(`Failed to sync database`));
