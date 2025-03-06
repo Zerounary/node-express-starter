@@ -2,8 +2,8 @@ const { Sequelize } = require('sequelize');
 
 const db = new Sequelize('testorcl', 'bosnds3', 'abc123', {
   pool: {
-    max: 100,
-    min: 5,
+    max: 10,
+    min: 0,
     acquire: 30000,
     idle: 10000
   },
