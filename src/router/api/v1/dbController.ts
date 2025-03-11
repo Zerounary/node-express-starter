@@ -4,7 +4,12 @@ import { ok, fail, ERROR_CODE } from "@/router/api/index";
 
 export default (api) => {
   api.get("/dbs", async (req, res) => {
-    const dbs = await DbModel.findAll();
+    let client_id = req.query.client_id;
+    const dbs = await DbModel.findAll({
+      where: {
+        client_id 
+      }
+    });
     res.json(ok(dbs));
   });
 

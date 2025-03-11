@@ -11,6 +11,9 @@ const DbModel = db.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    client_id: {
+      type: DataTypes.NUMBER,
+    },
     name: {
       type: DataTypes.STRING,
     },
