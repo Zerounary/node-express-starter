@@ -12,6 +12,7 @@ import ws_router from "@/router/ws";
 import { request } from "http";
 import { response } from "express";
 import db from "./db";
+import Client from "./db/models/client";
 
 // 跨域设置
 // webserver.use((req, res, next) => {
@@ -43,8 +44,8 @@ const LiveAssets = new LiveDirectory("./assets/", {
   },
   filter: {
     // keep: {
-        // Something like below can be used to only serve images, css, js, json files aka. most common web assets ONLY
-        // extensions: ['css', 'js', 'json', 'png', 'jpg', 'jpeg', 'html', 'htm', 'zip', '']
+    // Something like below can be used to only serve images, css, js, json files aka. most common web assets ONLY
+    // extensions: ['css', 'js', 'json', 'png', 'jpg', 'jpeg', 'html', 'htm', 'zip', '']
     // },
   },
 });
@@ -62,9 +63,9 @@ webserver.get("/assets/*", (request, response) => {
   const asset = LiveAssets.get(path);
   if (!asset) return response.status(404).send("Not Found");
 
-   const fileParts = asset.path.split(".");
-   const extension = fileParts[fileParts.length - 1]
-   response.type(extension);
+  const fileParts = asset.path.split(".");
+  const extension = fileParts[fileParts.length - 1];
+  response.type(extension);
 
   // Send the asset content as response depending on if the file is cached
   if (asset.cached) {
@@ -78,12 +79,28 @@ webserver.get("/assets/*", (request, response) => {
   }
 });
 
-db.sync({ alter: true }).then(res => {
-  const port = 22987;
-  webserver
-    .listen(port)
-    .then(async () => {
-      console.log(`Webserver started on port ${port}`);
-    })
-    .catch(() => console.log(`Failed to start webserver on port ${port}`));
-}).catch(() => console.log(`Failed to sync database`));
+db.sync({ alter: true })
+  .then((res) => {
+    // 第一次启动时，初始化所有客户端为离线。
+    Client.update(
+      {
+        online: "N",
+      },
+      {
+        where: {
+          online: "Y",
+        },
+      }
+    ).then(() => {
+      const port = 22987;
+      webserver
+        .listen(port)
+        .then(async () => {
+          console.log(`Webserver started on port ${port}`);
+        })
+        .catch(() => console.log(`Failed to start webserver on port ${port}`));
+    }).catch(() => {
+      console.log('Update Clinets offline failed')
+    });
+  })
+  .catch(() => console.log(`Failed to sync database`));
