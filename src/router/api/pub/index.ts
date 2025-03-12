@@ -1,29 +1,37 @@
+import { fail, ok, ERROR_CODE } from "@/router/api/index";
 import HyperExpress from "hyper-express";
 import logger from "@/logger";
 import { signSyc } from "@/utils/protocol";
 import uploadController from "./uploadController";
+import User from "@/db/models/user";
 
 const pub_router = new HyperExpress.Router();
 
 pub_router.post("/login", async (req, res, next) => {
-  let { email, password } = await req.json();
+  let { name, password } = await req.json();
+  let user = await User.findOne({
+    where: {
+      name,
+    },
+  });
+  if(user?.password != password) {
+    res.json(fail(ERROR_CODE, "登录失败，请检查账号密码"));
+    return
+  } 
   let token;
   try {
-    token = signSyc({ id: 1 })
+    token = signSyc({ id: user.id });
   } catch (err) {
-    console.log(err);
-    const error = new Error("Error! Something went wrong.");
-    return next(error);
+    res.json(fail(ERROR_CODE, "login fail"));
+    return
   }
-  res.json({
-    data: {
-      id: 1,
-      email,
+  res.json(
+    ok({
       token,
-    }
-  });
+    })
+  );
 });
 
-uploadController(pub_router)
+uploadController(pub_router);
 
 export default pub_router;

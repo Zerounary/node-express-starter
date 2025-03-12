@@ -2,6 +2,7 @@ import HyperExpress from "hyper-express";
 import { dispatch, initSocket, onSocketClose } from "./ws_events";
 import logger from '@/logger'
 import { decode } from "@/utils/protocol"
+import { jwt_mid } from "@/router/auth";
 const ws_router = new HyperExpress.Router();
 
 // websocket

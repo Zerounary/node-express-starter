@@ -1,12 +1,12 @@
 import HyperExpress from "hyper-express";
 import logger from "@/logger";
 import userController from "./userController";
-import { verifySync } from "@/utils/protocol";
 import { AI, AI_Stream } from "@/ai";
 import { ok, fail, ERROR_CODE } from "@/router/api/index";
 import clientController from "./clientController";
 import appController from "./appController";
 import dbController from "./dbController";
+import { jwt_mid } from "@/router/auth";
 
 const api_v1_router = new HyperExpress.Router();
 
@@ -113,33 +113,8 @@ api_v1_router.get("/orc", async (req, res) => {
 });
 export default api_v1_router;
 
-let is_jwt_check = false;
 
-api_v1_router.use((req, res, next) => {
-  if (is_jwt_check) {
-    const token = req.headers.authorization?.split(" ")[1] || "";
-    if (!token) {
-      res.status(401).json({
-        success: false,
-        message: "Error!Token was not provided.",
-      });
-      return;
-    }
-    try {
-      const decodedToken = verifySync(token);
-      req.locals.auth = decodedToken;
-      next();
-    } catch (e) {
-      res.status(401).json({
-        success: false,
-        message: "Error!Token was expired.",
-      });
-      return;
-    }
-  } else {
-    next();
-  }
-});
+api_v1_router.use(jwt_mid);
 
 userController(api_v1_router);
 clientController(api_v1_router);

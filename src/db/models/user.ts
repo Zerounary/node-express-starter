@@ -4,12 +4,18 @@ import db from '../index'
 const User = db.define(
   'User',
   {
+    id: {
+      type: DataTypes.NUMBER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+    },
     // Model attributes are defined here
-    firstName: {
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    lastName: {
+    password: {
       type: DataTypes.STRING,
       // allowNull defaults to true
     },

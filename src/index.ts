@@ -13,6 +13,7 @@ import { request } from "http";
 import { response } from "express";
 import db from "./db";
 import Client from "./db/models/client";
+import User from "./db/models/user";
 
 // 跨域设置
 webserver.use((req, res, next) => {
@@ -80,7 +81,15 @@ webserver.get("/assets/*", (request, response) => {
 });
 
 db.sync({ alter: true })
-  .then((res) => {
+  .then(async (res) => {
+    // 创建 root 用户
+    let count = await User.count()
+    if( count == 0) {
+      await User.create({
+        name: 'root',
+        password: 'bpm123'
+      })
+    }
     // 第一次启动时，初始化所有客户端为离线。
     Client.update(
       {
