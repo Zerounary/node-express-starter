@@ -1,6 +1,6 @@
 import { verifySync } from "@/utils/protocol";
 
-let is_jwt_check = true;
+export let is_jwt_check = false;
 
 export const jwt_mid =  (req, res, next) => {
   if (is_jwt_check) {
