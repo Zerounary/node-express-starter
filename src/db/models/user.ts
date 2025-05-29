@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize';
 import db from '../index'
 
 const User = db.define(
-  'User',
+  'test',
   {
     id: {
       type: DataTypes.NUMBER,
@@ -22,7 +22,7 @@ const User = db.define(
   },
   {
     // Other model options go here
-    tableName: 'BPM_USER',
+    tableName: 'BPM_TEST',
   },
 );
 
