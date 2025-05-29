@@ -1,8 +1,8 @@
 import { DataTypes } from 'sequelize';
 import db from '../index'
 
-const User = db.define(
-  'test',
+const Demo = db.define(
+  'demo',
   {
     id: {
       type: DataTypes.NUMBER,
@@ -22,8 +22,8 @@ const User = db.define(
   },
   {
     // Other model options go here
-    tableName: 'BPM_TEST',
+    tableName: 'BPM_DEMO',
   },
 );
 
-export default User;
+export default Demo;

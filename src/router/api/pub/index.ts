@@ -3,13 +3,13 @@ import HyperExpress from "hyper-express";
 import logger from "@/logger";
 import { signSyc } from "@/utils/protocol";
 import uploadController from "./uploadController";
-import User from "@/db/models/user";
+import Demo from "@/db/models/demo";
 
 const pub_router = new HyperExpress.Router();
 
 pub_router.post("/login", async (req, res, next) => {
   let { name, password } = await req.json();
-  let user = await User.findOne({
+  let user = await Demo.findOne({
     where: {
       name,
     },

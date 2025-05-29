@@ -5,9 +5,9 @@ export const ok = (data) => {
     }
 }
 
-export const fail = (code, msg) => {
+export const fail = (msg, code = 0) => {
     return {
-        code: 0,
+        code,
         msg
     }
 }

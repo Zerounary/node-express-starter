@@ -1,4 +1,4 @@
-import User from '@/db/models/user'
+import Demo from '@/db/models/demo'
 import db from '@/db'
 var cache = require('memory-cache');
 
@@ -15,7 +15,7 @@ export default (api) => {
       let result = cache.get('users');
       res.send(result);
     } else {
-      const users = await User.findAll();
+      const users = await Demo.findAll();
       let result = JSON.stringify(users, null, 2);
       cache.put('users', result, 1000 * 60 * 60 * 24);
       res.send(result);
@@ -25,7 +25,7 @@ export default (api) => {
   api.post("/user", async (req, res) => {
     let body = await req.json();
     console.log('🚀 ~ api.post ~ body:', body)
-    let user = await User.create({
+    let user = await Demo.create({
       firstName: body.firstName,
       lastName: body.lastName,
     })

@@ -9,7 +9,6 @@ export const crossMid = (req, res, next) => {
   res.setHeader("Access-Control-Allow-Headers", "*");
   // 允许携带凭证（如 cookies）
   res.setHeader("Access-Control-Allow-Credentials", "true");
-  console.log("options");
 
   if (req.method.toLocaleLowerCase() == "options") {
     res.send("");
