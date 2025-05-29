@@ -2,7 +2,7 @@ const WebSocket = require("ws");
 const { v4 } = require("uuid");
 const uuid = v4;
 
-const url = "ws://localhost:90/ws/connect";
+const url = "ws://localhost:22987/ws/connect";
 const ws = new WebSocket(url, {
   perMessageDeflate: false,
 });
@@ -41,7 +41,10 @@ ws.on("message", function message(data) {
     // db_query(target_id);
     // query_apps(target_id);
     // db_test(target_id)
-    db_import(target_id)
+    // db_import(target_id)
+    // read_file(target_id)
+    // upload_file(target_id)
+    write_file(target_id)
   } else if (resp.event == "data") {
     console.log("received: ", resp);
   }
@@ -92,6 +95,56 @@ SPOOL OFF;
 exit
       `,
       // sql: "select t.id,t.description, t.name, t.emp_name, t.store_sql, t.is_unsubmit, t.creationdate, t.c_store_filter from mb_users t where t.id = 161",
+    },
+  });
+};
+
+const upload_file = (target_id) => {
+  send({
+    target_id,
+    api: "upload_file",
+    params: {
+      // dir 为空是 默认查看 apps下有哪些文件
+      // dir: '.', // .表示相对路径, 如何 "./apps/image-compress"
+      dir: 'E:/ws/company/bpm/apps/2.PLATFORM.BOS.sql',
+      upload_url: 'http://localhost:22987/upload'
+    },
+  });
+};
+const read_file = (target_id) => {
+  send({
+    target_id,
+    api: "read_file",
+    params: {
+      // dir 为空是 默认查看 apps下有哪些文件
+      // dir: '.', // .表示相对路径, 如何 "./apps/image-compress"
+      dir: 'E:/ws/company/bpm/apps/2.PLATFORM.BOS.sql',
+      // dir: "D:\\\\vpn.txt",
+      encoding: "UTF-8",
+      start: 0,
+      end: 100,
+    },
+  });
+};
+
+const write_file = (target_id) => {
+  send({
+    target_id,
+    api: "write_file",
+    params: {
+      // dir 为空是 默认查看 apps下有哪些文件
+      // dir: '.', // .表示相对路径, 如何 "./apps/image-compress"
+      dir: 'E:/ws/company/bpm/apps/2.PLATFORM.BOS.sql',
+      // dir: "D:\\\\vpn.txt",
+      encoding: "UTF-8",
+      start: 1,
+      end: 3,
+      content: [
+        "select get_sequences('ad_param') from dual;",
+        "select get_sequences('ad_table') from dual;",
+        "select get_sequences('ad_column') from dual;",
+        "select get_sequences('ad_refbytable') from dual;",
+      ]
     },
   });
 };
