@@ -1,14 +1,20 @@
 import Demo from "@/db/models/demo";
 import { fail, ok } from "@/router/api";
+import { Controller, Get, Post } from "@/utils/routeDecorators";
 
+@Controller("/demo")
 export default class demo {
-  async getlist(req, res) {
+
+  @Get("/list")
+  async list12(req, res) {
     let list = await Demo.findAll();
     return ok(list)
   }
-  async postadd(req,res) {
+
+
+  @Post("/add")
+  async add(req,res) {
     let body = await req.json();
-    console.log('🚀 ~ api.post ~ body:', JSON.parse(''))
     if(body.name === undefined || body.name === '') {
         return fail('name is required');
     }
