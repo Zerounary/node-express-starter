@@ -1,36 +1,36 @@
-import HyperExpress from "hyper-express";
-const webserver = new HyperExpress.Server({
-  max_body_buffer: 1024 * 1,
-  max_body_length: 1024 * 1024 * 300,
-});
-
-import db from "./db";
+import webserver from "./app";
+import sequelize from './db/sequelize';
 import { initAssets } from "./assets";
-import { crossMid } from "./utils/middleware";
 import { RouteLoader } from "./utils/routeLoader";
-
-// 跨域设置
-webserver.use(crossMid);
-
-initAssets(webserver);
-
-const routeLoader = new RouteLoader(webserver, {
-  controllerDir: "./src/api",
-  prefix: "/api", // 全局路由前缀
-  middlewares: [], // 全局中间件
-});
-
-routeLoader.load();
+import { start } from "./server";
+import DynamicColumn from "./db/models/DynamicColumn";
+import DynamicTable from "./db/models/DynamicTable";
 
 
-db.sync({ alter: true })
-  .then(async (res) => {
-    const port = 22987;
-    webserver
-      .listen(port)
-      .then(async () => {
-        console.log(`Webserver started on port ${port}`);
-      })
-      .catch(() => console.log(`Failed to start webserver on port ${port}`));
-  })
-  .catch(() => console.log(`Failed to sync database`));
+async function bootstrap() {
+    try {
+        // 初始化静态资源
+        initAssets(webserver);
+
+        // 加载路由
+        const routeLoader = new RouteLoader(webserver, {
+            controllerDir: "./src/api",
+            prefix: "/api",
+            middlewares: [],
+        });
+        routeLoader.load();
+
+        // 同步数据库
+        await sequelize.sync({ force: true, alter: true });
+        DynamicTable.sync({ force: true, alter: true });
+        DynamicColumn.sync({ force: true, alter: true });
+        console.log('Database synchronized');
+
+        // 启动服务器
+        start();
+    } catch (error) {
+        console.error('Failed to start server:', error);
+    }
+}
+
+bootstrap();
