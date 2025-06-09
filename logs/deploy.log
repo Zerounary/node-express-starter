@@ -1,0 +1,78 @@
+[2025-06-09T03:23:34.868Z] [ERROR] 部署失败: 未找到项目 mike/diaspora 的部署配置
+[2025-06-09T03:24:25.117Z] [ERROR] 部署失败: 未找到项目 mike/diaspora 的部署配置
+[2025-06-09T03:24:30.758Z] [ERROR] 部署失败: 未找到项目 mike/diaspora 的部署配置
+[2025-06-09T03:25:21.295Z] [ERROR] 部署失败: 未找到平台 win32 的部署脚本
+[2025-06-09T03:26:06.492Z] [ERROR] 脚本执行错误: spawn C:\WINDOWS\system32\cmd.exe ENOENT
+[2025-06-09T03:26:06.493Z] [ERROR] 标准错误输出: 
+[2025-06-09T03:26:06.494Z] [ERROR] 部署失败: spawn C:\WINDOWS\system32\cmd.exe ENOENT
+[2025-06-09T03:35:11.426Z] [ERROR] 脚本执行错误: spawn C:\WINDOWS\system32\cmd.exe ENOENT
+[2025-06-09T03:35:11.427Z] [ERROR] 标准错误输出: 
+[2025-06-09T03:35:11.439Z] [ERROR] 部署失败: spawn C:\WINDOWS\system32\cmd.exe ENOENT
+[2025-06-09T03:40:10.454Z] [ERROR] 脚本执行错误: Command failed: E:\ws\node\hyper-express-demo\scripts\deploy.bat master
+�ļ�����Ŀ¼��������﷨����ȷ��
+
+[2025-06-09T03:40:10.455Z] [ERROR] 标准错误输出: �ļ�����Ŀ¼��������﷨����ȷ��
+
+[2025-06-09T03:40:10.456Z] [ERROR] 部署失败: Command failed: E:\ws\node\hyper-express-demo\scripts\deploy.bat master
+�ļ�����Ŀ¼��������﷨����ȷ��
+
+[2025-06-09T03:47:23.798Z] [INFO] 脚本执行输出: Start deploying branch: feat-think
+Pulling latest code...
+Your branch is up to date with 'gitlab/feat-think'.
+Installing dependencies...
+Deployment completed 
+
+[2025-06-09T03:47:23.800Z] [WARN] 脚本警告信息: Already on 'feat-think'
+fatal: couldn't find remote ref feat-think
+npm error code EPERM
+npm error syscall unlink
+npm error path E:\ws\node\hyper-express-demo\node_modules\uWebSockets.js\uws_win32_x64_115.node
+npm error errno -4048
+npm error [Error: EPERM: operation not permitted, unlink 'E:\ws\node\hyper-express-demo\node_modules\uWebSockets.js\uws_win32_x64_115.node'] {
+npm error   errno: -4048,
+npm error   code: 'EPERM',
+npm error   syscall: 'unlink',
+npm error   path: 'E:\\ws\\node\\hyper-express-demo\\node_modules\\uWebSockets.js\\uws_win32_x64_115.node'
+npm error }
+npm error
+npm error The operation was rejected by your operating system.
+npm error It's possible that the file was already in use (by a text editor or antivirus),
+npm error or that you lack permissions to access it.
+npm error
+npm error If you believe this might be a permissions issue, please double-check the
+npm error permissions of the file and its containing directories, or try running
+npm error the command again as root/Administrator.
+npm error A complete log of this run can be found in: D:\Develop\npm\npm-cache\_logs\2025-06-09T03_47_22_630Z-debug-0.log
+
+[2025-06-09T03:47:29.429Z] [ERROR] 部署失败: Command failed: pm2 restart app
+[PM2][ERROR] Process or Namespace app not found
+
+[2025-06-09T04:41:40.068Z] [INFO] 脚本执行输出: Start deploying branch: feat-think
+Pulling latest code...
+Your branch is up to date with 'gitlab/feat-think'.
+Installing dependencies...
+Deployment completed 
+
+[2025-06-09T04:41:40.070Z] [WARN] 脚本警告信息: Already on 'feat-think'
+fatal: couldn't find remote ref feat-think
+npm error code EPERM
+npm error syscall unlink
+npm error path E:\ws\node\hyper-express-demo\node_modules\uWebSockets.js\uws_win32_x64_115.node
+npm error errno -4048
+npm error [Error: EPERM: operation not permitted, unlink 'E:\ws\node\hyper-express-demo\node_modules\uWebSockets.js\uws_win32_x64_115.node'] {
+npm error   errno: -4048,
+npm error   code: 'EPERM',
+npm error   syscall: 'unlink',
+npm error   path: 'E:\\ws\\node\\hyper-express-demo\\node_modules\\uWebSockets.js\\uws_win32_x64_115.node'
+npm error }
+npm error
+npm error The operation was rejected by your operating system.
+npm error It's possible that the file was already in use (by a text editor or antivirus),
+npm error or that you lack permissions to access it.
+npm error
+npm error If you believe this might be a permissions issue, please double-check the
+npm error permissions of the file and its containing directories, or try running
+npm error the command again as root/Administrator.
+npm error A complete log of this run can be found in: D:\Develop\npm\npm-cache\_logs\2025-06-09T04_41_38_954Z-debug-0.log
+
+[2025-06-09T04:41:40.074Z] [INFO] 项目 mike/diaspora (feat-think) 部署成功
