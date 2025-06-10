@@ -12,7 +12,7 @@ class SchemaService {
   public async createTableFromDefinition(tableId: number) {
     const tableDefinition = (await DynamicTable.findByPk(tableId, {
       include: [{ model: DynamicColumn, as: 'columns' }],
-    })).toJSON();
+    }))?.toJSON();
 
     if (!tableDefinition) {
       throw new Error('Table definition not found');
@@ -26,19 +26,32 @@ class SchemaService {
   public async addColumnFromDefinition(columnId: number) {
     const columnDefinition = (await DynamicColumn.findByPk(columnId, {
         include: [{model: DynamicTable, as: 'table'}]
-    })).toJSON();
+    }))?.toJSON();
     
     if (!columnDefinition) {
         throw new Error('Column definition not found');
     }
 
-    const table = await columnDefinition.getTable();
+    const table = columnDefinition.table;
     const attribute = this.getSequelizeAttributes([columnDefinition]);
     
     await this.queryInterface.addColumn(
         table.name, 
         columnDefinition.name, 
         attribute[columnDefinition.name]
+    );
+  }
+
+  public async dropColumn(tableName: string, columnName: string) {
+    await this.queryInterface.removeColumn(tableName, columnName);
+  }
+
+  public async changeColumn(tableName: string, columnName: string, columnDefinition: DynamicColumn) {
+    const attribute = this.getSequelizeAttributes([columnDefinition]);
+    await this.queryInterface.changeColumn(
+      tableName,
+      columnName,
+      attribute[columnDefinition.name]
     );
   }
 
@@ -71,10 +84,16 @@ class SchemaService {
         return DataTypes.INTEGER;
       case 'FLOAT':
         return DataTypes.FLOAT;
+      case 'DOUBLE':
+        return DataTypes.DOUBLE;
+      case 'DECIMAL':
+        return DataTypes.DECIMAL;
       case 'BOOLEAN':
         return DataTypes.BOOLEAN;
       case 'DATE':
         return DataTypes.DATE;
+      case 'JSON':
+        return DataTypes.JSON;
       default:
         throw new Error(`Unsupported data type: ${dataType}`);
     }

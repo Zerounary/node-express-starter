@@ -30,7 +30,8 @@
     "sequelize": "^6.37.7",
     "sqlite3": "^5.1.7",
     "uuid": "^10.0.0",
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "zod": "^3.25.56"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
