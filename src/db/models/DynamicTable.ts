@@ -6,6 +6,8 @@ class DynamicTable extends Model {
   public id!: number;
   public name!: string;
   public description!: string | null;
+  public created!: string;
+  public updated!: string;
 
   public getColumns!: HasManyGetAssociationsMixin<DynamicColumn>;
   public columns?: DynamicColumn[];
@@ -26,9 +28,18 @@ DynamicTable.init({
     type: new DataTypes.STRING(255),
     allowNull: true,
   },
+  created: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  updated: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 }, {
   sequelize,
   tableName: 'dynamic_tables',
+  timestamps: true,
 });
 
 export default DynamicTable;

@@ -8,12 +8,25 @@ import DynamicTable from "./db/models/DynamicTable";
 import SchemaService from "./services/SchemaService";
 import { logError } from "./logger";
 import Report from './db/models/Report';
+import User from './db/models/User';
+import ActionLog from './db/models/ActionLog';
+import { authMiddleware } from "./router/auth";
+import { logMiddleware } from "./router/middlewares/logMiddleware";
 
 
 async function bootstrap() {
     try {
         // 初始化静态资源
         initAssets(webserver);
+        
+        // // Add user to the request context
+        // webserver.use((req, res, next) => {
+        //     // req.user = null;
+        //     next();
+        // });
+
+        // Register auth middleware
+        webserver.use(authMiddleware);
 
         // 加载路由
         const routeLoader = new RouteLoader(webserver, {
@@ -23,7 +36,12 @@ async function bootstrap() {
         });
         routeLoader.load();
 
+        // Register log middleware after routes are loaded
+        webserver.use(logMiddleware);
+
         // 同步核心模型
+        await User.sync({ alter: true });
+        await ActionLog.sync({ alter: true });
         await DynamicTable.sync({ alter: true });
         await DynamicColumn.sync({ alter: true });
         await Report.sync({ alter: true });

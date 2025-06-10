@@ -7,8 +7,11 @@ class DynamicColumn extends Model {
   public name!: string;
   public dataType!: string;
   public tableId!: number;
+  public created!: string;
+  public updated!: string;
 
   public getTable!: BelongsToGetAssociationMixin<DynamicTable>;
+  public table?: DynamicTable;
 }
 
 DynamicColumn.init({
@@ -22,7 +25,7 @@ DynamicColumn.init({
     allowNull: false,
   },
   dataType: {
-    type: new DataTypes.STRING(64),
+    type: new DataTypes.STRING(128),
     allowNull: false,
   },
   tableId: {
@@ -33,6 +36,14 @@ DynamicColumn.init({
     },
     allowNull: false,
   },
+  created: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  updated: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 }, {
   sequelize,
   tableName: 'dynamic_columns',
@@ -42,6 +53,7 @@ DynamicColumn.init({
       fields: ['tableId', 'name'],
     },
   ],
+  timestamps: true,
 });
 
 export default DynamicColumn; 

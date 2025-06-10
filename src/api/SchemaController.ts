@@ -59,7 +59,7 @@ export default class SchemaController {
       }
       const { columns: newColumns } = validationResult.data;
 
-      const table = (await DynamicTable.findOne({ where: { name: tableName }, include: [{ model: DynamicColumn, as: 'columns' }] }))?.toJSON();
+      const table = (await DynamicTable.findOne({ where: { name: tableName }, include: [{ model: DynamicColumn, as: 'columns' }] }));
 
       if (!table) {
         return fail('Table not found', 404);
@@ -122,12 +122,12 @@ export default class SchemaController {
     try {
       const { tableName, columnName } = req.params;
 
-      const table = (await DynamicTable.findOne({ where: { name: tableName } }))?.toJSON();
+      const table = (await DynamicTable.findOne({ where: { name: tableName } }));
       if (!table) {
         return fail('Table not found', 404);
       }
 
-      const column = (await DynamicColumn.findOne({ where: { name: columnName, tableId: table.id } }))?.toJSON();
+      const column = (await DynamicColumn.findOne({ where: { name: columnName, tableId: table.id } }));
       if (!column) {
         return fail('Column not found', 404);
       }

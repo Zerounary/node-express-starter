@@ -1,0 +1,66 @@
+import { Controller, Post } from "@/utils/routeDecorators";
+import { ok, fail } from "@/router/api";
+import User from "../db/models/User";
+import AuthService from "../services/AuthService";
+import { z } from 'zod';
+import { logError } from "../logger";
+
+const userSchema = z.object({
+  username: z.string().min(3),
+  password: z.string().min(6),
+});
+
+@Controller("/users")
+export default class UserController {
+
+  @Post("/register")
+  async register(req, res) {
+    try {
+      const body = await req.json();
+      const validationResult = userSchema.safeParse(body);
+      if (!validationResult.success) {
+        return fail(validationResult.error.errors, 400);
+      }
+
+      const { username, password } = validationResult.data;
+      const existingUser = await User.findOne({ where: { username } });
+      if (existingUser) {
+        return fail("Username already exists", 409);
+      }
+
+      const user = await User.create({ username, password });
+      return ok({ id: user.id, username: user.username });
+    } catch (error) {
+      logError(error);
+      return fail(error.message);
+    }
+  }
+
+  @Post("/login")
+  async login(req, res) {
+    try {
+      const body = await req.json();
+      const validationResult = userSchema.safeParse(body);
+      if (!validationResult.success) {
+        return fail(validationResult.error.errors, 400);
+      }
+
+      const { username, password } = validationResult.data;
+      const user = await User.findOne({ where: { username } });
+      if (!user) {
+        return fail("Invalid username or password", 401);
+      }
+
+      const isPasswordValid = await user.comparePassword(password);
+      if (!isPasswordValid) {
+        return fail("Invalid username or password", 401);
+      }
+
+      const token = AuthService.generateToken(user);
+      return ok({ token });
+    } catch (error) {
+      logError(error);
+      return fail(error.message);
+    }
+  }
+} 

@@ -8,6 +8,41 @@ import { logError } from "../logger";
 @Controller("/data/:tableName")
 export default class DynamicController {
 
+  @Get("/list")
+  async list(req, res) {
+    try {
+      const { tableName } = req.params;
+      const { ...filters } = req.query;
+
+      const where = {};
+      const operatorMap = {
+        eq: Op.eq, ne: Op.ne, gte: Op.gte, gt: Op.gt, lte: Op.lte, lt: Op.lt,
+        in: Op.in, notIn: Op.notIn, like: Op.like, iLike: Op.iLike,
+      };
+
+      for (const key in filters) {
+        const parts = key.split('-');
+        if (parts.length === 2) {
+            const [field, op] = parts;
+            if (field && op && operatorMap[op]) {
+                let value = filters[key];
+                if (op === 'in' || op === 'notIn') {
+                    value = value.split(',');
+                }
+                where[field] = { [operatorMap[op]]: value };
+            }
+        }
+      }
+
+      const Model = await DynamicDataService.getModelForTable(tableName);
+      const data = await Model.findAll({ where });
+      return ok(data);
+    } catch (error) {
+      logError(error);
+      return fail(error.message);
+    }
+  }
+
   @Get("/page")
   async find(req, res) {
     try {
@@ -93,7 +128,7 @@ export default class DynamicController {
       let body = await req.json();
 
       // beforeCreate hook
-      const modifiedBody = await HookService.executeHook(tableName, 'beforeCreate', body);
+      const modifiedBody = await HookService.executeHook(tableName, 'beforeCreate', body, req);
       if (modifiedBody) {
         body = modifiedBody;
       }
@@ -118,7 +153,7 @@ export default class DynamicController {
       let body = await req.json();
 
       // beforeUpdate hook
-      const modifiedBody = await HookService.executeHook(tableName, 'beforeUpdate', id, body);
+      const modifiedBody = await HookService.executeHook(tableName, 'beforeUpdate', id, body, req);
       if (modifiedBody) {
         body = modifiedBody;
       }
@@ -145,7 +180,7 @@ export default class DynamicController {
       const { tableName, id } = req.params;
 
       // beforeDelete hook
-      await HookService.executeHook(tableName, 'beforeDelete', id);
+      await HookService.executeHook(tableName, 'beforeDelete', id, req);
 
       const Model = await DynamicDataService.getModelForTable(tableName);
       const affectedCount = await Model.destroy({ where: { id } });

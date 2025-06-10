@@ -14,7 +14,7 @@ class DynamicDataService {
     const tableDefinition = (await DynamicTable.findOne({
       where: { name: tableName },
       include: [{ model: DynamicColumn, as: 'columns' }],
-    }))?.toJSON();
+    }));
 
     if (!tableDefinition) {
       throw new Error(`Table '${tableName}' not found.`);

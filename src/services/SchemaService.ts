@@ -12,7 +12,7 @@ class SchemaService {
   public async createTableFromDefinition(tableId: number) {
     const tableDefinition = (await DynamicTable.findByPk(tableId, {
       include: [{ model: DynamicColumn, as: 'columns' }],
-    }))?.toJSON();
+    }));
 
     if (!tableDefinition) {
       throw new Error('Table definition not found');
@@ -26,7 +26,7 @@ class SchemaService {
   public async addColumnFromDefinition(columnId: number) {
     const columnDefinition = (await DynamicColumn.findByPk(columnId, {
         include: [{model: DynamicTable, as: 'table'}]
-    }))?.toJSON();
+    }));
     
     if (!columnDefinition) {
         throw new Error('Column definition not found');

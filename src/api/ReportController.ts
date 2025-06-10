@@ -5,6 +5,7 @@ import { logError } from "../logger";
 import sequelize from "../db/sequelize";
 import { QueryTypes } from "sequelize";
 import { z } from 'zod';
+import Et from 'easytemplatejs'
 
 const reportSchema = z.object({
     name: z.string().min(1),
@@ -114,15 +115,16 @@ export default class ReportController {
             const { name } = req.params;
             const { filters = {}, page, pageSize, fetchAll = false } = await req.json();
 
-            const report = (await Report.findOne({ where: { name } }))?.toJSON();
+            const report = (await Report.findOne({ where: { name } }));
             if (!report) {
                 return fail("Report not found", 404);
             }
 
             const { sqlTemplate } = report;
+            const renderedSql = Et.template(sqlTemplate, { filters });
 
             if (fetchAll) {
-                const results = await sequelize.query(sqlTemplate, {
+                const results = await sequelize.query(renderedSql, {
                     replacements: filters,
                     type: QueryTypes.SELECT
                 });
@@ -134,7 +136,7 @@ export default class ReportController {
             const offset = (nPage - 1) * nPageSize;
 
             // For pagination, we need a count query and a data query
-            const countQuery = `SELECT COUNT(*) as count FROM (${sqlTemplate}) AS subquery`;
+            const countQuery = `SELECT COUNT(*) as count FROM (${renderedSql}) AS subquery`;
             const countResult: any = await sequelize.query(countQuery, {
                 replacements: filters,
                 type: QueryTypes.SELECT,
@@ -142,7 +144,7 @@ export default class ReportController {
             });
             const total = parseInt(countResult.count, 10);
 
-            const dataQuery = `${sqlTemplate} LIMIT :limit OFFSET :offset`;
+            const dataQuery = `${renderedSql} LIMIT :limit OFFSET :offset`;
             const results = await sequelize.query(dataQuery, {
                 replacements: { ...filters, limit: nPageSize, offset },
                 type: QueryTypes.SELECT
