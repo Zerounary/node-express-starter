@@ -14,7 +14,6 @@ export async function afterCreate(instance) {
 
 export async function beforeUpdate(id, data) {
   console.log('beforeUpdate hook for demo table', id, data);
-  data.updatedAt = new Date();
   return data;
 }
 

@@ -28,9 +28,28 @@ class HookService {
   }
 
   public async executeHook(tableName: string, hookName: string, ...args: any[]) {
+    // 1. 执行全局钩子
+    const globalHooks = this.hooks.get('_global');
+    let [id, data] = args;
+    if (globalHooks && typeof globalHooks[hookName] === 'function') {
+      const result = await globalHooks[hookName](...args);
+      if (result) {
+        data = result
+      }
+    }
+    
+    // 2. 执行特定于表的钩子
     const tableHooks = this.hooks.get(tableName);
     if (tableHooks && typeof tableHooks[hookName] === 'function') {
-      return await tableHooks[hookName](...args);
+      const result = await tableHooks[hookName](...[id, data]);
+      if (result) {
+        data = result;
+      }
+    }
+
+    // `DynamicController` 期望钩子返回被修改的对象
+    if (hookName.startsWith('before')) {
+      return data;
     }
   }
 }

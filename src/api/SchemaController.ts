@@ -29,7 +29,7 @@ export default class SchemaController {
       const { name, description, columns } = validationResult.data;
 
       // 1. 创建表定义
-      const table = await DynamicTable.create({ name, description });
+      const table = (await DynamicTable.create({ name, description })).toJSON();
 
       // 2. 创建列定义
       if (columns && columns.length > 0) {

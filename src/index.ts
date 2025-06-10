@@ -5,6 +5,7 @@ import { RouteLoader } from "./utils/routeLoader";
 import { start } from "./server";
 import DynamicColumn from "./db/models/DynamicColumn";
 import DynamicTable from "./db/models/DynamicTable";
+import SchemaService from "./services/SchemaService";
 
 
 async function bootstrap() {
@@ -20,16 +21,44 @@ async function bootstrap() {
         });
         routeLoader.load();
 
-        // 同步数据库
-        await sequelize.sync({ force: true, alter: true });
-        DynamicTable.sync({ force: true, alter: true });
-        DynamicColumn.sync({ force: true, alter: true });
-        console.log('Database synchronized');
+        // 同步核心模型
+        await DynamicTable.sync({ alter: true });
+        await DynamicColumn.sync({ alter: true });
+        console.log('Core models synchronized');
 
+        // 初始化动态表
+        await initDynamicTables();
+        
         // 启动服务器
         start();
     } catch (error) {
         console.error('Failed to start server:', error);
+    }
+}
+
+async function initDynamicTables() {
+    try {
+        console.log('Initializing dynamic tables...');
+        let tables = await DynamicTable.findAll({
+            raw: true,
+        });
+        if(tables.length === 0) {
+            return
+        }
+
+        const queryInterface = sequelize.getQueryInterface();
+        const allTables = await queryInterface.showAllTables();
+
+        for (const table of tables) {
+            if (!allTables.includes(table.name)) {
+                console.log(`Table "${table.name}" not found, creating...`);
+                await SchemaService.createTableFromDefinition(table.id);
+                console.log(`Table "${table.name}" created.`);
+            }
+        }
+        console.log('Dynamic tables initialized.');
+    } catch (error) {
+        console.error('Failed to initialize dynamic tables:', error);
     }
 }
 

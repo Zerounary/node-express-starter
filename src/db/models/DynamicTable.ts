@@ -20,7 +20,7 @@ DynamicTable.init({
   name: {
     type: new DataTypes.STRING(128),
     allowNull: false,
-    unique: true,
+    unique: 'dynamic_tables_name_key',
   },
   description: {
     type: new DataTypes.STRING(255),
