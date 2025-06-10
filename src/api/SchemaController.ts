@@ -3,6 +3,7 @@ import { ok, fail } from "@/router/api";
 import { DynamicTable, DynamicColumn } from "../db/models";
 import SchemaService from '../services/SchemaService';
 import { z } from 'zod';
+import { logError } from "../logger";
 
 const columnSchema = z.object({
   name: z.string().regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/),
@@ -42,7 +43,7 @@ export default class SchemaController {
 
       return ok(table);
     } catch (error) {
-      console.error(error);
+      logError(error);
       return fail(error.message);
     }
   }
@@ -93,7 +94,7 @@ export default class SchemaController {
 
       return ok({ message: 'Table merged successfully' });
     } catch (error) {
-      console.error(error);
+      logError(error);
       return fail(error.message);
     }
   }
@@ -111,7 +112,7 @@ export default class SchemaController {
 
         return ok(column);
     } catch (error) {
-        console.error(error);
+        logError(error);
         return fail(error.message);
     }
   }
@@ -136,7 +137,7 @@ export default class SchemaController {
 
       return ok({ message: 'Column deleted successfully' });
     } catch (error) {
-      console.error(error);
+      logError(error);
       return fail(error.message);
     }
   }

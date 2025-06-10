@@ -6,6 +6,8 @@ import { start } from "./server";
 import DynamicColumn from "./db/models/DynamicColumn";
 import DynamicTable from "./db/models/DynamicTable";
 import SchemaService from "./services/SchemaService";
+import { logError } from "./logger";
+import Report from './db/models/Report';
 
 
 async function bootstrap() {
@@ -24,6 +26,7 @@ async function bootstrap() {
         // 同步核心模型
         await DynamicTable.sync({ alter: true });
         await DynamicColumn.sync({ alter: true });
+        await Report.sync({ alter: true });
         console.log('Core models synchronized');
 
         // 初始化动态表
@@ -32,6 +35,7 @@ async function bootstrap() {
         // 启动服务器
         start();
     } catch (error) {
+        logError(error);
         console.error('Failed to start server:', error);
     }
 }
@@ -58,6 +62,7 @@ async function initDynamicTables() {
         }
         console.log('Dynamic tables initialized.');
     } catch (error) {
+        logError(error);
         console.error('Failed to initialize dynamic tables:', error);
     }
 }

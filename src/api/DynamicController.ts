@@ -2,18 +2,70 @@ import { Controller, Get, Post, Put, Delete } from "@/utils/routeDecorators";
 import { ok, fail } from "@/router/api";
 import DynamicDataService from '../services/DynamicDataService';
 import HookService from '../services/HookService';
+import { Op } from 'sequelize';
+import { logError } from "../logger";
 
 @Controller("/data/:tableName")
 export default class DynamicController {
 
-  @Get("/")
+  @Get("/page")
   async find(req, res) {
     try {
       const { tableName } = req.params;
+      const { page = 1, pageSize = 10, ...filters } = req.query;
+
+      const where = {};
+      const operatorMap = {
+        eq: Op.eq,
+        ne: Op.ne,
+        gte: Op.gte,
+        gt: Op.gt,
+        lte: Op.lte,
+        lt: Op.lt,
+        in: Op.in,
+        notIn: Op.notIn,
+        like: Op.like,
+        iLike: Op.iLike,
+      };
+
+      for (const key in filters) {
+        const parts = key.split('-');
+        if (parts.length === 2) {
+            const [field, op] = parts;
+            if (field && op && operatorMap[op]) {
+                let value = filters[key];
+                if (op === 'in' || op === 'notIn') {
+                    value = value.split(',');
+                }
+                where[field] = {
+                    [operatorMap[op]]: value
+                };
+            }
+        }
+      }
+
       const Model = await DynamicDataService.getModelForTable(tableName);
-      const data = await Model.findAll();
-      return ok(data);
+      
+      const nPage = parseInt(page, 10);
+      const nPageSize = parseInt(pageSize, 10);
+
+      const { count, rows } = await Model.findAndCountAll({
+        where,
+        limit: nPageSize,
+        offset: (nPage - 1) * nPageSize,
+      });
+
+      return ok({
+        data: rows,
+        pagination: {
+          total: count,
+          page: nPage,
+          pageSize: nPageSize,
+          totalPages: Math.ceil(count / nPageSize),
+        }
+      });
     } catch (error) {
+      logError(error);
       return fail(error.message);
     }
   }
@@ -29,6 +81,7 @@ export default class DynamicController {
       }
       return ok(instance);
     } catch (error) {
+      logError(error);
       return fail(error.message);
     }
   }
@@ -53,6 +106,7 @@ export default class DynamicController {
 
       return ok(instance);
     } catch (error) {
+      logError(error);
       return fail(error.message);
     }
   }
@@ -80,6 +134,7 @@ export default class DynamicController {
 
       return ok({ affectedCount });
     } catch (error) {
+      logError(error);
       return fail(error.message);
     }
   }
@@ -103,6 +158,7 @@ export default class DynamicController {
 
       return ok({ affectedCount });
     } catch (error) {
+      logError(error);
       return fail(error.message);
     }
   }
