@@ -77,7 +77,7 @@ export default class SchemaController {
       // 找出要删除的列
       const columnsToDelete = existingColumns.filter(c => !newColumnNames.includes(c.name));
       for (const col of columnsToDelete) {
-        await SchemaService.dropColumn(tableName, col.name);
+        await SchemaService.dropColumn(tableName, col.name, tenantId);
         await col.destroy();
       }
 
@@ -88,7 +88,7 @@ export default class SchemaController {
           // 修改列
           if (existingCol.dataType !== newCol.dataType) {
             await existingCol.update({ dataType: newCol.dataType });
-            await SchemaService.changeColumn(tableName, newCol.name, existingCol);
+            await SchemaService.changeColumn(tableName, newCol.name, existingCol, tenantId);
           }
         } else {
           // 新增列
@@ -138,7 +138,7 @@ export default class SchemaController {
         return fail('Column not found', 404);
       }
 
-      await SchemaService.dropColumn(tableName, columnName);
+      await SchemaService.dropColumn(tableName, columnName, tenantId);
       await column.destroy();
 
       return ok({ message: 'Column deleted successfully' });

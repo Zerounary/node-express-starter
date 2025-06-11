@@ -7,6 +7,10 @@ class DynamicDataService {
   private modelCache: Map<string, ModelCtor<Model<any, any>>> = new Map();
   private relationsCache: Map<string, boolean> = new Map();
 
+  private getPhysicalTableName(tableName: string, tenantId: number): string {
+    return `t_${tenantId}_${tableName}`;
+  }
+
   private getSequelizeAttributes(columns: DynamicColumn[]) {
     const attributes: { [key: string]: any } = {
       id: {
@@ -45,8 +49,8 @@ class DynamicDataService {
   }
 
   public async defineRelationships(model: ModelCtor<Model>, tableDefinition: DynamicTable, tenantId: number) {
-    const cacheKey = `${tenantId}:${tableDefinition.name}`;
-    if (this.relationsCache.has(cacheKey)) return;
+    const physicalTableName = this.getPhysicalTableName(tableDefinition.name, tenantId);
+    if (this.relationsCache.has(physicalTableName)) return;
 
     for (const column of tableDefinition.columns!) {
         try {
@@ -61,15 +65,19 @@ class DynamicDataService {
             logError(e);
         }
     }
-    this.relationsCache.set(cacheKey, true);
+    this.relationsCache.set(physicalTableName, true);
   }
 
   public async getModelForTable(tableName: string, tenantId: number): Promise<ModelCtor<Model<any, any>>> {
-    const cacheKey = `${tenantId}:${tableName}`;
+    const physicalTableName = this.getPhysicalTableName(tableName, tenantId);
+    const cacheKey = physicalTableName;
     if (this.modelCache.has(cacheKey)) {
         const model = this.modelCache.get(cacheKey)!;
         // Ensure relationships are defined, even if model is from cache
-        await this.defineRelationships(model, await DynamicTable.findOne({where: {name: tableName, tenantId}, include: [DynamicColumn]}) as DynamicTable, tenantId)
+        const tableDef = await DynamicTable.findOne({where: {name: tableName, tenantId}, include: [{ model: DynamicColumn, as: 'columns' }]})
+        if (tableDef) {
+            await this.defineRelationships(model, tableDef as DynamicTable, tenantId);
+        }
         return model;
     }
 
@@ -85,7 +93,7 @@ class DynamicDataService {
     const attributes = this.getSequelizeAttributes(tableDefinition.columns!);
     attributes.tenantId = { type: DataTypes.INTEGER, allowNull: false };
     
-    const Model = sequelize.define(tableName, attributes, { tableName, timestamps: false });
+    const Model = sequelize.define(physicalTableName, attributes, { tableName: physicalTableName, timestamps: false });
     this.modelCache.set(cacheKey, Model);
     
     await this.defineRelationships(Model, tableDefinition, tenantId);

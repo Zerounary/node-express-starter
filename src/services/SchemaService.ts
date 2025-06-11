@@ -9,6 +9,10 @@ class SchemaService {
     this.queryInterface = sequelize.getQueryInterface();
   }
 
+  private getPhysicalTableName(tableName: string, tenantId: number): string {
+    return `t_${tenantId}_${tableName}`;
+  }
+
   public async createTableFromDefinition(tableId: number) {
     const tableDefinition = (await DynamicTable.findByPk(tableId, {
       include: [{ model: DynamicColumn, as: 'columns' }],
@@ -18,9 +22,10 @@ class SchemaService {
       throw new Error('Table definition not found');
     }
 
+    const physicalTableName = this.getPhysicalTableName(tableDefinition.name, tableDefinition.tenantId);
     const attributes = this.getSequelizeAttributes(tableDefinition.columns!);
 
-    await this.queryInterface.createTable(tableDefinition.name, attributes);
+    await this.queryInterface.createTable(physicalTableName, attributes);
   }
 
   public async addColumnFromDefinition(columnId: number) {
@@ -33,23 +38,26 @@ class SchemaService {
     }
 
     const table = columnDefinition.table;
+    const physicalTableName = this.getPhysicalTableName(table.name, table.tenantId);
     const attribute = this.getSequelizeAttributes([columnDefinition]);
     
     await this.queryInterface.addColumn(
-        table.name, 
+        physicalTableName, 
         columnDefinition.name, 
         attribute[columnDefinition.name]
     );
   }
 
-  public async dropColumn(tableName: string, columnName: string) {
-    await this.queryInterface.removeColumn(tableName, columnName);
+  public async dropColumn(tableName: string, columnName: string, tenantId: number) {
+    const physicalTableName = this.getPhysicalTableName(tableName, tenantId);
+    await this.queryInterface.removeColumn(physicalTableName, columnName);
   }
 
-  public async changeColumn(tableName: string, columnName: string, columnDefinition: DynamicColumn) {
+  public async changeColumn(tableName: string, columnName: string, columnDefinition: DynamicColumn, tenantId: number) {
+    const physicalTableName = this.getPhysicalTableName(tableName, tenantId);
     const attribute = this.getSequelizeAttributes([columnDefinition]);
     await this.queryInterface.changeColumn(
-      tableName,
+      physicalTableName,
       columnName,
       attribute[columnDefinition.name]
     );
@@ -73,6 +81,7 @@ class SchemaService {
     }
 
     // 添加默认字段
+    attributes['tenantId'] = { type: DataTypes.INTEGER, allowNull: true };
     attributes['created'] = { type: DataTypes.STRING, allowNull: true };
     attributes['createdAt'] = { type: DataTypes.DATE, allowNull: true };
     attributes['updated'] = { type: DataTypes.STRING, allowNull: true };

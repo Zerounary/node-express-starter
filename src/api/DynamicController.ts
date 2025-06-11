@@ -85,7 +85,7 @@ export default class DynamicController {
     try {
       const { tableName, id } = req.params;
       const Model = await DynamicDataService.getModelForTable(tableName, req.user.tenantId);
-      const instance = await Model.findByPk(id);
+      const instance = await Model.findOne({ where: { id, tenantId: req.user.tenantId } });
       if (!instance) {
         return fail("Instance not found", 404);
       }
@@ -101,6 +101,7 @@ export default class DynamicController {
     try {
       const { tableName } = req.params;
       let body = await req.json();
+      body.tenantId = req.user.tenantId;
 
       // beforeCreate hook
       const modifiedBody = await HookService.executeHook(tableName, 'beforeCreate', body, req);
@@ -125,6 +126,7 @@ export default class DynamicController {
   async update(req, res) {
     try {
       const { tableName, id } = req.params;
+      const { tenantId } = req.user;
       let body = await req.json();
 
       // beforeUpdate hook
@@ -134,7 +136,7 @@ export default class DynamicController {
       }
 
       const Model = await DynamicDataService.getModelForTable(tableName, req.user.tenantId);
-      const [affectedCount] = await Model.update(body, { where: { id } });
+      const [affectedCount] = await Model.update(body, { where: { id, tenantId } });
       if (affectedCount === 0) {
         return fail("Instance not found or no changes made", 404);
       }
@@ -153,12 +155,13 @@ export default class DynamicController {
   async remove(req, res) {
     try {
       const { tableName, id } = req.params;
+      const { tenantId } = req.user;
 
       // beforeDelete hook
       await HookService.executeHook(tableName, 'beforeDelete', id, req);
 
       const Model = await DynamicDataService.getModelForTable(tableName, req.user.tenantId);
-      const affectedCount = await Model.destroy({ where: { id } });
+      const affectedCount = await Model.destroy({ where: { id, tenantId } });
       if (affectedCount === 0) {
         return fail("Instance not found", 404);
       }

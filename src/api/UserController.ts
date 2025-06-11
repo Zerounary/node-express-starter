@@ -11,6 +11,11 @@ const userSchema = z.object({
   tenantId: z.number().int(),
 });
 
+const loginSchema = z.object({
+  username: z.string(),
+  password: z.string(),
+});
+
 @Controller("/users")
 export default class UserController {
 
@@ -41,7 +46,7 @@ export default class UserController {
   async login(req, res) {
     try {
       const body = await req.json();
-      const validationResult = userSchema.safeParse(body);
+      const validationResult = loginSchema.safeParse(body);
       if (!validationResult.success) {
         return fail(validationResult.error.errors, 400);
       }
