@@ -5,7 +5,7 @@ import { logError } from "../logger";
 import sequelize from "../db/sequelize";
 import { QueryTypes } from "sequelize";
 import { z } from 'zod';
-import Et from 'easytemplatejs'
+import AT from 'art-template'
 
 const reportSchema = z.object({
     name: z.string().min(1),
@@ -121,7 +121,7 @@ export default class ReportController {
             }
 
             const { sqlTemplate } = report;
-            const renderedSql = Et.template(sqlTemplate, { filters });
+            const renderedSql = AT.render(sqlTemplate, filters);
 
             if (fetchAll) {
                 const results = await sequelize.query(renderedSql, {
