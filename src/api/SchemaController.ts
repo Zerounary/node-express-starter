@@ -7,7 +7,10 @@ import { logError } from "../logger";
 
 const columnSchema = z.object({
   name: z.string().regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/),
-  dataType: z.enum(['STRING', 'TEXT', 'INTEGER', 'FLOAT', 'DOUBLE', 'DECIMAL', 'BOOLEAN', 'DATE', 'JSON']),
+  dataType: z.enum(['STRING', 'TEXT', 'INTEGER', 'FLOAT', 'DOUBLE', 'DECIMAL', 'BOOLEAN', 'DATE', 'JSON', 'RELATIONSHIP', 'ENUM']),
+  relationshipType: z.enum(['one-to-one', 'one-to-many']).optional().nullable(),
+  relatedToTableId: z.number().int().optional().nullable(),
+  enumValues: z.array(z.string()).optional().nullable(),
 });
 
 const createTableSchema = z.object({
@@ -22,6 +25,7 @@ export default class SchemaController {
   @Post("/tables")
   async createTable(req, res) {
     try {
+      const { tenantId } = req.user;
       const body = await req.json();
       const validationResult = createTableSchema.safeParse(body);
       if (!validationResult.success) {
@@ -30,7 +34,7 @@ export default class SchemaController {
       const { name, description, columns } = validationResult.data;
 
       // 1. 创建表定义
-      const table = (await DynamicTable.create({ name, description })).toJSON();
+      const table = await DynamicTable.create({ name, description, tenantId });
 
       // 2. 创建列定义
       if (columns && columns.length > 0) {
@@ -51,6 +55,7 @@ export default class SchemaController {
   @Put('/tables/:name')
   async mergeTable(req, res) {
     try {
+      const { tenantId } = req.user;
       const { name: tableName } = req.params;
       const body = await req.json();
       const validationResult = createTableSchema.safeParse({ name: tableName, ...body });
@@ -59,10 +64,10 @@ export default class SchemaController {
       }
       const { columns: newColumns } = validationResult.data;
 
-      const table = (await DynamicTable.findOne({ where: { name: tableName }, include: [{ model: DynamicColumn, as: 'columns' }] }));
+      const table = await DynamicTable.findOne({ where: { name: tableName, tenantId }, include: [{ model: DynamicColumn, as: 'columns' }] });
 
       if (!table) {
-        return fail('Table not found', 404);
+        return fail('Table not found in your tenant', 404);
       }
 
       const existingColumns = table.columns || [];
@@ -120,14 +125,15 @@ export default class SchemaController {
   @Delete('/tables/:tableName/columns/:columnName')
   async deleteColumn(req, res) {
     try {
+      const { tenantId } = req.user;
       const { tableName, columnName } = req.params;
 
-      const table = (await DynamicTable.findOne({ where: { name: tableName } }));
+      const table = await DynamicTable.findOne({ where: { name: tableName, tenantId } });
       if (!table) {
-        return fail('Table not found', 404);
+        return fail('Table not found in your tenant', 404);
       }
 
-      const column = (await DynamicColumn.findOne({ where: { name: columnName, tableId: table.id } }));
+      const column = await DynamicColumn.findOne({ where: { name: columnName, tableId: table.id } });
       if (!column) {
         return fail('Column not found', 404);
       }

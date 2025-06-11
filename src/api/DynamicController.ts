@@ -8,33 +8,37 @@ import { logError } from "../logger";
 @Controller("/data/:tableName")
 export default class DynamicController {
 
+  private async getParsedWhere(filters: any, tenantId: number) {
+      const where: any = { tenantId };
+      const operatorMap = {
+          eq: Op.eq, ne: Op.ne, gte: Op.gte, gt: Op.gt, lte: Op.lte, lt: Op.lt,
+          in: Op.in, notIn: Op.notIn, like: Op.like, iLike: Op.iLike,
+      };
+
+      for (const key in filters) {
+          const parts = key.split('-');
+          if (parts.length === 2) {
+              const [field, op] = parts;
+              if (field && op && operatorMap[op]) {
+                  let value = filters[key];
+                  if (op === 'in' || op === 'notIn') {
+                      value = value.split(',');
+                  }
+                  where[field] = { [operatorMap[op]]: value };
+              }
+          }
+      }
+      return where;
+  }
+
   @Get("/list")
   async list(req, res) {
     try {
       const { tableName } = req.params;
       const { ...filters } = req.query;
-
-      const where = {};
-      const operatorMap = {
-        eq: Op.eq, ne: Op.ne, gte: Op.gte, gt: Op.gt, lte: Op.lte, lt: Op.lt,
-        in: Op.in, notIn: Op.notIn, like: Op.like, iLike: Op.iLike,
-      };
-
-      for (const key in filters) {
-        const parts = key.split('-');
-        if (parts.length === 2) {
-            const [field, op] = parts;
-            if (field && op && operatorMap[op]) {
-                let value = filters[key];
-                if (op === 'in' || op === 'notIn') {
-                    value = value.split(',');
-                }
-                where[field] = { [operatorMap[op]]: value };
-            }
-        }
-      }
-
-      const Model = await DynamicDataService.getModelForTable(tableName);
+      const where = await this.getParsedWhere(filters, req.user.tenantId);
+      
+      const Model = await DynamicDataService.getModelForTable(tableName, req.user.tenantId);
       const data = await Model.findAll({ where });
       return ok(data);
     } catch (error) {
@@ -48,38 +52,9 @@ export default class DynamicController {
     try {
       const { tableName } = req.params;
       const { page = 1, pageSize = 10, ...filters } = req.query;
+      const where = await this.getParsedWhere(filters, req.user.tenantId);
 
-      const where = {};
-      const operatorMap = {
-        eq: Op.eq,
-        ne: Op.ne,
-        gte: Op.gte,
-        gt: Op.gt,
-        lte: Op.lte,
-        lt: Op.lt,
-        in: Op.in,
-        notIn: Op.notIn,
-        like: Op.like,
-        iLike: Op.iLike,
-      };
-
-      for (const key in filters) {
-        const parts = key.split('-');
-        if (parts.length === 2) {
-            const [field, op] = parts;
-            if (field && op && operatorMap[op]) {
-                let value = filters[key];
-                if (op === 'in' || op === 'notIn') {
-                    value = value.split(',');
-                }
-                where[field] = {
-                    [operatorMap[op]]: value
-                };
-            }
-        }
-      }
-
-      const Model = await DynamicDataService.getModelForTable(tableName);
+      const Model = await DynamicDataService.getModelForTable(tableName, req.user.tenantId);
       
       const nPage = parseInt(page, 10);
       const nPageSize = parseInt(pageSize, 10);
@@ -109,7 +84,7 @@ export default class DynamicController {
   async findOne(req, res) {
     try {
       const { tableName, id } = req.params;
-      const Model = await DynamicDataService.getModelForTable(tableName);
+      const Model = await DynamicDataService.getModelForTable(tableName, req.user.tenantId);
       const instance = await Model.findByPk(id);
       if (!instance) {
         return fail("Instance not found", 404);
@@ -133,7 +108,7 @@ export default class DynamicController {
         body = modifiedBody;
       }
 
-      const Model = await DynamicDataService.getModelForTable(tableName);
+      const Model = await DynamicDataService.getModelForTable(tableName, req.user.tenantId);
       const instance = await Model.create(body);
 
       // afterCreate hook
@@ -158,7 +133,7 @@ export default class DynamicController {
         body = modifiedBody;
       }
 
-      const Model = await DynamicDataService.getModelForTable(tableName);
+      const Model = await DynamicDataService.getModelForTable(tableName, req.user.tenantId);
       const [affectedCount] = await Model.update(body, { where: { id } });
       if (affectedCount === 0) {
         return fail("Instance not found or no changes made", 404);
@@ -182,7 +157,7 @@ export default class DynamicController {
       // beforeDelete hook
       await HookService.executeHook(tableName, 'beforeDelete', id, req);
 
-      const Model = await DynamicDataService.getModelForTable(tableName);
+      const Model = await DynamicDataService.getModelForTable(tableName, req.user.tenantId);
       const affectedCount = await Model.destroy({ where: { id } });
       if (affectedCount === 0) {
         return fail("Instance not found", 404);

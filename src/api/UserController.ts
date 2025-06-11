@@ -8,6 +8,7 @@ import { logError } from "../logger";
 const userSchema = z.object({
   username: z.string().min(3),
   password: z.string().min(6),
+  tenantId: z.number().int(),
 });
 
 @Controller("/users")
@@ -22,14 +23,14 @@ export default class UserController {
         return fail(validationResult.error.errors, 400);
       }
 
-      const { username, password } = validationResult.data;
+      const { username, password, tenantId } = validationResult.data;
       const existingUser = await User.findOne({ where: { username } });
       if (existingUser) {
         return fail("Username already exists", 409);
       }
 
-      const user = await User.create({ username, password });
-      return ok({ id: user.id, username: user.username });
+      const user = await User.create({ username, password, tenantId });
+      return ok({ id: user.id, username: user.username, tenantId: user.tenantId });
     } catch (error) {
       logError(error);
       return fail(error.message);

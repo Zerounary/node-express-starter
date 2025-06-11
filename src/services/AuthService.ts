@@ -6,6 +6,7 @@ class AuthService {
     const payload = {
       id: user.id,
       username: user.username,
+      tenantId: user.tenantId,
     };
     return signSyc(payload);
   }

@@ -1,9 +1,11 @@
 import { Model, DataTypes, HasManyGetAssociationsMixin } from 'sequelize';
 import sequelize from '../sequelize';
 import type DynamicColumn from './DynamicColumn';
+import Tenant from './Tenant';
 
 class DynamicTable extends Model {
   public id!: number;
+  public tenantId!: number;
   public name!: string;
   public description!: string | null;
   public created!: string;
@@ -18,6 +20,14 @@ DynamicTable.init({
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
+  },
+  tenantId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+        model: Tenant,
+        key: 'id'
+    }
   },
   name: {
     type: new DataTypes.STRING(128),
@@ -40,6 +50,11 @@ DynamicTable.init({
   sequelize,
   tableName: 'dynamic_tables',
   timestamps: true,
+  indexes: [{
+    unique: true,
+    fields: ['tenantId', 'name'],
+    name: 'dynamic_tables_tenant_name_key'
+  }]
 });
 
 export default DynamicTable;

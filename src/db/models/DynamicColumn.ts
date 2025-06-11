@@ -9,6 +9,9 @@ class DynamicColumn extends Model {
   public tableId!: number;
   public created!: string;
   public updated!: string;
+  public relationshipType?: 'one-to-one' | 'one-to-many' | null;
+  public relatedToTableId?: number | null;
+  public enumValues?: string[] | null;
 
   public getTable!: BelongsToGetAssociationMixin<DynamicTable>;
   public table?: DynamicTable;
@@ -35,6 +38,22 @@ DynamicColumn.init({
       key: 'id',
     },
     allowNull: false,
+  },
+  relationshipType: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  relatedToTableId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'dynamic_tables',
+      key: 'id',
+    }
+  },
+  enumValues: {
+    type: DataTypes.ARRAY(DataTypes.STRING),
+    allowNull: true,
   },
   created: {
     type: DataTypes.STRING,

@@ -10,6 +10,7 @@ import { logError } from "./logger";
 import Report from './db/models/Report';
 import User from './db/models/User';
 import ActionLog from './db/models/ActionLog';
+import Tenant from './db/models/Tenant';
 import { authMiddleware } from "./router/auth";
 import { logMiddleware } from "./router/middlewares/logMiddleware";
 
@@ -40,6 +41,7 @@ async function bootstrap() {
         webserver.use(logMiddleware);
 
         // 同步核心模型
+        await Tenant.sync({ alter: true });
         await User.sync({ alter: true });
         await ActionLog.sync({ alter: true });
         await DynamicTable.sync({ alter: true });
