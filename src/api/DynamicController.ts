@@ -4,6 +4,7 @@ import DynamicDataService from '../services/DynamicDataService';
 import HookService from '../services/HookService';
 import { Op } from 'sequelize';
 import { logError } from "../logger";
+import { checkPermission } from '../router/middlewares/permissionMiddleware';
 
 @Controller("/data/:tableName")
 export default class DynamicController {
@@ -31,7 +32,7 @@ export default class DynamicController {
       return where;
   }
 
-  @Get("/list")
+  @Get("/list", [checkPermission('data:list::tableName')])
   async list(req, res) {
     try {
       const { tableName } = req.params;
@@ -47,7 +48,7 @@ export default class DynamicController {
     }
   }
 
-  @Get("/page")
+  @Get("/page", [checkPermission('data:page::tableName')])
   async find(req, res) {
     try {
       const { tableName } = req.params;
@@ -80,7 +81,7 @@ export default class DynamicController {
     }
   }
 
-  @Get("/:id")
+  @Get("/:id", [checkPermission('data:read::tableName')])
   async findOne(req, res) {
     try {
       const { tableName, id } = req.params;
@@ -96,7 +97,7 @@ export default class DynamicController {
     }
   }
 
-  @Post("/")
+  @Post("/", [checkPermission('data:create::tableName')])
   async create(req, res) {
     try {
       const { tableName } = req.params;
@@ -122,7 +123,7 @@ export default class DynamicController {
     }
   }
 
-  @Put("/:id")
+  @Put("/:id", [checkPermission('data:update::tableName')])
   async update(req, res) {
     try {
       const { tableName, id } = req.params;
@@ -151,7 +152,7 @@ export default class DynamicController {
     }
   }
 
-  @Delete("/:id")
+  @Delete("/:id", [checkPermission('data:delete::tableName')])
   async remove(req, res) {
     try {
       const { tableName, id } = req.params;

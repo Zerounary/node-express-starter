@@ -11,8 +11,10 @@ import Report from './db/models/Report';
 import User from './db/models/User';
 import ActionLog from './db/models/ActionLog';
 import Tenant from './db/models/Tenant';
+import DocumentType from './db/models/DocumentType';
 import { authMiddleware } from "./router/auth";
 import { logMiddleware } from "./router/middlewares/logMiddleware";
+import { Permission, Role, RolePermissions, UserRoles } from "./db/models/Role";
 
 
 async function bootstrap() {
@@ -47,6 +49,12 @@ async function bootstrap() {
         await DynamicTable.sync({ alter: true });
         await DynamicColumn.sync({ alter: true });
         await Report.sync({ alter: true });
+        await DocumentType.sync({ alter: true });
+        await Role.sync({ alter: true });
+        await Permission.sync({ alter: true});
+        await RolePermissions.sync({ alter: true});
+        await UserRoles.sync({ alter: true});
+
         console.log('Core models synchronized');
 
         // 初始化动态表

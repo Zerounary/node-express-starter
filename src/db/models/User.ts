@@ -1,13 +1,16 @@
-import { DataTypes, Model } from 'sequelize';
+import { DataTypes, Model, BelongsToManyAddAssociationMixin } from 'sequelize';
 import sequelize from '../sequelize';
 import bcrypt from 'bcryptjs';
 import Tenant from './Tenant';
+import { Role } from './Role';
 
 class User extends Model {
   public id!: number;
   public tenantId!: number;
   public username!: string;
   public password!: string;
+  public Roles?: Role[];
+  public addRole!: BelongsToManyAddAssociationMixin<Role, number>;
 
   public async comparePassword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);

@@ -46,8 +46,8 @@ export class RouteLoader {
       const { default: ControllerClass } = await import(controllerPath);
       const controllerInstance = new ControllerClass();
       
-      // 获取控制器前缀
-      const controllerPrefix = getControllerMetadata(ControllerClass);
+      // 获取控制器元数据 (prefix and middlewares)
+      const { prefix: controllerPrefix, middlewares: controllerMiddlewares } = getControllerMetadata(ControllerClass);
       
       // 获取所有路由元数据
       const routes = getRouteMetadata(ControllerClass);
@@ -60,8 +60,9 @@ export class RouteLoader {
         
         // 注册路由，添加返回值处理中间件
         (router[route.method] as (...args: any[]) => void)(fullPath, 
-          ...this.middlewares,
-          ...(route.middleware || []),
+          ...this.middlewares, // Global middlewares
+          ...(controllerMiddlewares || []), // Controller-level middlewares
+          ...(route.middlewares || []), // Route-level middlewares
           async (req, res) => {
             try {
               // 执行控制器方法
