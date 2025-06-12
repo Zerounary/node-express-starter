@@ -11,10 +11,8 @@ export const checkPermission = (action: string) => {
         const finalAction = action.replace(/:(\w+)/g, (match, key) => req.params[key] || match);
 
         const hasPerm = await PermissionService.hasPermission(req.user.id, finalAction);
-        if (hasPerm) {
-            return next();
-        } else {
-            return res.status(403).json(fail(`Forbidden: Missing permission for action: ${finalAction}`));
+        if (!hasPerm) {
+           return res.status(403).json(fail(`Forbidden: Missing permission for action: ${finalAction}`));
         }
     };
 }; 

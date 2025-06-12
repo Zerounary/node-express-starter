@@ -53,13 +53,21 @@ export class RouteLoader {
       const routes = getRouteMetadata(ControllerClass);
       
       const router = new HyperExpress.Router();
+      // 获取 controllerPrefix 中类似 :tableName 的变量，并转成字符串数组
+      const variableNames = controllerPrefix.match(/:\w+/g) || [];
+
+      // controllerPrefix 移除变量
+      const cleanControllerPrefix = controllerPrefix.replace(/:\w+/g, '').replace(/\/$/, '');
+
+      //
+      const mountPath = this.prefix + cleanControllerPrefix;
       
       // 注册每个路由
       routes.forEach(route => {
-        const fullPath = `${controllerPrefix}${route.path}`;
+        const routePath = variableNames.join('/') + route.path; // Path is now relative to the controller's mount path
         
         // 注册路由，添加返回值处理中间件
-        (router[route.method] as (...args: any[]) => void)(fullPath, 
+        (router[route.method] as (...args: any[]) => void)(routePath, 
           ...this.middlewares, // Global middlewares
           ...(controllerMiddlewares || []), // Controller-level middlewares
           ...(route.middlewares || []), // Route-level middlewares
@@ -78,7 +86,8 @@ export class RouteLoader {
                 res.json(result);
               }
             } catch (error) {
-              console.error(`路由处理错误 (${route.method.toUpperCase()} ${fullPath}):`, error);
+              const fullErrorPath = path.join(mountPath, routePath).replace(/\\\\/g, '/');
+              console.error(`路由处理错误 (${route.method.toUpperCase()} ${fullErrorPath}):`, error);
               res.status(500).json({
                 code: 500,
                 msg: "服务器内部错误",
@@ -88,10 +97,11 @@ export class RouteLoader {
           }
         );
         
-        console.log(`注册路由: ${route.method.toUpperCase()} ${this.prefix}${fullPath}`);
+        const fullLogPath = path.join(mountPath, routePath).replace(/\\\\/g, '/');
+        console.log(`注册路由: ${route.method.toUpperCase()} ${fullLogPath}`);
       });
       
-      this.app.use(this.prefix, router);
+      this.app.use(mountPath, router);
     } catch (error) {
       console.error(`注册控制器路由失败 (${controllerPath}):`, error);
     }
