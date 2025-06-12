@@ -15,6 +15,7 @@ import DocumentType from './db/models/DocumentType';
 import { authMiddleware } from "./router/auth";
 import { logMiddleware } from "./router/middlewares/logMiddleware";
 import { Permission, Role, RolePermissions, UserRoles } from "./db/models/Role";
+import { Workflow, WorkflowState, WorkflowTransition } from './db/models/Workflow';
 
 
 async function bootstrap() {
@@ -50,6 +51,9 @@ async function bootstrap() {
         await DynamicColumn.sync({ alter: true });
         await Report.sync({ alter: true });
         await DocumentType.sync({ alter: true });
+        await Workflow.sync({ alter: true });
+        await WorkflowState.sync({ alter: true });
+        await WorkflowTransition.sync({ alter: true });
         await Role.sync({ alter: true });
         await Permission.sync({ alter: true});
         await RolePermissions.sync({ alter: true});
