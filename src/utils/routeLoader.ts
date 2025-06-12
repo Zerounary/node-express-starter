@@ -66,6 +66,7 @@ export class RouteLoader {
           async (req, res) => {
             try {
               // 执行控制器方法
+              console.log('执行此处')
               const result = await controllerInstance[route.fnName](req, res);
               
               // 处理返回值

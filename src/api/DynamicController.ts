@@ -34,6 +34,11 @@ export default class DynamicController {
       }
       return where;
   }
+  @Get("/fuck")
+  async fuck(req, res) {
+    console.log('fuck')
+    return "fk"
+  }
 
   @Get("/list", [checkPermission('data:list::tableName')])
   async list(req, res) {
@@ -119,6 +124,7 @@ export default class DynamicController {
       // afterCreate hook
       await HookService.executeHook(tableName, 'afterCreate', instance);
 
+
       return ok(instance);
     } catch (error) {
       logError(error);
@@ -161,7 +167,11 @@ export default class DynamicController {
       const { tenantId, id: userId } = req.user;
       const { tableName, id, actionName } = req.params;
 
-      const result = await WorkflowService.executeTransition(tenantId, userId, tableName, parseInt(id, 10), actionName);
+      // afterUpdate hook
+      let result = await HookService.executeHook(tableName, actionName, id);
+
+            // Try to start a workflow for the new record
+      await WorkflowService.createInstanceForRecord(req.user.tenantId, tableName, id);
 
       return ok(result);
     } catch (error) {

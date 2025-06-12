@@ -28,3 +28,8 @@ export async function beforeDelete(id) {
 export async function afterDelete(id) {
   console.log('afterDelete hook for demo table', id);
 } 
+
+export async function submit(id) {
+  console.log('submit hook for demo table', id);
+  return "ok";
+} 
