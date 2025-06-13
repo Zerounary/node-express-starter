@@ -62,8 +62,14 @@ export default class UserController {
         return fail("Invalid username or password", 401);
       }
 
-      const token = AuthService.generateToken(user);
-      return ok({ token });
+      const accessToken = AuthService.generateToken(user);
+      // 返回没有密码的用户信息
+      const userInfo = {
+        id: user.id,
+        username: user.username,
+        tenantId: user.tenantId,
+      };
+      return ok({ accessToken, ...userInfo });
     } catch (error) {
       logError(error);
       return fail(error.message);

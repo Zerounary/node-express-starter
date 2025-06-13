@@ -16,6 +16,13 @@ export default class RoleController {
         return ok(role);
     }
 
+    @Get("/")
+    async getRoles(req, res) {
+        const { tenantId } = req.user;
+        const roles = await Role.findAll({ where: { tenantId } });
+        return ok(roles);
+    }
+
     // 新增 permission
     @Post("/permission")
     async createPermission(req, res) {

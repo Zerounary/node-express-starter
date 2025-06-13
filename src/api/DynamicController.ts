@@ -34,11 +34,6 @@ export default class DynamicController {
       }
       return where;
   }
-  @Get("/fuck")
-  async fuck(req, res) {
-    console.log('fuck')
-    return "fk"
-  }
 
   @Get("/list", [checkPermission('data:list::tableName')])
   async list(req, res) {
