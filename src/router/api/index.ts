@@ -1,14 +1,14 @@
 export const ok = (data) => {
     return {
-        code: 1,
+        code: 0,
         data
     }
 }
 
-export const fail = (msg, code = 0) => {
+export const fail = (error, code = 500) => {
     return {
         code,
-        msg
+        error
     }
 }
 

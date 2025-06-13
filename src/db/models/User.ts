@@ -1,4 +1,4 @@
-import { DataTypes, Model, BelongsToManyAddAssociationMixin } from 'sequelize';
+import { DataTypes, Model, BelongsToManyAddAssociationMixin, BelongsToManyGetAssociationsMixin } from 'sequelize';
 import sequelize from '../sequelize';
 import bcrypt from 'bcryptjs';
 import Tenant from './Tenant';
@@ -7,11 +7,13 @@ import { Role } from './Role';
 class User extends Model {
   public id!: number;
   public tenantId!: number;
+  public realName?: string;
   public username!: string;
   public password!: string;
   public Roles?: Role[];
   public addRole!: BelongsToManyAddAssociationMixin<Role, number>;
-
+  public getRoles!: BelongsToManyGetAssociationsMixin<Role>;
+  
   public async comparePassword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);
   }
@@ -39,6 +41,10 @@ User.init({
   password: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  realName: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
 }, {
   sequelize,

@@ -3,8 +3,8 @@ import { fail } from '../api';
 
 const NO_AUTH = process.env.NODE_ENV === 'development';
 const ALLOWED_PATHS = [
-  '/api/users/login',
-  '/api/users/register',
+  '/api/auth/login',
+  '/api/auth/register',
   '/api/tenants/quick-create',
 ];
 

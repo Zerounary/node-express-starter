@@ -10,10 +10,10 @@ export interface UserInfo {
 export const MOCK_USERS: UserInfo[] = [
   {
     id: 0,
-    password: '123456',
+    password: 'root123',
     realName: 'Vben',
     roles: ['super'],
-    username: 'vben',
+    username: 'root',
   },
   {
     id: 1,

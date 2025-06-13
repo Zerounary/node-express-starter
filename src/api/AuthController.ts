@@ -16,15 +16,8 @@ const loginSchema = z.object({
   password: z.string(),
 });
 
-@Controller("/user")
-export default class UserController {
-
-  @Get("/info")
-  async getUserInfo(req, res) {
-    const { id: userId } = req.user;
-    const user = await User.findByPk(userId);
-    return ok(user);
-  }
+@Controller("/auth")
+export default class AuthController {
 
   @Post("/register")
   async register(req, res) {
@@ -47,6 +40,15 @@ export default class UserController {
       logError(error);
       return fail(error.message);
     }
+  }
+
+  @Get("codes")
+  async getPermission(req, res) {
+    const { id: userId } = req.user;
+    const user = await User.findByPk(userId);
+    const roles = await user.getRoles();
+    const permissions = roles.map(role => role.getPermissions());
+    return ok(permissions);
   }
 
   @Post("/login")
