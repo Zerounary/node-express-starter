@@ -20,6 +20,7 @@
     "axios": "^1.7.9",
     "bcryptjs": "^3.0.2",
     "crypto-js": "^4.2.0",
+    "dotenv": "^17.1.0",
     "fast-jwt": "^5.0.2",
     "hyper-express": "^6.16.4",
     "jsonwebtoken": "^9.0.2",

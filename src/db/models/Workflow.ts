@@ -24,7 +24,7 @@ Workflow.init({
   name: { type: DataTypes.STRING, allowNull: false },
   dynamicTableId: { type: DataTypes.INTEGER, allowNull: false, references: { model: DynamicTable, key: 'id' } },
   priority: { type: DataTypes.INTEGER, defaultValue: 0 },
-  dataFilterConditions: { type: DataTypes.JSONB, allowNull: false },
+  dataFilterConditions: { type: DataTypes.JSON, allowNull: false },
 }, { sequelize, tableName: 'workflows' });
 
 /**
@@ -51,7 +51,7 @@ WorkflowStage.init({
   name: { type: DataTypes.STRING, allowNull: false },
   minApprovals: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 },
   minRejections: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 },
-  dataFilterConditions: { type: DataTypes.JSONB },
+  dataFilterConditions: { type: DataTypes.JSON },
   timeoutDays: { type: DataTypes.INTEGER, defaultValue: 0 },
   timeoutAction: { type: DataTypes.ENUM('approve', 'reject'), defaultValue: 'reject' },
 }, { sequelize, tableName: 'workflow_stages' });

@@ -1,7 +1,7 @@
 import webserver from "./app";
 
 export function start() {
-    const port = 22987; //process.env.PORT || 22987;
+    const port = 80; //process.env.PORT || 22987;
     webserver
       .listen(port)
       .then(() => {

@@ -40,7 +40,7 @@ async function bootstrap() {
         routeLoader.load();
 
         // Register log middleware after routes are loaded
-        // webserver.use(logMiddleware);
+        webserver.use(logMiddleware);
 
         // 同步核心模型
         await Tenant.sync({ alter: true });
@@ -98,5 +98,6 @@ async function initDynamicTables() {
         console.error('Failed to initialize dynamic tables:', error);
     }
 }
+
 
 bootstrap();
