@@ -21,23 +21,16 @@ ActionLog.init({
   },
   userId: {
     type: DataTypes.INTEGER,
-    references: {
-      model: User,
-      key: 'id',
-    },
     allowNull: true, // 允许匿名操作
   },
   action: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
   method: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
   path: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
   params: {
     type: DataTypes.JSON,

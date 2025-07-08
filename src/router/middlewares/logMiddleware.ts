@@ -12,7 +12,7 @@ export const logMiddleware = async (req, res) => {
       body: await req.json(),
       ip: req.ip,
     };
-    await ActionLog.create(logData);
+    ActionLog.create(logData);
   } catch (error) {
     // 如果请求体不是JSON，或者有其他错误，记录下来但不要阻塞主流程
     if (error.message.includes('body is not valid JSON')) {
