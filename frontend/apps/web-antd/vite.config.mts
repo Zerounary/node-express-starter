@@ -12,7 +12,7 @@ export default defineConfig(async () => {
             rewrite: (path) => path.replace(/^\/api/, ''),
             // mock代理目标地址
             // target: 'http://localhost:5320/api',
-            target: 'http://localhost:22987/api',
+            target: 'http://localhost:80/api',
             ws: true,
           },
         },
