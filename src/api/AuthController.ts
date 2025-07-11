@@ -42,12 +42,16 @@ export default class AuthController {
     }
   }
 
-  @Get("codes")
+  @Get("/codes")
   async getPermission(req, res) {
     const { id: userId } = req.user;
     const user = await User.findByPk(userId);
     const roles = await user.getRoles();
-    const permissions = roles.map(role => role.getPermissions());
+    let permissions = [];
+    for(let role of roles) {
+      const perms = await role.getPermissions();
+      permissions = permissions.concat(perms.map(p => p.action));
+    }
     return ok(permissions);
   }
 

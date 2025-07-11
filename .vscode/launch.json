@@ -6,7 +6,7 @@
       "request": "launch",
       "name": "Node: Nodemon",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["start"],
+      "runtimeArgs": ["run", "dev"],
       "outputCapture": "std"
     }
   ]

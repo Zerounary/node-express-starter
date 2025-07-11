@@ -49,37 +49,4 @@ export default class UserController {
     }
   }
 
-  @Post("/login")
-  async login(req, res) {
-    try {
-      const body = await req.json();
-      const validationResult = loginSchema.safeParse(body);
-      if (!validationResult.success) {
-        return fail(validationResult.error.errors, 400);
-      }
-
-      const { username, password } = validationResult.data;
-      const user = await User.findOne({ where: { username } });
-      if (!user) {
-        return fail("Invalid username or password", 401);
-      }
-
-      const isPasswordValid = await user.comparePassword(password);
-      if (!isPasswordValid) {
-        return fail("Invalid username or password", 401);
-      }
-
-      const accessToken = AuthService.generateToken(user);
-      // 返回没有密码的用户信息
-      const userInfo = {
-        id: user.id,
-        username: user.username,
-        tenantId: user.tenantId,
-      };
-      return ok({ accessToken, ...userInfo });
-    } catch (error) {
-      logError(error);
-      return fail(error.message);
-    }
-  }
 } 

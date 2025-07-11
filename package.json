@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon",
-    "start": "nodemon",
+    "dev": "cross-env NODE_ENV=development  nodemon",
+    "start": "cross-env NODE_ENV=production nodemon",
     "db": "node tests/db.js",
     "wsc": "node tests/wsc.js",
     "crypto": "node tests/crypto.js",
@@ -44,6 +44,7 @@
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.10.2",
     "@types/sequelize": "^4.28.20",
+    "cross-env": "^7.0.3",
     "mocha": "^11.0.1",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
