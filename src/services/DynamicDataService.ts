@@ -2,13 +2,15 @@ import { Model, ModelCtor, DataTypes } from 'sequelize';
 import sequelize from '../db/sequelize';
 import { DynamicTable, DynamicColumn } from '../db/models';
 import { logError } from '../logger';
+import { systemTables } from '@/db/init';
 
 class DynamicDataService {
   private modelCache: Map<string, ModelCtor<Model<any, any>>> = new Map();
   private relationsCache: Map<string, boolean> = new Map();
 
   private getPhysicalTableName(tableName: string, tenantId: number): string {
-    return `t_${tenantId}_${tableName}`;
+    let t = systemTables.find(t => t.alias_name === tableName);
+    return t ? t.name : tableName;
   }
 
   private getSequelizeAttributes(columns: DynamicColumn[]) {
@@ -74,20 +76,20 @@ class DynamicDataService {
     if (this.modelCache.has(cacheKey)) {
         const model = this.modelCache.get(cacheKey)!;
         // Ensure relationships are defined, even if model is from cache
-        const tableDef = await DynamicTable.findOne({where: {name: tableName, tenantId}, include: [{ model: DynamicColumn, as: 'columns' }]})
+        const tableDef = await DynamicTable.findOne({where: {name: physicalTableName, tenantId}, include: [{ model: DynamicColumn, as: 'columns' }]})
         if (tableDef) {
             await this.defineRelationships(model, tableDef as DynamicTable, tenantId);
         }
         return model;
     }
 
-    const tableDefinition = await DynamicTable.findOne({
-      where: { name: tableName, tenantId },
+    let tableDefinition = await DynamicTable.findOne({
+      where: { name: physicalTableName, tenantId },
       include: [{ model: DynamicColumn, as: 'columns' }],
     });
 
     if (!tableDefinition) {
-      throw new Error(`Table '${tableName}' not found for the current tenant.`);
+      throw new Error(`Table '${physicalTableName}' not found for the current tenant.`);
     }
 
     const attributes = this.getSequelizeAttributes(tableDefinition.columns!);

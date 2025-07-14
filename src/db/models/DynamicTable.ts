@@ -34,16 +34,13 @@ DynamicTable.init({
     allowNull: false,
     unique: 'dynamic_tables_name_key',
   },
+  alias_name: {
+    type: new DataTypes.STRING(128),
+    allowNull: false,
+    unique: 'dynamic_tables_alias_name_key',
+  },
   description: {
     type: new DataTypes.STRING(255),
-    allowNull: true,
-  },
-  created: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  updated: {
-    type: DataTypes.STRING,
     allowNull: true,
   },
 }, {

@@ -15,6 +15,7 @@ import { authMiddleware } from "./router/auth";
 import { logMiddleware } from "./router/middlewares/logMiddleware";
 import { Permission, Role, RolePermissions, UserRoles } from "./db/models/Role";
 import { Workflow, WorkflowStage, WorkflowStageApprover, WorkflowInstance, WorkflowInstanceLog } from './db/models/Workflow';
+import { initSystemData } from "./db/init";
 
 
 async function bootstrap() {
@@ -60,6 +61,9 @@ async function bootstrap() {
         await UserRoles.sync({ alter: true});
 
         console.log('Core models synchronized');
+
+        // 初始化系统结构数据
+        await initSystemData();
 
         // 初始化动态表
         await initDynamicTables();

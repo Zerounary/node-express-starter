@@ -4,6 +4,7 @@ import type { Recordable } from '@vben/types';
 import { alert } from '@vben/common-ui';
 
 import { useSystem } from '#/store/system';
+import { getPage } from './crud';
 
 export namespace SystemTableApi {
   export interface SystemTable {
@@ -47,30 +48,7 @@ function filterTable(
  * 获取角色列表数据
  */
 export async function getTableList(params: Recordable<any>) {
-  return new Promise((resolve) => {
-    const system = useSystem();
-    const items = system.tables.filter((e) =>
-      // BUG 不知道为什么引用了 views 中的data 的函数就会导致页面控件无法渲染
-      filterTable(e, params, [
-        {
-          component: 'Input',
-          fieldName: 'table',
-        },
-        {
-          component: 'Input',
-          fieldName: 'name',
-        },
-        {
-          component: 'RangePicker',
-          fieldName: 'createTime',
-        },
-      ]),
-    );
-    resolve({
-      items,
-      total: items.length,
-    });
-  });
+  return getPage('table', params);
 }
 /**
  * 创建表

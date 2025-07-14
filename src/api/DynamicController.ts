@@ -156,7 +156,7 @@ export default class DynamicController {
     }
   }
 
-  @Post("/:id/actions/:actionName", [checkPermission('data:action::actionName::tableName')])
+  @Post("/actions/:actionName", [checkPermission('data:action::actionName::tableName')])
   async performAction(req, res) {
     try {
       const { tenantId, id: userId } = req.user;

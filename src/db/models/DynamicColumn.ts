@@ -27,6 +27,10 @@ DynamicColumn.init({
     type: new DataTypes.STRING(128),
     allowNull: false,
   },
+  description: {
+    type: new DataTypes.STRING(128),
+    allowNull: false,
+  },
   dataType: {
     type: new DataTypes.STRING(128),
     allowNull: false,
@@ -53,14 +57,6 @@ DynamicColumn.init({
   },
   enumValues: {
     type: DataTypes.JSON,
-    allowNull: true,
-  },
-  created: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  updated: {
-    type: DataTypes.STRING,
     allowNull: true,
   },
 }, {

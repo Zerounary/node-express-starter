@@ -82,9 +82,7 @@ class SchemaService {
 
     // 添加默认字段
     attributes['tenantId'] = { type: DataTypes.INTEGER, allowNull: true };
-    attributes['created'] = { type: DataTypes.STRING, allowNull: true };
     attributes['createdAt'] = { type: DataTypes.DATE, allowNull: true };
-    attributes['updated'] = { type: DataTypes.STRING, allowNull: true };
     attributes['updatedAt'] = { type: DataTypes.DATE, allowNull: true };
     
     return attributes;
