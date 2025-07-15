@@ -1,5 +1,9 @@
 import { DynamicColumn, DynamicTable } from "./models";
+import { Permission, Role } from "./models/Role";
+import Tenant from "./models/Tenant";
+import User from "./models/User";
 
+// 系统表字段配置
 export const systemTables = [
     {
         name: 'dynamic_tables',
@@ -8,6 +12,20 @@ export const systemTables = [
         columns: [
             { name: 'name', dataType: 'STRING', required: true, description: '表', relationshipType: undefined, relatedToTableId: undefined, enumValues: undefined },
             { name: 'description', dataType: 'STRING', required: true, description: '描述', relationshipType: undefined, relatedToTableId: undefined, enumValues: undefined },
+        ]
+    },
+    {
+        name: 'dynamic_columns',
+        description: '字段',
+        alias_name: 'column',
+        columns: [
+            { name: 'name', dataType: 'STRING', required: true, description: '数据库名称', relationshipType: undefined, relatedToTableId: undefined, enumValues: undefined },
+            { name: 'description', dataType: 'STRING', required: true, description: '描述', relationshipType: undefined, relatedToTableId: undefined, enumValues: undefined },
+            { name: 'dataType', dataType: 'STRING', required: true, description: '字段类型', relationshipType: undefined, relatedToTableId: undefined, enumValues: undefined },
+            { name: 'tableId', dataType: 'INTEGER', required: true, description: '所属表', relationshipType: undefined, relatedToTableId: undefined, enumValues: undefined },
+            { name: 'relationshipType', dataType: 'STRING', required: true, description: '外键关联类型', relationshipType: undefined, relatedToTableId: undefined, enumValues: undefined },
+            { name: 'relatedToTableId', dataType: 'INTEGER', required: true, description: '外键表', relationshipType: undefined, relatedToTableId: undefined, enumValues: undefined },
+            { name: 'enumValues', dataType: 'JSON', required: true, description: '枚举值', relationshipType: undefined, relatedToTableId: undefined, enumValues: undefined },
         ]
     }
 ]
@@ -50,4 +68,44 @@ export const initSystemData = async () => {
             }
         }
     }
+}
+
+
+export const adminUser = {
+    name: 'root',
+    password: 'root123',
+    tenant: "top",
+    permissions: [
+        'data:*:*',
+        'action:*:*',
+    ],
+    roles: ["admin"],
+}
+
+export const initAdminUser = async () => {
+    let [tenant] = await Tenant.findOrCreate({ where: { name: adminUser.tenant }, defaults: {
+        description: '系统租户',
+    } })
+    // 创建角色
+    const [adminRole] = await Role.findOrCreate({ where: { name: 'admin' }, defaults: { tenantId: tenant.id, description: '系统管理员角色' } });
+
+    // 创建权限
+    for (const permission of adminUser.permissions) {
+       let [perm] = await Permission.findOrCreate({ where: { action: permission } });
+       adminRole.addPermission(perm.id)
+    }
+
+    // 创建用户
+    const [user] = await User.findOrCreate({
+        where: { username: adminUser.name, tenantId: tenant.id },
+        defaults: {
+            realName: '系统管理员',
+            password: adminUser.password,
+            tenantId: tenant.id,
+        }
+    });
+
+    // 关联角色
+    await user.addRole(adminRole);
+    
 }

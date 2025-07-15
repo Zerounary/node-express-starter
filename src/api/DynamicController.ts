@@ -70,7 +70,7 @@ export default class DynamicController {
       });
 
       return ok({
-        data: rows,
+        items: rows,
         pagination: {
           total: count,
           page: nPage,
@@ -153,25 +153,6 @@ export default class DynamicController {
     } catch (error) {
       logError(error);
       return fail(error.message);
-    }
-  }
-
-  @Post("/actions/:actionName", [checkPermission('data:action::actionName::tableName')])
-  async performAction(req, res) {
-    try {
-      const { tenantId, id: userId } = req.user;
-      const { tableName, id, actionName } = req.params;
-
-      // afterUpdate hook
-      let result = await HookService.executeHook(tableName, actionName, id);
-
-            // Try to start a workflow for the new record
-      await WorkflowService.createInstanceForRecord(req.user.tenantId, tableName, id);
-
-      return ok(result);
-    } catch (error) {
-      logError(error);
-      return fail(error.message, 400); // Use 400 for business logic errors
     }
   }
 

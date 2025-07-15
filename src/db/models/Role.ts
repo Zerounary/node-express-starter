@@ -7,6 +7,7 @@ class Role extends Model {
   public id!: number;
   public tenantId!: number;
   public name!: string;
+  public description!: string;
   public addPermission!: BelongsToManyAddAssociationMixin<Permission, number>;
   public getPermissions!: BelongsToManyGetAssociationsMixin<Permission>;
   public Permissions?: Permission[];
@@ -22,6 +23,7 @@ Role.init({
   id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
   tenantId: { type: DataTypes.INTEGER, allowNull: false, references: { model: Tenant, key: 'id' } },
   name: { type: DataTypes.STRING, allowNull: false },
+  description: { type: DataTypes.STRING, allowNull: true },
 }, { sequelize, tableName: 'roles', indexes: [{ unique: true, fields: ['tenantId', 'name'] }] });
 
 Permission.init({

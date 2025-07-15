@@ -1,6 +1,7 @@
 import { Model, DataTypes, BelongsToGetAssociationMixin } from 'sequelize';
 import sequelize from '../sequelize';
 import type DynamicTable from './DynamicTable';
+import Tenant from './Tenant';
 
 class DynamicColumn extends Model {
   public id!: number;
@@ -22,6 +23,14 @@ DynamicColumn.init({
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
+  },
+  tenantId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+        model: Tenant,
+        key: 'id'
+    }
   },
   name: {
     type: new DataTypes.STRING(128),
