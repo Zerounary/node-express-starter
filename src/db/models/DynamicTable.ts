@@ -7,6 +7,7 @@ class DynamicTable extends Model {
   public id!: number;
   public tenantId!: number;
   public name!: string;
+  public alias_name!: string;
   public description!: string | null;
   public created!: string;
   public updated!: string;

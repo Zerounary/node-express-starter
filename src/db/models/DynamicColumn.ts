@@ -10,9 +10,11 @@ class DynamicColumn extends Model {
   public tableId!: number;
   public created!: string;
   public updated!: string;
+  public description!: string;
   public relationshipType?: 'one-to-one' | 'one-to-many' | null;
   public relatedToTableId?: number | null;
   public enumValues?: string[] | null;
+  public ui?: any | null;
 
   public getTable!: BelongsToGetAssociationMixin<DynamicTable>;
   public table?: DynamicTable;
@@ -65,6 +67,10 @@ DynamicColumn.init({
     }
   },
   enumValues: {
+    type: DataTypes.JSON,
+    allowNull: true,
+  },
+  ui: {
     type: DataTypes.JSON,
     allowNull: true,
   },

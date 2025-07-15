@@ -8,7 +8,14 @@ export async function getPageConfig(id, params) {
   }
   let columns = await table.getColumns();
   return {
-    ...table.dataValues,
-    columns,
+    id: table.id,
+    table: table.alias_name || table.name,
+    name: table.description,
+    columns: columns.map(col => ({
+      id: col.id,
+      fieldName: col.name,
+      label: col.description,
+      ...col.ui,
+    })),
   }
 } 

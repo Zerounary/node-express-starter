@@ -5,107 +5,210 @@ import User from "./models/User";
 
 // 系统表字段配置
 export const systemTables = [
-    {
-        name: 'dynamic_tables',
-        description: '表',
-        alias_name: 'table',
-        columns: [
-            { name: 'name', dataType: 'STRING', required: true, description: '表', relationshipType: undefined, relatedToTableId: undefined, enumValues: undefined },
-            { name: 'description', dataType: 'STRING', required: true, description: '描述', relationshipType: undefined, relatedToTableId: undefined, enumValues: undefined },
-        ]
-    },
-    {
-        name: 'dynamic_columns',
-        description: '字段',
-        alias_name: 'column',
-        columns: [
-            { name: 'name', dataType: 'STRING', required: true, description: '数据库名称', relationshipType: undefined, relatedToTableId: undefined, enumValues: undefined },
-            { name: 'description', dataType: 'STRING', required: true, description: '描述', relationshipType: undefined, relatedToTableId: undefined, enumValues: undefined },
-            { name: 'dataType', dataType: 'STRING', required: true, description: '字段类型', relationshipType: undefined, relatedToTableId: undefined, enumValues: undefined },
-            { name: 'tableId', dataType: 'INTEGER', required: true, description: '所属表', relationshipType: undefined, relatedToTableId: undefined, enumValues: undefined },
-            { name: 'relationshipType', dataType: 'STRING', required: true, description: '外键关联类型', relationshipType: undefined, relatedToTableId: undefined, enumValues: undefined },
-            { name: 'relatedToTableId', dataType: 'INTEGER', required: true, description: '外键表', relationshipType: undefined, relatedToTableId: undefined, enumValues: undefined },
-            { name: 'enumValues', dataType: 'JSON', required: true, description: '枚举值', relationshipType: undefined, relatedToTableId: undefined, enumValues: undefined },
-        ]
-    }
-]
+  {
+    name: "dynamic_tables",
+    description: "表",
+    alias_name: "table",
+    columns: [
+      {
+        name: "name",
+        dataType: "STRING",
+        required: true,
+        description: "表",
+        relationshipType: undefined,
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: {
+            width: 200,
+            component: 'Input',
+        },
+      },
+      {
+        name: "description",
+        dataType: "STRING",
+        required: true,
+        description: "描述",
+        relationshipType: undefined,
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: {
+            width: 200,
+            component: 'Input',
+        },
+      },
+    ],
+  },
+  {
+    name: "dynamic_columns",
+    description: "字段",
+    alias_name: "column",
+    columns: [
+      {
+        name: "name",
+        dataType: "STRING",
+        required: true,
+        description: "数据库名称",
+        relationshipType: undefined,
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: undefined,
+      },
+      {
+        name: "description",
+        dataType: "STRING",
+        required: true,
+        description: "描述",
+        relationshipType: undefined,
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: undefined,
+      },
+      {
+        name: "dataType",
+        dataType: "STRING",
+        required: true,
+        description: "字段类型",
+        relationshipType: undefined,
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: undefined,
+      },
+      {
+        name: "tableId",
+        dataType: "INTEGER",
+        required: true,
+        description: "所属表",
+        relationshipType: undefined,
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: undefined,
+      },
+      {
+        name: "relationshipType",
+        dataType: "STRING",
+        required: true,
+        description: "外键关联类型",
+        relationshipType: undefined,
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: undefined,
+      },
+      {
+        name: "relatedToTableId",
+        dataType: "INTEGER",
+        required: true,
+        description: "外键表",
+        relationshipType: undefined,
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: undefined,
+      },
+      {
+        name: "enumValues",
+        dataType: "JSON",
+        required: true,
+        description: "枚举值",
+        relationshipType: undefined,
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: undefined,
+      },
+      {
+        name: "ui",
+        dataType: "JSON",
+        required: true,
+        description: "界面配置",
+        relationshipType: undefined,
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: undefined,
+      },
+    ],
+  },
+];
 
 export const initSystemData = async () => {
-    for (const table of systemTables) {
-        const exists = await DynamicTable.findOne({ where: { name: table.name }});
-        let tableId = exists?.id;
-        if (!exists) {
-            // 创建表
-            let tableRow = await DynamicTable.create({
-                tenantId: 1,
-                name: table.name,
-                alias_name: table.alias_name,
-                description: table.description,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            });
-            tableId = tableRow.id;
-        } else {
-            await DynamicTable.update(table, { where: { id: tableId } });
-        }
-
-        // 初始化列
-        for (const column of table.columns) {
-            const existsColumn = await DynamicColumn.findOne({ where: { name: column.name, tableId } });
-            if (!existsColumn) {
-                await DynamicColumn.create({
-                    tenantId: 1,
-                    name: column.name,
-                    dataType: column.dataType,
-                    tableId,
-                    description: column.description,
-                    relationshipType: column?.relationshipType,
-                    relatedToTableId: column?.relatedToTableId,
-                    enumValues: column?.enumValues,
-                });
-            } else {
-                await DynamicColumn.update(column, { where: { name: column.name } });
-            }
-        }
+  for (const table of systemTables) {
+    const exists = await DynamicTable.findOne({ where: { name: table.name } });
+    let tableId = exists?.id;
+    if (!exists) {
+      // 创建表
+      let tableRow = await DynamicTable.create({
+        tenantId: 1,
+        name: table.name,
+        alias_name: table.alias_name,
+        description: table.description,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+      tableId = tableRow.id;
+    } else {
+      await DynamicTable.update(table, { where: { id: tableId } });
     }
-}
 
+    // 初始化列
+    for (const column of table.columns) {
+      const existsColumn = await DynamicColumn.findOne({
+        where: { name: column.name, tableId },
+      });
+      if (!existsColumn) {
+        await DynamicColumn.create({
+          tenantId: 1,
+          name: column.name,
+          dataType: column.dataType,
+          tableId,
+          description: column.description,
+          relationshipType: column?.relationshipType,
+          relatedToTableId: column?.relatedToTableId,
+          enumValues: column?.enumValues,
+          ui: column?.ui,
+        });
+      } else {
+        await DynamicColumn.update(column, { where: { name: column.name } });
+      }
+    }
+  }
+};
 
 export const adminUser = {
-    name: 'root',
-    password: 'root123',
-    tenant: "top",
-    permissions: [
-        'data:*:*',
-        'action:*:*',
-    ],
-    roles: ["admin"],
-}
+  name: "root",
+  password: "root123",
+  tenant: "top",
+  permissions: ["data:*:*", "action:*:*"],
+  roles: ["admin"],
+};
 
 export const initAdminUser = async () => {
-    let [tenant] = await Tenant.findOrCreate({ where: { name: adminUser.tenant }, defaults: {
-        description: '系统租户',
-    } })
-    // 创建角色
-    const [adminRole] = await Role.findOrCreate({ where: { name: 'admin' }, defaults: { tenantId: tenant.id, description: '系统管理员角色' } });
+  let [tenant] = await Tenant.findOrCreate({
+    where: { name: adminUser.tenant },
+    defaults: {
+      description: "系统租户",
+    },
+  });
+  // 创建角色
+  const [adminRole] = await Role.findOrCreate({
+    where: { name: "admin" },
+    defaults: { tenantId: tenant.id, description: "系统管理员角色" },
+  });
 
-    // 创建权限
-    for (const permission of adminUser.permissions) {
-       let [perm] = await Permission.findOrCreate({ where: { action: permission } });
-       adminRole.addPermission(perm.id)
-    }
-
-    // 创建用户
-    const [user] = await User.findOrCreate({
-        where: { username: adminUser.name, tenantId: tenant.id },
-        defaults: {
-            realName: '系统管理员',
-            password: adminUser.password,
-            tenantId: tenant.id,
-        }
+  // 创建权限
+  for (const permission of adminUser.permissions) {
+    let [perm] = await Permission.findOrCreate({
+      where: { action: permission },
     });
+    adminRole.addPermission(perm.id);
+  }
 
-    // 关联角色
-    await user.addRole(adminRole);
-    
-}
+  // 创建用户
+  const [user] = await User.findOrCreate({
+    where: { username: adminUser.name, tenantId: tenant.id },
+    defaults: {
+      realName: "系统管理员",
+      password: adminUser.password,
+      tenantId: tenant.id,
+    },
+  });
+
+  // 关联角色
+  await user.addRole(adminRole);
+};
