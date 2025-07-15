@@ -71,12 +71,7 @@ export default class DynamicController {
 
       return ok({
         items: rows,
-        pagination: {
-          total: count,
-          page: nPage,
-          pageSize: nPageSize,
-          totalPages: Math.ceil(count / nPageSize),
-        }
+        total: count,
       });
     } catch (error) {
       logError(error);

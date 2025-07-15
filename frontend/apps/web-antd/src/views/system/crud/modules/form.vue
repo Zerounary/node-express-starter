@@ -8,7 +8,7 @@ import { computed, defineProps, ref } from 'vue';
 import { useVbenDrawer } from '@vben/common-ui';
 
 import { useVbenForm } from '#/adapter/form';
-import { createTable, updateTable } from '#/api/system/table';
+import { create, update } from '#/api/system/crud';
 import { $t } from '#/locales';
 
 import { useFormSchema } from '../data';
@@ -31,7 +31,7 @@ const [Drawer, drawerApi] = useVbenDrawer({
     if (!valid) return;
     const values = await formApi.getValues();
     drawerApi.lock();
-    (id.value ? updateTable(id.value, values) : createTable(values))
+    (id.value ? update(props.table, id.value, values) : create(id.value, values))
       .then(() => {
         emits('success');
         drawerApi.close();

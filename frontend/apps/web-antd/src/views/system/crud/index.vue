@@ -16,7 +16,7 @@ import { Plus } from '@vben/icons';
 import { Button, message, Modal } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { getList, remove } from '#/api/system/crud';
+import { getPage, remove } from '#/api/system/crud';
 import { $t } from '#/locales';
 import { useSystem } from '#/store/system';
 
@@ -28,12 +28,12 @@ const system = useSystem();
 
 const { setTabTitle } = useTabs();
 const tableName = route.params.table;
+console.log('🚀 ~ route.params:', route.params)
 
-const table = system.table(tableName);
+// const table = system.table(tableName);
+const table  = route.params
 
 setTabTitle(table?.name);
-console.log('🚀 ~ table:', table);
-console.log('🚀 ~ tableName:', tableName);
 
 const [FormDrawer, formDrawerApi] = useVbenDrawer({
   connectedComponent: Form,
@@ -58,7 +58,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     proxyConfig: {
       ajax: {
         query: async ({ page }, formValues) => {
-          return await getList(table.table, {
+          return await getPage(table.table, {
             page: page.currentPage,
             pageSize: page.pageSize,
             ...formValues,
@@ -129,7 +129,7 @@ async function onStatusChange(newStatus: number, row) {
       `你要将${row.name}的状态切换为 【${status[newStatus.toString()]}】 吗？`,
       `切换状态`,
     );
-    await updateRole(row.id, { status: newStatus });
+    await (row.id, { status: newStatus });
     return true;
   } catch {
     return false;

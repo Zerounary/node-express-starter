@@ -1,8 +1,9 @@
+import { systemTables } from "@/db/init";
 import { DynamicTable } from "@/db/models";
 
 export async function getPageConfig(id, params) {
-  console.log('getPageConfig', id, params);
-  let table = await DynamicTable.findOne({where: { id }})
+  let tableName = params.tableName
+  let table = await DynamicTable.findOne({where: { alias_name: tableName }})
   if(!table)  {
     throw new Error('Table not found');
   }

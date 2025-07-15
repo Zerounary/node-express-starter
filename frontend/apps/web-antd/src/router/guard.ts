@@ -10,6 +10,7 @@ import { useAuthStore } from '#/store';
 import { useSystem } from '#/store/system';
 
 import { generateAccess } from './access';
+import { getPageConfig } from '#/api';
 
 /**
  * 通用守卫配置
@@ -19,8 +20,16 @@ function setupCommonGuard(router: Router) {
   // 记录已经加载的页面
   const loadedPaths = new Set<string>();
 
-  router.beforeEach((to) => {
+  router.beforeEach(async (to) => {
+    console.log('🚀 ~ router.beforeEach ~ to:', to)
     to.meta.loaded = loadedPaths.has(to.path);
+
+    if(to.meta.dyn) {
+      let table :string = to.meta.table || to.params?.table;
+      let res = await getPageConfig(table)
+      to.params = res
+      console.log('🚀 ~ getPageConfig ~ res:', res)
+    }
 
     // 页面加载进度条
     if (!to.meta.loaded && preferences.transition.progress) {
@@ -33,7 +42,7 @@ function setupCommonGuard(router: Router) {
     // 记录页面是否加载,如果已经加载，后续的页面切换动画等效果不在重复执行
 
     loadedPaths.add(to.path);
-
+    console.log(`Loaded paths: ${Array.from(loadedPaths).join(', ')}`);
     // 关闭页面加载进度条
     if (preferences.transition.progress) {
       stopProgress();

@@ -16,18 +16,22 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           title: $t('system.table.name'),
+          dyn: true,
+          table: 'table',
         },
         name: 'SystemTable',
         path: '/system/table',
-        component: () => import('#/views/system/table/index.vue'),
+        component: () => import('#/views/system/crud/index.vue'),
       },
       {
         meta: {
           title: $t('system.column.name'),
+          dyn: true,
+          table: 'column',
         },
         name: 'SystemColumn',
         path: '/system/column',
-        component: () => import('#/views/system/column/index.vue'),
+        component: () => import('#/views/system/crud/index.vue'),
       },
       {
         meta: {
@@ -41,7 +45,7 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    meta: { title: '...', hideInMenu: true },
+    meta: { title: '...', hideInMenu: true, dyn: true },
     name: 'Crud',
     path: 'crud/:table',
     component: () => import('#/views/system/crud/index.vue'),

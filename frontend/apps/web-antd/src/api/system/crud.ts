@@ -1,13 +1,11 @@
 import { requestClient } from '#/api/request';
 
-const baseURL = '';
 
 /**
  * 获取分页列表
  */
 async function getPage(table: string, params) {
-  return requestClient.get<Array<any>>(`/api/data/${table}/page`, {
-    baseURL,
+  return requestClient.get<Array<any>>(`/data/${table}/page`, {
     params,
   });
 }
@@ -16,8 +14,7 @@ async function getPage(table: string, params) {
  * 获取列表
  */
 async function getList(table: string, params) {
-  return requestClient.get<Array<any>>(`/api/data/${table}/list`, {
-    baseURL,
+  return requestClient.get<Array<any>>(`/data/${table}/list`, {
     params,
   });
 }
@@ -26,9 +23,7 @@ async function getList(table: string, params) {
  * 通过id获取详情
  */
 async function getById(table: string, id: string) {
-  return requestClient.get<Array<any>>(`/api/data/${table}/${id}`, {
-    baseURL,
-  });
+  return requestClient.get<Array<any>>(`/data/${table}/${id}`);
 }
 
 /**
@@ -36,7 +31,7 @@ async function getById(table: string, id: string) {
  * @param data 数据
  */
 async function create(table: string, data) {
-  return requestClient.post(`/api/data/${table}`, data);
+  return requestClient.post(`/data/${table}`, data);
 }
 
 /**
@@ -46,7 +41,7 @@ async function create(table: string, data) {
  * @param data 更新的字段对象
  */
 async function update(table: string, id: string, data) {
-  return requestClient.put(`/api/data/${table}/${id}`, data);
+  return requestClient.put(`/data/${table}/${id}`, data);
 }
 
 /**
@@ -54,7 +49,7 @@ async function update(table: string, id: string, data) {
  * @param id  ID
  */
 async function remove(table: string, id: string) {
-  return requestClient.delete(`/api/data/${table}/${id}`);
+  return requestClient.delete(`/data/${table}/${id}`);
 }
 
 
@@ -65,8 +60,8 @@ async function remove(table: string, id: string) {
  * @param params
  * @returns
  */
-async function execute(table: string, actionName: string, params) {
-  return requestClient.post(`/api/data/${table}/actions/${actionName}`, params);
+async function execute(table: string, actionName: string, params = {}) {
+  return requestClient.post(`/action/${table}/${actionName}`, params);
 }
 
 /**
@@ -75,8 +70,7 @@ async function execute(table: string, actionName: string, params) {
  * @param params 查询参数
  */
 async function exportData(table: string, params) {
-  return requestClient.get(`/api/data/${table}/export`, {
-    baseURL,
+  return requestClient.get(`/data/${table}/export`, {
     params,
     responseType: 'blob',
   });
