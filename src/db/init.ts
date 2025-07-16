@@ -3,13 +3,61 @@ import { Permission, Role } from "./models/Role";
 import Tenant from "./models/Tenant";
 import User from "./models/User";
 
+export const defaultColumns = (columns = []) => {
+  return [
+    {
+      name: "id",
+      dataType: "INTEGER",
+      required: true,
+      description: "ID",
+      relationshipType: undefined,
+      relatedToTableId: undefined,
+      enumValues: undefined,
+      ui: {
+        width: 100,
+        component: 'Input',
+        disabled: true,
+      },
+    },
+    ...columns,
+    {
+      name: "createdAt",
+      dataType: "DATE",
+      required: true,
+      description: "创建时间",
+      relationshipType: undefined,
+      relatedToTableId: undefined,
+      enumValues: undefined,
+      ui: {
+        width: 200,
+        component: 'DatePicker',
+        disabled: true,
+      },
+    },
+    {
+      name: "updatedAt",
+      dataType: "DATE",
+      required: true,
+      description: "更新时间",
+      relationshipType: undefined,
+      relatedToTableId: undefined,
+      enumValues: undefined,
+      ui: {
+        width: 200,
+        component: 'DatePicker',
+        disabled: true,
+      },
+    },
+  ];
+}
+
 // 系统表字段配置
 export const systemTables = [
   {
     name: "dynamic_tables",
     description: "表",
     alias_name: "table",
-    columns: [
+    columns: defaultColumns([
       {
         name: "name",
         dataType: "STRING",
@@ -36,13 +84,26 @@ export const systemTables = [
             component: 'Input',
         },
       },
-    ],
+      {
+        name: "alias_name",
+        dataType: "STRING",
+        required: true,
+        description: "表别名",
+        relationshipType: undefined,
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: {
+            width: 200,
+            component: 'Input',
+        },
+      },
+    ]),
   },
   {
     name: "dynamic_columns",
     description: "字段",
     alias_name: "column",
-    columns: [
+    columns: defaultColumns([
       {
         name: "name",
         dataType: "STRING",
@@ -123,7 +184,7 @@ export const systemTables = [
         enumValues: undefined,
         ui: undefined,
       },
-    ],
+    ]),
   },
 ];
 
@@ -136,7 +197,7 @@ export const initSystemData = async () => {
       let tableRow = await DynamicTable.create({
         tenantId: 1,
         name: table.name,
-        alias_name: table.alias_name,
+        alias_name: table.alias_name || table.name,
         description: table.description,
         createdAt: new Date(),
         updatedAt: new Date(),

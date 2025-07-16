@@ -1,6 +1,14 @@
 import { systemTables } from "@/db/init";
 import { DynamicTable } from "@/db/models";
 
+export async function beforeCreate(data) {
+  data.alias_name = data.alias_name || data.name;
+}
+
+export async function afterCreate(data) {
+  // TODO 为这个表创建默认字段，id，createdAt, updatedAt，创建人，修改人
+}
+
 export async function getPageConfig(id, params) {
   let tableName = params.tableName
   let table = await DynamicTable.findOne({where: { alias_name: tableName }})

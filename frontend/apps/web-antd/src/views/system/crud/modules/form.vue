@@ -16,6 +16,7 @@ import { useFormSchema } from '../data';
 const props = defineProps<{
   table: Object;
 }>();
+const tableName = computed(() => props.table.table);
 const emits = defineEmits(['success']);
 const formData = ref<SystemTableApi.SystemTable>();
 
@@ -31,7 +32,7 @@ const [Drawer, drawerApi] = useVbenDrawer({
     if (!valid) return;
     const values = await formApi.getValues();
     drawerApi.lock();
-    (id.value ? update(props.table, id.value, values) : create(id.value, values))
+    (id.value ? update(tableName.value, id.value, values) : create(tableName.value, values))
       .then(() => {
         emits('success');
         drawerApi.close();

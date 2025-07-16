@@ -95,7 +95,7 @@ export default class DynamicController {
     }
   }
 
-  @Post("/", [checkPermission('data:create::tableName')])
+  @Post("", [checkPermission('data:create::tableName')])
   async create(req, res) {
     try {
       const { tableName } = req.params;
