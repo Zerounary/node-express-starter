@@ -39,7 +39,7 @@ export function useGridFormSchema(table): VbenFormSchema[] {
   const dynColumns = (table.columns || []).map(mapToSchemaColumn);
   console.log('🚀 ~ useGridFormSchema ~ dynColumns:', dynColumns);
   return [
-    ...dynColumns,
+    ...dynColumns.filter(col => col.mask.charAt(4) == '1'),
     {
       component: 'RangePicker',
       fieldName: 'createTime',
@@ -56,12 +56,7 @@ export function useColumns<T = SystemTableApi.SystemTable>(
   const dynColumns = (table.columns || []).map(mapToGridColumn);
   console.log('🚀 ~ dynColumns:', dynColumns);
   return [
-    ...dynColumns,
-    {
-      field: 'createTime',
-      title: $t('system.table.createTime'),
-      width: 200,
-    },
+    ...dynColumns.filter(col => col.mask.charAt(0) == '1'),
     {
       align: 'center',
       cellRender: {

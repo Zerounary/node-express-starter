@@ -9,6 +9,10 @@ export async function afterCreate(data) {
   // TODO 为这个表创建默认字段，id，createdAt, updatedAt，创建人，修改人
 }
 
+export async function beforeDelete(id) {
+  // TODO 删除其关联的所有字段
+}
+
 export async function getPageConfig(id, params) {
   let tableName = params.tableName
   let table = await DynamicTable.findOne({where: { alias_name: tableName }})

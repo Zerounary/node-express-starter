@@ -14,6 +14,7 @@ export const defaultColumns = (columns = []) => {
       relatedToTableId: undefined,
       enumValues: undefined,
       ui: {
+        mask: '0000000000',
         width: 100,
         component: 'Input',
         disabled: true,
@@ -29,6 +30,7 @@ export const defaultColumns = (columns = []) => {
       relatedToTableId: undefined,
       enumValues: undefined,
       ui: {
+        mask: '0010001001',
         width: 200,
         component: 'DatePicker',
         disabled: true,
@@ -43,6 +45,7 @@ export const defaultColumns = (columns = []) => {
       relatedToTableId: undefined,
       enumValues: undefined,
       ui: {
+        mask: '0010001001',
         width: 200,
         component: 'DatePicker',
         disabled: true,
@@ -67,6 +70,7 @@ export const systemTables = [
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: {
+            mask: '1111111111',
             width: 200,
             component: 'Input',
         },
@@ -80,6 +84,7 @@ export const systemTables = [
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: {
+            mask: '1111111111',
             width: 200,
             component: 'Input',
         },
@@ -93,6 +98,7 @@ export const systemTables = [
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: {
+            mask: '1111111111',
             width: 200,
             component: 'Input',
         },
