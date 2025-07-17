@@ -61,8 +61,13 @@ const mapToGridColumn = (col) => ({
   title: col.label,
 });
 
+const mapToOpFilterColumn = (col) => ({
+  ...col,
+  fieldName: col.filterOp ? `${col.fieldName}-${col.filterOp}` : col.fieldName,
+})
+
 export function useGridFormSchema(table): VbenFormSchema[] {
-  const dynColumns = (table.columns || []).map(mapToSchemaColumn).filter(isFilterVisable);
+  const dynColumns = (table.columns || []).map(mapToSchemaColumn).map(mapToOpFilterColumn).filter(isFilterVisable);
   console.log('🚀 ~ useGridFormSchema ~ dynColumns:', dynColumns);
   return [
     ...dynColumns,

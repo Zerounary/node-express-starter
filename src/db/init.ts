@@ -1,8 +1,25 @@
-import { or } from "sequelize";
 import { DynamicColumn, DynamicTable } from "./models";
 import { Permission, Role } from "./models/Role";
 import Tenant from "./models/Tenant";
 import User from "./models/User";
+
+const getColumnFilterOp = (column) => {
+  switch (column.dataType) {
+    case 'STRING':
+    case 'TEXT':
+      return "like";
+    case 'INTEGER':
+    case 'FLOAT':
+    case 'DOUBLE':
+      return "eq";
+    case 'DATE':
+      return "eq";
+    case 'BOOLEAN':
+      return "eq";
+    default:
+      return "eq";
+  }
+}
 
 const autoFill = (column, index) => {
   return {
@@ -12,6 +29,7 @@ const autoFill = (column, index) => {
       mask: '1111111111',
       width: 100,
       component: 'Input',
+      filterOp: getColumnFilterOp(column),
       ...column.ui,
     }
   }
@@ -211,6 +229,16 @@ export const systemTables = [
         enumValues: undefined,
         ui: undefined,
       },
+      {
+        name: "orderno",
+        dataType: "INTEGER",
+        required: true,
+        description: "序号",
+        relationshipType: undefined,
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: undefined,
+      },
     ]),
   },
 ];
@@ -242,14 +270,8 @@ export const initSystemData = async () => {
       if (!existsColumn) {
         await DynamicColumn.create({
           tenantId: 1,
-          name: column.name,
-          dataType: column.dataType,
           tableId,
-          description: column.description,
-          relationshipType: column?.relationshipType,
-          relatedToTableId: column?.relatedToTableId,
-          enumValues: column?.enumValues,
-          ui: column?.ui,
+          ...column,
         });
       } else {
         await DynamicColumn.update(column, { where: { name: column.name } });

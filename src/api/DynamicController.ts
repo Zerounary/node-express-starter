@@ -25,10 +25,16 @@ export default class DynamicController {
               const [field, op] = parts;
               if (field && op && operatorMap[op]) {
                   let value = filters[key];
+                  if(op == 'like') {
+                    value = `%${value}%`;
+                  }
                   if (op === 'in' || op === 'notIn') {
                       value = value.split(',');
                   }
                   where[field] = { [operatorMap[op]]: value };
+              } else if(field) {
+                // 默认处理为等于
+                where[field] = { [Op.eq]: filters[key] };
               }
           }
       }
