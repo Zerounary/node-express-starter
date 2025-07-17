@@ -15,6 +15,7 @@ class DynamicColumn extends Model {
   public relatedToTableId?: number | null;
   public enumValues?: string[] | null;
   public ui?: any | null;
+  public orderno?: number | null;
 
   public getTable!: BelongsToGetAssociationMixin<DynamicTable>;
   public table?: DynamicTable;
@@ -72,6 +73,10 @@ DynamicColumn.init({
   },
   ui: {
     type: DataTypes.JSON,
+    allowNull: true,
+  },
+  orderno: {
+    type: DataTypes.INTEGER,
     allowNull: true,
   },
 }, {

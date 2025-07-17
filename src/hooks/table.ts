@@ -19,7 +19,7 @@ export async function getPageConfig(id, params) {
   if(!table)  {
     throw new Error('Table not found');
   }
-  let columns = await table.getColumns();
+  let columns = (await table.getColumns()).sort((a, b) => a.orderno - b.orderno);
   return {
     id: table.id,
     table: table.alias_name || table.name,

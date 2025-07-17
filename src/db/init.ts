@@ -1,7 +1,21 @@
+import { or } from "sequelize";
 import { DynamicColumn, DynamicTable } from "./models";
 import { Permission, Role } from "./models/Role";
 import Tenant from "./models/Tenant";
 import User from "./models/User";
+
+const autoFill = (column, index) => {
+  return {
+    ...column,
+    orderno: column.orderno || (index + 1) * 10,
+    ui: {
+      mask: '1111111111',
+      width: 100,
+      component: 'Input',
+      ...column.ui,
+    }
+  }
+}
 
 export const defaultColumns = (columns = []) => {
   return [
@@ -19,8 +33,9 @@ export const defaultColumns = (columns = []) => {
         component: 'Input',
         disabled: true,
       },
+      orderno: 10,
     },
-    ...columns,
+    ...columns.map(autoFill),
     {
       name: "createdAt",
       dataType: "DATE",
@@ -30,11 +45,12 @@ export const defaultColumns = (columns = []) => {
       relatedToTableId: undefined,
       enumValues: undefined,
       ui: {
-        mask: '0010001001',
+        mask: '0010101001',
         width: 200,
         component: 'DatePicker',
         disabled: true,
       },
+      orderno: 1100,
     },
     {
       name: "updatedAt",
@@ -45,11 +61,12 @@ export const defaultColumns = (columns = []) => {
       relatedToTableId: undefined,
       enumValues: undefined,
       ui: {
-        mask: '0010001001',
+        mask: '0010101001',
         width: 200,
         component: 'DatePicker',
         disabled: true,
       },
+      orderno: 1200,
     },
   ];
 }
@@ -118,7 +135,11 @@ export const systemTables = [
         relationshipType: undefined,
         relatedToTableId: undefined,
         enumValues: undefined,
-        ui: undefined,
+        ui: {
+            mask: '1111111111',
+            width: 200,
+            component: 'Input',
+        },
       },
       {
         name: "description",

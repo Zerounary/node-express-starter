@@ -47,6 +47,7 @@ const gridFormSchema = useGridFormSchema(table);
 
 const [Grid, gridApi] = useVbenVxeGrid({
   formOptions: {
+    collapsed: true,
     fieldMappingTime: [['createTime', ['startTime', 'endTime']]],
     schema: gridFormSchema,
     submitOnChange: false,
