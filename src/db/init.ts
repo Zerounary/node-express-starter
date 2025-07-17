@@ -118,6 +118,8 @@ export const systemTables = [
         relationshipType: undefined,
         relatedToTableId: undefined,
         enumValues: undefined,
+        ak: true,
+        dk: true,
         ui: {
             mask: '1111111111',
             width: 200,
@@ -187,7 +189,10 @@ export const systemTables = [
         relationshipType: undefined,
         relatedToTableId: undefined,
         enumValues: undefined,
-        ui: undefined,
+        ui: {
+          component: 'ApiSelect',
+          table: 'table'
+        },
       },
       {
         name: "relationshipType",

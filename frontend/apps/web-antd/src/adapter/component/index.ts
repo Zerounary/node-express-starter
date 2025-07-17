@@ -20,6 +20,7 @@ import { ApiComponent, globalShareState, IconPicker } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
+import FkPicker from './FkPicker.vue';
 
 const AutoComplete = defineAsyncComponent(
   () => import('ant-design-vue/es/auto-complete'),
@@ -106,6 +107,7 @@ const withDefaultPlaceholder = <T extends Component>(
 export type ComponentType =
   | 'ApiSelect'
   | 'ApiTreeSelect'
+  | 'FkPicker'
   | 'AutoComplete'
   | 'Checkbox'
   | 'CheckboxGroup'
@@ -143,6 +145,7 @@ async function initComponentAdapter() {
       },
       'select',
       {
+        showSearch: true,
         component: Select,
         loadingSlot: 'suffixIcon',
         visibleEvent: 'onDropdownVisibleChange',
@@ -164,6 +167,7 @@ async function initComponentAdapter() {
         visibleEvent: 'onVisibleChange',
       },
     ),
+    FkPicker,
     AutoComplete,
     Checkbox,
     CheckboxGroup,

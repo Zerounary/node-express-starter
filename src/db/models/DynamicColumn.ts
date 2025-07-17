@@ -47,6 +47,14 @@ DynamicColumn.init({
     type: new DataTypes.STRING(128),
     allowNull: false,
   },
+  ak: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+  },
+  dk: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+  },
   tableId: {
     type: DataTypes.INTEGER,
     references: {

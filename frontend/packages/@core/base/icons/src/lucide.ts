@@ -1,4 +1,5 @@
 export {
+  Filter,
   ArrowDown,
   ArrowLeft,
   ArrowLeftToLine,

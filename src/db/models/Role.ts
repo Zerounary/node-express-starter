@@ -28,7 +28,7 @@ Role.init({
 
 Permission.init({
   id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-  action: { type: DataTypes.STRING, allowNull: false, unique: true },
+  action: { type: DataTypes.STRING, allowNull: false, unique: 'permission_action' },
   description: { type: DataTypes.STRING },
 }, { sequelize, tableName: 'permissions', timestamps: false });
 

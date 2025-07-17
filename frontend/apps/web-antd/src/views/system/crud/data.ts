@@ -1,16 +1,19 @@
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SystemTableApi } from '#/api';
+import { getPage } from '#/api/system/crud';
 
 import { $t } from '#/locales';
 
-const isCreateVisable = (col => col.mask?.charAt(0) == '1');
-const isUpdateVisable = (col => col.mask?.charAt(2) == '1');
-const isListVisable = (col => col.mask?.charAt(4) == '1');
-const isFilterVisable = (col => col.mask?.charAt(5) == '1');
+const isCreateVisable = (col) => col.mask?.charAt(0) == '1';
+const isUpdateVisable = (col) => col.mask?.charAt(2) == '1';
+const isListVisable = (col) => col.mask?.charAt(4) == '1';
+const isFilterVisable = (col) => col.mask?.charAt(5) == '1';
 
 export function useFormCreateSchema(table): VbenFormSchema[] {
-  const dynColumns = (table.columns || []).map(mapToSchemaColumn).filter(isCreateVisable);
+  const dynColumns = (table.columns || [])
+    .map(mapToSchemaColumn)
+    .filter(isCreateVisable);
   return [
     ...dynColumns,
     {
@@ -31,7 +34,9 @@ export function useFormCreateSchema(table): VbenFormSchema[] {
 }
 
 export function useFormUpdateSchema(table): VbenFormSchema[] {
-  const dynColumns = (table.columns || []).map(mapToSchemaColumn).filter(isUpdateVisable);
+  const dynColumns = (table.columns || [])
+    .map(mapToSchemaColumn)
+    .filter(isUpdateVisable);
   return [
     ...dynColumns,
     {
@@ -64,13 +69,28 @@ const mapToGridColumn = (col) => ({
 const mapToOpFilterColumn = (col) => ({
   ...col,
   fieldName: col.filterOp ? `${col.fieldName}-${col.filterOp}` : col.fieldName,
-})
+});
 
 export function useGridFormSchema(table): VbenFormSchema[] {
-  const dynColumns = (table.columns || []).map(mapToSchemaColumn).map(mapToOpFilterColumn).filter(isFilterVisable);
+  const dynColumns = (table.columns || [])
+    .map(mapToSchemaColumn)
+    .map(mapToOpFilterColumn)
+    .filter(isFilterVisable);
   console.log('🚀 ~ useGridFormSchema ~ dynColumns:', dynColumns);
   return [
-    ...dynColumns,
+    // ...dynColumns,
+    {
+      componentProps: {
+        table: 'table',
+      },
+      component: 'FkPicker',
+      fieldName: 'tableId-eq',
+      filterOp: 'eq',
+      id: 6,
+      label: '所属表',
+      mask: '1111111111',
+      width: 100,
+    },
     {
       component: 'RangePicker',
       fieldName: 'createTime',
@@ -84,7 +104,9 @@ export function useColumns<T = SystemTableApi.SystemTable>(
   onActionClick: OnActionClickFn<T>,
   onStatusChange?: (newStatus: any, row: T) => PromiseLike<boolean | undefined>,
 ): VxeTableGridOptions['columns'] {
-  const dynColumns = (table.columns || []).map(mapToGridColumn).filter(isListVisable);
+  const dynColumns = (table.columns || [])
+    .map(mapToGridColumn)
+    .filter(isListVisable);
   console.log('🚀 ~ dynColumns:', dynColumns);
   return [
     ...dynColumns,
