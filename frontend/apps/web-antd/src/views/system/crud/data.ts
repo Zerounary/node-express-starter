@@ -4,8 +4,34 @@ import type { SystemTableApi } from '#/api';
 
 import { $t } from '#/locales';
 
-export function useFormSchema(table): VbenFormSchema[] {
-  const dynColumns = (table.columns || []).map(mapToSchemaColumn);
+const isCreateVisable = (col => col.mask.charAt(0) == '1');
+const isUpdateVisable = (col => col.mask.charAt(2) == '1');
+const isListVisable = (col => col.mask.charAt(4) == '1');
+const isFilterVisable = (col => col.mask.charAt(5) == '1');
+
+export function useFormCreateSchema(table): VbenFormSchema[] {
+  const dynColumns = (table.columns || []).map(mapToSchemaColumn).filter(isCreateVisable);
+  return [
+    ...dynColumns,
+    {
+      component: 'RadioGroup',
+      componentProps: {
+        buttonStyle: 'solid',
+        options: [
+          { label: $t('common.enabled'), value: 1 },
+          { label: $t('common.disabled'), value: 0 },
+        ],
+        optionType: 'button',
+      },
+      defaultValue: 1,
+      fieldName: 'status',
+      label: $t('system.status'),
+    },
+  ];
+}
+
+export function useFormUpdateSchema(table): VbenFormSchema[] {
+  const dynColumns = (table.columns || []).map(mapToSchemaColumn).filter(isUpdateVisable);
   return [
     ...dynColumns,
     {
@@ -36,10 +62,10 @@ const mapToGridColumn = (col) => ({
 });
 
 export function useGridFormSchema(table): VbenFormSchema[] {
-  const dynColumns = (table.columns || []).map(mapToSchemaColumn);
+  const dynColumns = (table.columns || []).map(mapToSchemaColumn).filter(isFilterVisable);
   console.log('🚀 ~ useGridFormSchema ~ dynColumns:', dynColumns);
   return [
-    ...dynColumns.filter(col => col.mask.charAt(4) == '1'),
+    ...dynColumns,
     {
       component: 'RangePicker',
       fieldName: 'createTime',
@@ -53,10 +79,10 @@ export function useColumns<T = SystemTableApi.SystemTable>(
   onActionClick: OnActionClickFn<T>,
   onStatusChange?: (newStatus: any, row: T) => PromiseLike<boolean | undefined>,
 ): VxeTableGridOptions['columns'] {
-  const dynColumns = (table.columns || []).map(mapToGridColumn);
+  const dynColumns = (table.columns || []).map(mapToGridColumn).filter(isListVisable);
   console.log('🚀 ~ dynColumns:', dynColumns);
   return [
-    ...dynColumns.filter(col => col.mask.charAt(0) == '1'),
+    ...dynColumns,
     {
       align: 'center',
       cellRender: {

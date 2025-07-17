@@ -11,7 +11,7 @@ import { useVbenForm } from '#/adapter/form';
 import { create, update } from '#/api/system/crud';
 import { $t } from '#/locales';
 
-import { useFormSchema } from '../data';
+import { useFormCreateSchema, useFormUpdateSchema } from '../data';
 
 const props = defineProps<{
   table: Object;
@@ -21,7 +21,7 @@ const emits = defineEmits(['success']);
 const formData = ref<SystemTableApi.SystemTable>();
 
 const [Form, formApi] = useVbenForm({
-  schema: useFormSchema(props.table),
+  schema: useFormCreateSchema(props.table),
   showDefaultActions: false,
 });
 
@@ -48,9 +48,11 @@ const [Drawer, drawerApi] = useVbenDrawer({
       if (data) {
         formData.value = data;
         id.value = data.id;
+        formApi.updateSchema(useFormUpdateSchema(props.table))
         formApi.setValues(data);
       } else {
         id.value = undefined;
+        formApi.updateSchema(useFormCreateSchema(props.table))
       }
     }
   },

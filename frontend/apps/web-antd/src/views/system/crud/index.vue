@@ -136,7 +136,12 @@ async function onStatusChange(newStatus: number, row) {
   }
 }
 
+function onCreate() {
+  formDrawerApi.setData({}).open();
+}
+
 function onEdit(row: SystemTableApi.SystemTable) {
+  // console.log('🚀 ~ onEdit ~ row:', row);
   formDrawerApi.setData(row).open();
 }
 
@@ -161,10 +166,6 @@ function onDelete(row: SystemTableApi.SystemTable) {
 
 function onRefresh() {
   gridApi.query();
-}
-
-function onCreate() {
-  formDrawerApi.setData({}).open();
 }
 </script>
 <template>
