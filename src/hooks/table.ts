@@ -28,6 +28,8 @@ export async function getPageConfig(id, params) {
       id: col.id,
       fieldName: col.name,
       label: col.description,
+      ak: col.ak,
+      dk: col.dk,
       ...col.ui,
     })),
   }

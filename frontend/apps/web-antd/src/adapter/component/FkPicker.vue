@@ -1,17 +1,22 @@
 <template>
   <div>
-    <div class="flex">
+    <div class="w-full flex">
       <Select
         class="flex-grow"
         v-model:value="modelValue"
+        show-search
         label-in-value
         allow-clear
         :mode="mode"
         :options="
           selections.map((item) => ({ label: item.name, value: item.id }))
         "
-      ></Select>
-      <Button @click="openFilter">过滤</Button>
+        @search="search"
+      >
+        <template #suffixIcon>
+          <FilterOutlined @click="openFilter" />
+        </template>
+      </Select>
     </div>
     <Modal
       title="选择数据"
@@ -38,12 +43,19 @@
 import { defineProps, defineModel, ref, watch, computed } from 'vue';
 import { getPage } from '#/api/system/crud';
 import { Select, Modal, Table, Button } from 'ant-design-vue';
-import { getPageConfig } from '#/api';
+import { getPageConfig, keywordSearch } from '#/api';
 import type { TableColumnType } from 'ant-design-vue';
-const props = defineProps<{
-  table: String;
-  mode: 'single' | 'multiple';
-}>();
+import { FilterOutlined } from '@ant-design/icons-vue'
+const props = defineProps({
+  table: {
+    type: String,
+    required: true,
+  },
+  mode: {
+    type: String,
+    default: 'single',
+  },
+});
 
 const refTable = ref<any>({});
 const selections = ref<any[]>([]); // Changed to array to store multiple selections
@@ -74,12 +86,13 @@ const columns = computed(() => {
 const selectedRowKeys = ref<any[]>([]); // To hold selected keys from the table
 const selectedRows = ref<any[]>([]); // To hold selected rows from the table
 
-const fetchData = async () => {
+const fetchData = async (params = {}) => {
   loading.value = true;
   try {
     const result: any = await getPage(props.table as string, {
       page: pagination.value.current,
       size: pagination.value.pageSize,
+      ...params,
     });
     console.log('🚀 ~ fetchData ~ result:', result);
     tableData.value = result.items; // Assuming result has a data property
@@ -89,6 +102,16 @@ const fetchData = async () => {
   } finally {
     loading.value = false;
   }
+};
+
+const search = async (value: string) => {
+  console.log('Search value:', value);
+  let res = await keywordSearch(props.table, value)
+  console.log('🚀 ~ search ~ res:', res)
+  selections.value = res.items.map((item: any) => ({
+    id: item.id,
+    name: item.name, // Assuming the item has a name field
+  }));
 };
 
 watch(isModalVisible, (newVal) => {

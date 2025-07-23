@@ -15,6 +15,8 @@ class DynamicColumn extends Model {
   public relatedToTableId?: number | null;
   public enumValues?: string[] | null;
   public ui?: any | null;
+  public ak?: boolean| null;
+  public dk?: boolean| null;
   public orderno?: number | null;
 
   public getTable!: BelongsToGetAssociationMixin<DynamicTable>;

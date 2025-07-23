@@ -85,6 +85,45 @@ export default class DynamicController {
     }
   }
 
+  /**
+    * 搜索数据，通过 ak 搜索展示id和dk
+   */
+  @Get("/search", [checkPermission('data:page::tableName')])
+  async search(req, res) {
+    try {
+      const { tableName } = req.params;
+      const { page = 1, pageSize = 10, keyword } = req.query;
+
+      const Model = await DynamicDataService.getModelForTable(tableName, req.user.tenantId);
+      
+      const nPage = parseInt(page, 10);
+      const nPageSize = parseInt(pageSize, 10);
+
+      // TODO 完善这里ak的获取逻辑
+      let ak = 'name';
+      let dk = 'name';
+
+      const { count, rows } = await Model.findAndCountAll({
+        attributes: ['id',dk],
+        where: {
+          [ak]: {
+            [Op.like]: `%${keyword}%`
+          },
+        },
+        limit: nPageSize,
+        offset: (nPage - 1) * nPageSize,
+      });
+
+      return ok({
+        items: rows,
+        total: count,
+      });
+    } catch (error) {
+      logError(error);
+      return fail(error.message);
+    }
+  }
+
   @Get("/:id", [checkPermission('data:read::tableName')])
   async findOne(req, res) {
     try {

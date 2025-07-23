@@ -1,5 +1,13 @@
 import { requestClient } from '#/api/request';
 
+/**
+ * 关键字搜索
+ */
+async function getKeywordList(table: string, params) {
+  return requestClient.get<Array<any>>(`/data/${table}/search`, {
+    params,
+  });
+}
 
 /**
  * 获取分页列表
@@ -85,4 +93,4 @@ async function importData(table: string, file: File) {
   // TODO 选择文件进行上传，然后后台任务导入。
 }
 
-export { create, update, remove, getPage, getList, getById, execute, exportData, importData };
+export { create, update, remove, getPage, getList, getKeywordList, getById, execute, exportData, importData };
