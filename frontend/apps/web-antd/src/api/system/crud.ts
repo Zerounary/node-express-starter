@@ -93,4 +93,10 @@ async function importData(table: string, file: File) {
   // TODO 选择文件进行上传，然后后台任务导入。
 }
 
-export { create, update, remove, getPage, getList, getKeywordList, getById, execute, exportData, importData };
+async function search(table: string, params) {
+  return requestClient.get<Array<any>>(`/data/${table}/search`, {
+    params,
+  });
+}
+
+export { create, update, remove, getPage, getList, getKeywordList, getById, execute, exportData, importData, search };

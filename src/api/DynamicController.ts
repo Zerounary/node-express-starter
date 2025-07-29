@@ -8,6 +8,7 @@ import { checkPermission } from '../router/middlewares/permissionMiddleware';
 import WorkflowService from '../services/WorkflowService';
 import Papa from 'papaparse';
 import sequelize from '../db/sequelize';
+import { getTableConfig } from "@/hooks/table";
 
 @Controller("/data/:tableName")
 export default class DynamicController {
@@ -92,30 +93,71 @@ export default class DynamicController {
   async search(req, res) {
     try {
       const { tableName } = req.params;
-      const { page = 1, pageSize = 10, keyword } = req.query;
+      const { page = 1, pageSize = 10, keyword, ...filters } = req.query;
 
       const Model = await DynamicDataService.getModelForTable(tableName, req.user.tenantId);
       
       const nPage = parseInt(page, 10);
       const nPageSize = parseInt(pageSize, 10);
 
-      // TODO 完善这里ak的获取逻辑
-      let ak = 'name';
-      let dk = 'name';
+      // 获取表配置，查找ak和dk字段
+      const tableConfig = await getTableConfig(tableName);
+
+      if (!tableConfig) {
+        return fail("表配置未找到", 404);
+      }
+
+      // 查找ak字段（用于搜索）和dk字段（用于显示）
+      const akColumn = tableConfig.columns.find(col => col.ak === true);
+      const dkColumn = tableConfig.columns.find(col => col.dk === true);
+      
+      const ak = akColumn ? akColumn.fieldName : 'name'; // 默认使用name字段
+      const dk = dkColumn ? dkColumn.fieldName : ak; // 如果没有dk字段，使用ak字段
+
+      // 构建查询条件
+      const where: any = { tenantId: req.user.tenantId };
+      
+      // 添加关键词搜索条件
+      if (keyword) {
+        where[ak] = {
+          [Op.like]: `%${keyword}%`
+        };
+      }
+
+      // 添加其他过滤条件
+      const additionalWhere = await this.getParsedWhere(filters, req.user.tenantId);
+      Object.assign(where, additionalWhere);
+
+      // 确定要返回的字段
+      const attributes = ['id'];
+      if (dk && dk !== 'id') {
+        attributes.push(dk);
+      }
+      // 如果ak和dk不同，也包含ak字段用于搜索匹配
+      if (ak !== dk && ak !== 'id') {
+        attributes.push(ak);
+      }
 
       const { count, rows } = await Model.findAndCountAll({
-        attributes: ['id',dk],
-        where: {
-          [ak]: {
-            [Op.like]: `%${keyword}%`
-          },
-        },
+        attributes,
+        where,
         limit: nPageSize,
         offset: (nPage - 1) * nPageSize,
       });
 
+      // 格式化返回数据，确保每个项目都有name字段用于显示
+      const formattedRows = rows.map(row => {
+        const item = row.toJSON();
+        return {
+          id: item.id,
+          name: item[dk] || item[ak] || item.id, // 优先使用dk字段，其次ak字段，最后使用id
+          [dk]: item[dk],
+          [ak]: item[ak]
+        };
+      });
+
       return ok({
-        items: rows,
+        items: formattedRows,
         total: count,
       });
     } catch (error) {

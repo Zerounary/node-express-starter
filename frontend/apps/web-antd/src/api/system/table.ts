@@ -4,7 +4,7 @@ import type { Recordable } from '@vben/types';
 import { alert } from '@vben/common-ui';
 
 import { useSystem } from '#/store/system';
-import { execute, getKeywordList, getPage } from './crud';
+import { execute, getKeywordList, getPage, search } from './crud';
 import { debounce } from '#/utils';
 
 export namespace SystemTableApi {
@@ -107,11 +107,11 @@ export async function getPageConfig(table: string) {
  return execute("table", `getPageConfig`, { tableName: table});
 }
 
-const debouncedKeywordSearch = debounce(async (table: string, keyword: string) => {
-  return getKeywordList(table, { keyword });
+const debouncedKeywordSearch = debounce(async (table: string, keyword: string, filters: any = {}) => {
+  return search(table, { keyword, ...filters });
 }, 300);
 
-export async function keywordSearch(table: string, keyword: string) {
-  return debouncedKeywordSearch(table, keyword);
+export async function keywordSearch(table: string, keyword: string, filters: any = {}) {
+  return debouncedKeywordSearch(table, keyword, filters);
 }
 

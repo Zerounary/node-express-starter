@@ -15,6 +15,10 @@ export async function beforeDelete(id) {
 
 export async function getPageConfig(id, params) {
   let tableName = params.tableName
+  return await getTableConfig(tableName)
+} 
+
+export async function getTableConfig(tableName) {
   let table = await DynamicTable.findOne({where: { alias_name: tableName }})
   if(!table)  {
     throw new Error('Table not found');
@@ -33,4 +37,4 @@ export async function getPageConfig(id, params) {
       ...col.ui,
     })),
   }
-} 
+}
