@@ -14,6 +14,7 @@ export function useFormCreateSchema(table): VbenFormSchema[] {
   const dynColumns = (table.columns || [])
     .map(mapToSchemaColumn)
     .filter(isCreateVisable);
+  console.log('🚀 ~ useFormCreateSchema ~ dynColumns:', dynColumns)
   return [
     ...dynColumns,
     {
@@ -37,6 +38,7 @@ export function useFormUpdateSchema(table): VbenFormSchema[] {
   const dynColumns = (table.columns || [])
     .map(mapToSchemaColumn)
     .filter(isUpdateVisable);
+  console.log('🚀 ~ useFormUpdateSchema ~ dynColumns:', dynColumns)
   return [
     ...dynColumns,
     {

@@ -21,6 +21,7 @@ import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
 import FkPicker from './FkPicker.vue';
+import PermissionPicker from './PermissionPicker.vue'
 
 const AutoComplete = defineAsyncComponent(
   () => import('ant-design-vue/es/auto-complete'),
@@ -107,6 +108,7 @@ const withDefaultPlaceholder = <T extends Component>(
 export type ComponentType =
   | 'ApiSelect'
   | 'ApiTreeSelect'
+  | 'PermissionPicker'
   | 'FkPicker'
   | 'AutoComplete'
   | 'Checkbox'

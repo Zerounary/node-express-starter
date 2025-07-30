@@ -44,15 +44,20 @@ const [Drawer, drawerApi] = useVbenDrawer({
   onOpenChange(isOpen) {
     if (isOpen) {
       const data = drawerApi.getData<SystemTableApi.SystemTable>();
+      console.log('🚀 ~ onOpenChange ~ data:', data)
       formApi.resetForm();
-      if (data) {
+      if (data?.id) {
         formData.value = data;
         id.value = data.id;
-        formApi.updateSchema(useFormUpdateSchema(props.table))
+        formApi.setState({
+          schema: useFormUpdateSchema(props.table),
+        })
         formApi.setValues(data);
       } else {
         id.value = undefined;
-        formApi.updateSchema(useFormCreateSchema(props.table))
+        formApi.setState({
+          schema: useFormCreateSchema(props.table),
+        })
       }
     }
   },
