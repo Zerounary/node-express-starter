@@ -14,6 +14,7 @@ class DynamicDataService {
   }
 
   private getSequelizeAttributes(columns: DynamicColumn[]) {
+    let facts = columns.filter(e => !e.is_virtual)
     const attributes: { [key: string]: any } = {
       id: {
         type: DataTypes.INTEGER,
@@ -22,7 +23,7 @@ class DynamicDataService {
       },
     };
 
-    for (const column of columns) {
+    for (const column of facts) {
       if (column.name === 'id') continue;
       if (column.dataType === 'RELATIONSHIP') {
         attributes[column.name] = { type: DataTypes.INTEGER, allowNull: true };

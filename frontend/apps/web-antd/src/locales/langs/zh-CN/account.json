@@ -1,0 +1,12 @@
+{
+  "title": "用户管理",
+  "user": {
+    "name": "用户"
+  },
+  "role": {
+    "name": "角色"
+  },
+  "permission": {
+    "name": "权限"
+  }
+}

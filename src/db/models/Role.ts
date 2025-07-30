@@ -30,7 +30,7 @@ Permission.init({
   id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
   action: { type: DataTypes.STRING, allowNull: false, unique: 'permission_action' },
   description: { type: DataTypes.STRING },
-}, { sequelize, tableName: 'permissions', timestamps: false });
+}, { sequelize, tableName: 'permissions'  });
 
 const UserRoles = sequelize.define('user_roles', {
   userId: { type: DataTypes.INTEGER, primaryKey: true },

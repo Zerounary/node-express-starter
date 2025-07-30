@@ -5,35 +5,35 @@ import User from "./models/User";
 
 const getColumnFilterOp = (column) => {
   switch (column.dataType) {
-    case 'STRING':
-    case 'TEXT':
+    case "STRING":
+    case "TEXT":
       return "like";
-    case 'INTEGER':
-    case 'FLOAT':
-    case 'DOUBLE':
+    case "INTEGER":
+    case "FLOAT":
+    case "DOUBLE":
       return "eq";
-    case 'DATE':
+    case "DATE":
       return "eq";
-    case 'BOOLEAN':
+    case "BOOLEAN":
       return "eq";
     default:
       return "eq";
   }
-}
+};
 
 const autoFill = (column, index) => {
   return {
     ...column,
     orderno: column.orderno || (index + 1) * 10,
     ui: {
-      mask: '1111111111',
+      mask: "1111111111",
       width: 100,
-      component: 'Input',
+      component: "Input",
       filterOp: getColumnFilterOp(column),
       ...column.ui,
-    }
-  }
-}
+    },
+  };
+};
 
 export const defaultColumns = (columns = []) => {
   return [
@@ -46,9 +46,9 @@ export const defaultColumns = (columns = []) => {
       relatedToTableId: undefined,
       enumValues: undefined,
       ui: {
-        mask: '0000000000',
+        mask: "0000000000",
         width: 100,
-        component: 'Input',
+        component: "Input",
         disabled: true,
       },
       orderno: 10,
@@ -63,9 +63,9 @@ export const defaultColumns = (columns = []) => {
       relatedToTableId: undefined,
       enumValues: undefined,
       ui: {
-        mask: '0010101001',
+        mask: "0010101001",
         width: 200,
-        component: 'DatePicker',
+        component: "DatePicker",
         disabled: true,
       },
       orderno: 1100,
@@ -79,15 +79,15 @@ export const defaultColumns = (columns = []) => {
       relatedToTableId: undefined,
       enumValues: undefined,
       ui: {
-        mask: '0010101001',
+        mask: "0010101001",
         width: 200,
-        component: 'DatePicker',
+        component: "DatePicker",
         disabled: true,
       },
       orderno: 1200,
     },
   ];
-}
+};
 
 // 系统表字段配置
 export const systemTables = [
@@ -105,9 +105,9 @@ export const systemTables = [
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: {
-            mask: '1111111111',
-            width: 200,
-            component: 'Input',
+          mask: "1111111111",
+          width: 200,
+          component: "Input",
         },
       },
       {
@@ -121,9 +121,9 @@ export const systemTables = [
         ak: true,
         dk: true,
         ui: {
-            mask: '1111111111',
-            width: 200,
-            component: 'Input',
+          mask: "1111111111",
+          width: 200,
+          component: "Input",
         },
       },
       {
@@ -135,9 +135,9 @@ export const systemTables = [
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: {
-            mask: '1111111111',
-            width: 200,
-            component: 'Input',
+          mask: "1111111111",
+          width: 200,
+          component: "Input",
         },
       },
     ]),
@@ -156,9 +156,9 @@ export const systemTables = [
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: {
-            mask: '1111111111',
-            width: 200,
-            component: 'Input',
+          mask: "1111111111",
+          width: 200,
+          component: "Input",
         },
       },
       {
@@ -190,8 +190,11 @@ export const systemTables = [
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: {
-          component: 'ApiSelect',
-          table: 'table'
+          component: "FkPicker",
+          table: "table",
+          componentProps: {
+            table: "table",
+          },
         },
       },
       {
@@ -246,6 +249,86 @@ export const systemTables = [
       },
     ]),
   },
+  {
+    name: "users",
+    description: "用户",
+    alias_name: "users",
+    columns: defaultColumns([
+      {
+        name: "username",
+        dataType: "STRING",
+        required: true,
+        description: "用户名",
+        relationshipType: undefined,
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: {
+          mask: "1111111111",
+          width: 200,
+          component: "Input",
+        },
+      },
+      {
+        name: "realName",
+        dataType: "STRING",
+        required: true,
+        description: "姓名",
+        relationshipType: undefined,
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: undefined,
+      },
+    ]),
+  },
+  {
+    name: "roles",
+    description: "角色",
+    alias_name: "roles",
+    columns: defaultColumns([
+      {
+        name: "name",
+        dataType: "STRING",
+        required: true,
+        description: "名称",
+        relationshipType: undefined,
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: {
+          mask: "1111111111",
+          width: 200,
+          component: "Input",
+        },
+      },
+      {
+        name: "description",
+        dataType: "STRING",
+        required: true,
+        description: "描述",
+        relationshipType: undefined,
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: undefined,
+      },
+      {
+        name: "perms",
+        dataType: "STRING",
+        required: false,
+        is_virtual: true,
+        description: "授权",
+        relationshipType: undefined,
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: {
+          mask: "0011000000",
+          width: 200,
+          component: "PermissionPicker",
+          componentProps: {
+
+          }
+        },
+      },
+    ]),
+  },
 ];
 
 export const initSystemData = async () => {
@@ -269,6 +352,7 @@ export const initSystemData = async () => {
 
     // 初始化列
     for (const column of table.columns) {
+      if(column.is_virtual) continue; // 跳过虚拟列
       const existsColumn = await DynamicColumn.findOne({
         where: { name: column.name, tableId },
       });

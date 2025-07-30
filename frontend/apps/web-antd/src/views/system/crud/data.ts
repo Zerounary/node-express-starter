@@ -78,19 +78,7 @@ export function useGridFormSchema(table): VbenFormSchema[] {
     .filter(isFilterVisable);
   console.log('🚀 ~ useGridFormSchema ~ dynColumns:', dynColumns);
   return [
-    // ...dynColumns,
-    {
-      componentProps: {
-        table: 'table',
-      },
-      component: 'FkPicker',
-      fieldName: 'tableId-eq',
-      filterOp: 'eq',
-      id: 6,
-      label: '所属表',
-      mask: '1111111111',
-      width: 100,
-    },
+    ...dynColumns,
     {
       component: 'RangePicker',
       fieldName: 'createTime',

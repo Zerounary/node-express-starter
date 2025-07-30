@@ -15,6 +15,7 @@ class DynamicColumn extends Model {
   public relatedToTableId?: number | null;
   public enumValues?: string[] | null;
   public ui?: any | null;
+  public is_virtual?: boolean| null;
   public ak?: boolean| null;
   public dk?: boolean| null;
   public orderno?: number | null;
@@ -48,6 +49,10 @@ DynamicColumn.init({
   dataType: {
     type: new DataTypes.STRING(128),
     allowNull: false,
+  },
+  is_virtual: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
   },
   ak: {
     type: DataTypes.BOOLEAN,
