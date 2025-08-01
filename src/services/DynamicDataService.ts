@@ -3,6 +3,7 @@ import sequelize from '../db/sequelize';
 import { DynamicTable, DynamicColumn } from '../db/models';
 import { logError } from '../logger';
 import { systemTables } from '@/db/init';
+import { ColumnDataTypes } from '@/utils';
 
 class DynamicDataService {
   private modelCache: Map<string, ModelCtor<Model<any, any>>> = new Map();
@@ -36,17 +37,26 @@ class DynamicDataService {
     return attributes;
   }
 
+  /**
+   * Maps a string data type to Sequelize DataTypes.
+   * @param dataType Maps a string data type to Sequelize DataTypes.
+   * @returns 
+   */
   private mapDataType(dataType: string) {
     switch (dataType.toUpperCase()) {
-      case 'STRING': return DataTypes.STRING;
-      case 'TEXT': return DataTypes.TEXT;
-      case 'INTEGER': return DataTypes.INTEGER;
-      case 'FLOAT': return DataTypes.FLOAT;
-      case 'DOUBLE': return DataTypes.DOUBLE;
-      case 'DECIMAL': return DataTypes.DECIMAL;
-      case 'BOOLEAN': return DataTypes.BOOLEAN;
-      case 'DATE': return DataTypes.DATE;
-      case 'JSON': return DataTypes.JSON;
+      case ColumnDataTypes.ID: return DataTypes.INTEGER;
+      case ColumnDataTypes.DOCNO: return DataTypes.STRING;
+      case ColumnDataTypes.DATENUMBER: return DataTypes.INTEGER;
+      case ColumnDataTypes.DATE: return DataTypes.DATE;
+      case ColumnDataTypes.QTY: return DataTypes.INTEGER;
+      case ColumnDataTypes.AMT: return DataTypes.DECIMAL;
+      case ColumnDataTypes.STRING: return DataTypes.STRING;
+      case ColumnDataTypes.TEXT: return DataTypes.TEXT;
+      case ColumnDataTypes.JSON: return DataTypes.JSON;
+      case ColumnDataTypes.INTEGER: return DataTypes.INTEGER;
+      case ColumnDataTypes.BOOLEAN: return DataTypes.BOOLEAN;
+      case ColumnDataTypes.DECIMAL: return DataTypes.DECIMAL;
+      case ColumnDataTypes.BIGINT: return DataTypes.BIGINT;
       default: throw new Error(`Unsupported data type: ${dataType}`);
     }
   }
