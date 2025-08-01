@@ -6,16 +6,18 @@ import User from "./models/User";
 
 const getColumnFilterOp = (column) => {
   switch (column.dataType) {
-    case "STRING":
-    case "TEXT":
+    case ColumnDataTypes.DOCNO:
+    case ColumnDataTypes.STRING:
+    case ColumnDataTypes.TEXT:
+    case ColumnDataTypes.JSON:
       return "like";
-    case "INTEGER":
-    case "FLOAT":
-    case "DOUBLE":
+    case ColumnDataTypes.ID:
+    case ColumnDataTypes.INTEGER:
       return "eq";
-    case "DATE":
+    case ColumnDataTypes.DATE:
+    case ColumnDataTypes.DATENUMBER:
       return "eq";
-    case "BOOLEAN":
+    case ColumnDataTypes.BOOLEAN:
       return "eq";
     default:
       return "eq";
