@@ -1,66 +1,53 @@
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SystemTableApi } from '#/api';
-import { getPage } from '#/api/system/crud';
 
 import { $t } from '#/locales';
 
 const isCreateVisable = (col) => col.mask?.charAt(0) == '1';
+const isCreateEditable = (col) => col.mask?.charAt(1) == '1';
 const isUpdateVisable = (col) => col.mask?.charAt(2) == '1';
+const isUpdateEditable = (col) => col.mask?.charAt(3) == '1';
 const isListVisable = (col) => col.mask?.charAt(4) == '1';
 const isFilterVisable = (col) => col.mask?.charAt(5) == '1';
 
 export function useFormCreateSchema(table): VbenFormSchema[] {
   const dynColumns = (table.columns || [])
-    .map(mapToSchemaColumn)
-    .filter(isCreateVisable);
-  console.log('🚀 ~ useFormCreateSchema ~ dynColumns:', dynColumns)
-  return [
-    ...dynColumns,
-    {
-      component: 'RadioGroup',
-      componentProps: {
-        buttonStyle: 'solid',
-        options: [
-          { label: $t('common.enabled'), value: 1 },
-          { label: $t('common.disabled'), value: 0 },
-        ],
-        optionType: 'button',
-      },
-      defaultValue: 1,
-      fieldName: 'status',
-      label: $t('system.status'),
-    },
-  ];
+    .filter(isCreateVisable)
+    .map(mapToCreateSchemaColumn);
+  console.log('🚀 ~ useFormCreateSchema ~ dynColumns:', dynColumns);
+  return [...dynColumns];
 }
 
 export function useFormUpdateSchema(table): VbenFormSchema[] {
   const dynColumns = (table.columns || [])
-    .map(mapToSchemaColumn)
-    .filter(isUpdateVisable);
-  console.log('🚀 ~ useFormUpdateSchema ~ dynColumns:', dynColumns)
-  return [
-    ...dynColumns,
-    {
-      component: 'RadioGroup',
-      componentProps: {
-        buttonStyle: 'solid',
-        options: [
-          { label: $t('common.enabled'), value: 1 },
-          { label: $t('common.disabled'), value: 0 },
-        ],
-        optionType: 'button',
-      },
-      defaultValue: 1,
-      fieldName: 'status',
-      label: $t('system.status'),
-    },
-  ];
+    .filter(isUpdateVisable)
+    .map(mapToUpdateSchemaColumn);
+  console.log('🚀 ~ useFormUpdateSchema ~ dynColumns:', dynColumns);
+  return [...dynColumns];
 }
 
-const mapToSchemaColumn = (col) => ({
-  ...col,
-});
+const mapToUpdateSchemaColumn = (col) => {
+  let component = isUpdateEditable(col) ? col.component : 'Text';
+  return {
+    ...col,
+    component,
+  };
+};
+
+const mapToCreateSchemaColumn = (col) => {
+  let component = isCreateEditable(col) ? col.component : 'Text';
+  return {
+    ...col,
+    component,
+  };
+};
+
+const mapToListSchemaColumn = (col) => {
+  return {
+    ...col,
+  };
+};
 
 const mapToGridColumn = (col) => ({
   ...col,
@@ -75,18 +62,11 @@ const mapToOpFilterColumn = (col) => ({
 
 export function useGridFormSchema(table): VbenFormSchema[] {
   const dynColumns = (table.columns || [])
-    .map(mapToSchemaColumn)
-    .map(mapToOpFilterColumn)
-    .filter(isFilterVisable);
+    .filter(isFilterVisable)
+    .map(mapToListSchemaColumn)
+    .map(mapToOpFilterColumn);
   console.log('🚀 ~ useGridFormSchema ~ dynColumns:', dynColumns);
-  return [
-    ...dynColumns,
-    {
-      component: 'RangePicker',
-      fieldName: 'createTime',
-      label: $t('system.table.createTime'),
-    },
-  ];
+  return [...dynColumns];
 }
 
 export function useColumns<T = SystemTableApi.SystemTable>(
@@ -95,8 +75,8 @@ export function useColumns<T = SystemTableApi.SystemTable>(
   onStatusChange?: (newStatus: any, row: T) => PromiseLike<boolean | undefined>,
 ): VxeTableGridOptions['columns'] {
   const dynColumns = (table.columns || [])
-    .map(mapToGridColumn)
-    .filter(isListVisable);
+    .filter(isListVisable)
+    .map(mapToGridColumn);
   console.log('🚀 ~ dynColumns:', dynColumns);
   return [
     ...dynColumns,

@@ -49,6 +49,7 @@ export async function getTableConfig(tableName) {
       label: col.description,
       ak: col.ak,
       dk: col.dk,
+      dataType: col.dataType,
       ...col.ui,
     })),
   };

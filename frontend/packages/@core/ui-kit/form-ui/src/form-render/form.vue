@@ -123,7 +123,10 @@ const computedSchema = computed(
         wrapperClass,
         ...schema,
         commonComponentProps: componentProps,
-        componentProps: schema.componentProps,
+        componentProps: {
+          schema,
+          ...schema.componentProps,
+        },
         controlClass: cn(controlClass, schema.controlClass),
         formFieldProps: {
           ...formFieldProps,

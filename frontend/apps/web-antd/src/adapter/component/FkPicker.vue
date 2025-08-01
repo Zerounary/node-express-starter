@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <div class="w-full flex">
+  <div class="w-full">
+    {{ mask }}
+    <div v-if="!disabled" class="w-full flex">
       <Select
         class="flex-grow"
         v-model:value="modelValue"
@@ -20,6 +21,7 @@
         </template>
       </Select>
     </div>
+    <div v-else>{{ modelValue }}</div>
     <Modal
       title="选择数据"
       v-model:open="isModalVisible"
@@ -58,6 +60,13 @@ import { getPageConfig, keywordSearch } from '#/api';
 import type { TableColumnType } from 'ant-design-vue';
 import { FilterOutlined } from '@ant-design/icons-vue'
 const props = defineProps({
+  mask: {
+    type: String,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
   table: {
     type: String,
     required: true,

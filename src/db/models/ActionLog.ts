@@ -1,6 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../sequelize';
 import User from './User';
+import { commontFields } from './common';
 
 class ActionLog extends Model {
   public id!: number;
@@ -41,6 +42,7 @@ ActionLog.init({
   ip: {
     type: DataTypes.STRING,
   },
+  ...commontFields,
 }, {
   sequelize,
   tableName: 'action_logs',

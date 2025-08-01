@@ -3,6 +3,7 @@ import sequelize from '../sequelize';
 import bcrypt from 'bcryptjs';
 import Tenant from './Tenant';
 import { Role } from './Role';
+import { commontFields } from './common';
 
 class User extends Model {
   public id!: number;
@@ -46,6 +47,7 @@ User.init({
     type: DataTypes.STRING,
     allowNull: true,
   },
+  ...commontFields,
 }, {
   sequelize,
   tableName: 'users',

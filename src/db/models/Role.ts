@@ -2,6 +2,7 @@ import { Model, DataTypes, BelongsToManyAddAssociationMixin, BelongsToManyGetAss
 import sequelize from '../sequelize';
 import Tenant from './Tenant';
 import User from './User';
+import { commontFields } from './common';
 
 class Role extends Model {
   public id!: number;
@@ -24,22 +25,26 @@ Role.init({
   tenantId: { type: DataTypes.INTEGER, allowNull: false, references: { model: Tenant, key: 'id' } },
   name: { type: DataTypes.STRING, allowNull: false },
   description: { type: DataTypes.STRING, allowNull: true },
+  ...commontFields,
 }, { sequelize, tableName: 'roles', indexes: [{ unique: true, fields: ['tenantId', 'name'] }] });
 
 Permission.init({
   id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
   action: { type: DataTypes.STRING, allowNull: false, unique: 'permission_action' },
   description: { type: DataTypes.STRING },
+  ...commontFields,
 }, { sequelize, tableName: 'permissions'  });
 
 const UserRoles = sequelize.define('user_roles', {
   userId: { type: DataTypes.INTEGER, primaryKey: true },
   roleId: { type: DataTypes.INTEGER, primaryKey: true },
+  ...commontFields,
 });
 
 const RolePermissions = sequelize.define('role_permissions', {
   roleId: { type: DataTypes.INTEGER, primaryKey: true },
   permissionId: { type: DataTypes.INTEGER, primaryKey: true },
+  ...commontFields,
 });
 
 // Associations

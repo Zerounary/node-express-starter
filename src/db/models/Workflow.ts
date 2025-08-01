@@ -3,6 +3,7 @@ import sequelize from '../sequelize';
 import Tenant from './Tenant';
 import DynamicTable from './DynamicTable';
 import User from './User';
+import { commontFields } from './common';
 
 /**
  * Table 1: Workflow
@@ -25,6 +26,7 @@ Workflow.init({
   dynamicTableId: { type: DataTypes.INTEGER, allowNull: false, references: { model: DynamicTable, key: 'id' } },
   priority: { type: DataTypes.INTEGER, defaultValue: 0 },
   dataFilterConditions: { type: DataTypes.JSON, allowNull: false },
+  ...commontFields,
 }, { sequelize, tableName: 'workflows' });
 
 /**
@@ -54,6 +56,7 @@ WorkflowStage.init({
   dataFilterConditions: { type: DataTypes.JSON },
   timeoutDays: { type: DataTypes.INTEGER, defaultValue: 0 },
   timeoutAction: { type: DataTypes.ENUM('approve', 'reject'), defaultValue: 'reject' },
+  ...commontFields,
 }, { sequelize, tableName: 'workflow_stages' });
 
 /**
@@ -68,6 +71,7 @@ WorkflowStageApprover.init({
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     stageId: { type: DataTypes.INTEGER, allowNull: false, references: { model: WorkflowStage, key: 'id' } },
     userId: { type: DataTypes.INTEGER, allowNull: false, references: { model: User, key: 'id' } },
+    ...commontFields,
 }, { sequelize, tableName: 'workflow_stage_approvers', timestamps: false });
 
 
@@ -95,6 +99,7 @@ WorkflowInstance.init({
   recordId: { type: DataTypes.INTEGER, allowNull: false },
   status: { type: DataTypes.ENUM('pending', 'approved', 'rejected', 'cancelled'), allowNull: false, defaultValue: 'pending' },
   lastComment: { type: DataTypes.STRING },
+  ...commontFields,
 }, { sequelize, tableName: 'workflow_instances' });
 
 
@@ -116,6 +121,7 @@ WorkflowInstanceLog.init({
     userId: { type: DataTypes.INTEGER, allowNull: false, references: { model: User, key: 'id' } },
     action: { type: DataTypes.ENUM('approve', 'reject'), allowNull: false },
     comment: { type: DataTypes.STRING, allowNull: false },
+    ...commontFields,
 }, { sequelize, tableName: 'workflow_instance_logs' });
 
 

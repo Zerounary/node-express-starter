@@ -1,3 +1,4 @@
+import { ColumnDataTypes } from "@/utils";
 import { DynamicColumn, DynamicTable } from "./models";
 import { Permission, Role } from "./models/Role";
 import Tenant from "./models/Tenant";
@@ -39,7 +40,7 @@ export const defaultColumns = (columns = []) => {
   return [
     {
       name: "id",
-      dataType: "INTEGER",
+      dataType: ColumnDataTypes.ID,
       required: true,
       description: "ID",
       relationshipType: undefined,
@@ -55,8 +56,27 @@ export const defaultColumns = (columns = []) => {
     },
     ...columns.map(autoFill),
     {
+      name: "createdBy",
+      dataType: ColumnDataTypes.ID,
+      required: true,
+      description: "创建人",
+      relationshipType: undefined,
+      relatedToTableId: undefined,
+      enumValues: undefined,
+      ui: {
+        mask: "0010101001",
+        width: 200,
+        component: "FkPicker",
+        componentProps: {
+          table: "users",
+        },
+        disabled: true,
+      },
+      orderno: 1100,
+    },
+    {
       name: "createdAt",
-      dataType: "DATE",
+      dataType: ColumnDataTypes.DATE,
       required: true,
       description: "创建时间",
       relationshipType: undefined,
@@ -68,12 +88,31 @@ export const defaultColumns = (columns = []) => {
         component: "DatePicker",
         disabled: true,
       },
-      orderno: 1100,
+      orderno: 1200,
+    },
+    {
+      name: "updatedBy",
+      dataType: ColumnDataTypes.ID,
+      required: true,
+      description: "修改人",
+      relationshipType: undefined,
+      relatedToTableId: undefined,
+      enumValues: undefined,
+      ui: {
+        mask: "0010101001",
+        width: 200,
+        component: "FkPicker",
+        componentProps: {
+          table: "users",
+        },
+        disabled: true,
+      },
+      orderno: 1300,
     },
     {
       name: "updatedAt",
-      dataType: "DATE",
-      required: true,
+      dataType: ColumnDataTypes.DATE,
+      required: false,
       description: "更新时间",
       relationshipType: undefined,
       relatedToTableId: undefined,
@@ -84,7 +123,31 @@ export const defaultColumns = (columns = []) => {
         component: "DatePicker",
         disabled: true,
       },
-      orderno: 1200,
+      orderno: 1400,
+    },
+    {
+      name: "isActive",
+      dataType: ColumnDataTypes.BOOLEAN,
+      required: false,
+      description: "可用",
+      relationshipType: undefined,
+      relatedToTableId: undefined,
+      enumValues: undefined,
+      ui: {
+        mask: "0010101001",
+        width: 200,
+        component: 'RadioGroup',
+        componentProps: {
+          buttonStyle: 'solid',
+          options: [
+            { label: '是', value: true },
+            { label: '否', value: false },
+          ],
+          optionType: 'button',
+        },
+        disabled: true,
+      },
+      orderno: 1500,
     },
   ];
 };
@@ -98,7 +161,7 @@ export const systemTables = [
     columns: defaultColumns([
       {
         name: "name",
-        dataType: "STRING",
+        dataType: ColumnDataTypes.STRING,
         required: true,
         description: "表",
         relationshipType: undefined,
@@ -112,7 +175,7 @@ export const systemTables = [
       },
       {
         name: "description",
-        dataType: "STRING",
+        dataType: ColumnDataTypes.STRING,
         required: true,
         description: "描述",
         relationshipType: undefined,
@@ -128,7 +191,7 @@ export const systemTables = [
       },
       {
         name: "alias_name",
-        dataType: "STRING",
+        dataType: ColumnDataTypes.STRING,
         required: true,
         description: "表别名",
         relationshipType: undefined,
@@ -149,7 +212,7 @@ export const systemTables = [
     columns: defaultColumns([
       {
         name: "name",
-        dataType: "STRING",
+        dataType: ColumnDataTypes.STRING,
         required: true,
         description: "数据库名称",
         relationshipType: undefined,
@@ -163,7 +226,7 @@ export const systemTables = [
       },
       {
         name: "description",
-        dataType: "STRING",
+        dataType: ColumnDataTypes.STRING,
         required: true,
         description: "描述",
         relationshipType: undefined,
@@ -173,7 +236,7 @@ export const systemTables = [
       },
       {
         name: "dataType",
-        dataType: "STRING",
+        dataType: ColumnDataTypes.STRING,
         required: true,
         description: "字段类型",
         relationshipType: undefined,
@@ -183,7 +246,7 @@ export const systemTables = [
       },
       {
         name: "tableId",
-        dataType: "INTEGER",
+        dataType: ColumnDataTypes.ID,
         required: true,
         description: "所属表",
         relationshipType: undefined,
@@ -199,7 +262,7 @@ export const systemTables = [
       },
       {
         name: "relationshipType",
-        dataType: "STRING",
+        dataType: ColumnDataTypes.STRING,
         required: true,
         description: "外键关联类型",
         relationshipType: undefined,
@@ -209,7 +272,7 @@ export const systemTables = [
       },
       {
         name: "relatedToTableId",
-        dataType: "INTEGER",
+        dataType: ColumnDataTypes.ID,
         required: true,
         description: "外键表",
         relationshipType: undefined,
@@ -219,7 +282,7 @@ export const systemTables = [
       },
       {
         name: "enumValues",
-        dataType: "JSON",
+        dataType: ColumnDataTypes.JSON,
         required: true,
         description: "枚举值",
         relationshipType: undefined,
@@ -229,7 +292,7 @@ export const systemTables = [
       },
       {
         name: "ui",
-        dataType: "JSON",
+        dataType: ColumnDataTypes.JSON,
         required: true,
         description: "界面配置",
         relationshipType: undefined,
@@ -239,7 +302,7 @@ export const systemTables = [
       },
       {
         name: "orderno",
-        dataType: "INTEGER",
+        dataType: ColumnDataTypes.ID,
         required: true,
         description: "序号",
         relationshipType: undefined,
@@ -256,7 +319,7 @@ export const systemTables = [
     columns: defaultColumns([
       {
         name: "username",
-        dataType: "STRING",
+        dataType: ColumnDataTypes.STRING,
         required: true,
         description: "用户名",
         relationshipType: undefined,
@@ -270,7 +333,7 @@ export const systemTables = [
       },
       {
         name: "realName",
-        dataType: "STRING",
+        dataType: ColumnDataTypes.STRING,
         required: true,
         description: "姓名",
         relationshipType: undefined,
@@ -287,7 +350,7 @@ export const systemTables = [
     columns: defaultColumns([
       {
         name: "name",
-        dataType: "STRING",
+        dataType: ColumnDataTypes.STRING,
         required: true,
         description: "名称",
         relationshipType: undefined,
@@ -301,7 +364,7 @@ export const systemTables = [
       },
       {
         name: "description",
-        dataType: "STRING",
+        dataType: ColumnDataTypes.STRING,
         required: true,
         description: "描述",
         relationshipType: undefined,
@@ -311,7 +374,7 @@ export const systemTables = [
       },
       {
         name: "perms",
-        dataType: "STRING",
+        dataType: ColumnDataTypes.STRING,
         required: false,
         is_virtual: true,
         description: "授权",

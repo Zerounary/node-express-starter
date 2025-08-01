@@ -1,6 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../sequelize';
 import Tenant from './Tenant';
+import { commontFields } from './common';
 
 class Report extends Model {
   public id!: number;
@@ -32,6 +33,7 @@ Report.init({
     type: DataTypes.TEXT,
     allowNull: false,
   },
+  ...commontFields,
 }, {
   sequelize,
   tableName: 'reports',

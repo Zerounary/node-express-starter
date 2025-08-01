@@ -1,6 +1,7 @@
 import { DataTypes, Model, HasManyGetAssociationsMixin } from 'sequelize';
 import sequelize from '../sequelize';
 import User from './User';
+import { commontFields } from './common';
 
 class Tenant extends Model {
   public id!: number;
@@ -24,6 +25,7 @@ Tenant.init({
     allowNull: false,
     unique: 'tenants_name_key',
   },
+  ...commontFields,
 }, {
   sequelize,
   tableName: 'tenants',

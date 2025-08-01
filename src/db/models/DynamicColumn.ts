@@ -2,6 +2,7 @@ import { Model, DataTypes, BelongsToGetAssociationMixin } from 'sequelize';
 import sequelize from '../sequelize';
 import type DynamicTable from './DynamicTable';
 import Tenant from './Tenant';
+import { commontFields } from './common';
 
 class DynamicColumn extends Model {
   public id!: number;
@@ -94,6 +95,7 @@ DynamicColumn.init({
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  ...commontFields,
 }, {
   sequelize,
   tableName: 'dynamic_columns',

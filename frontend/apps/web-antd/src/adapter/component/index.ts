@@ -22,6 +22,8 @@ import { $t } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 import FkPicker from './FkPicker.vue';
 import PermissionPicker from './PermissionPicker.vue'
+import Text from './Text.vue'
+import DatePicker from './DatePicker.vue'
 
 const AutoComplete = defineAsyncComponent(
   () => import('ant-design-vue/es/auto-complete'),
@@ -33,9 +35,7 @@ const Checkbox = defineAsyncComponent(
 const CheckboxGroup = defineAsyncComponent(() =>
   import('ant-design-vue/es/checkbox').then((res) => res.CheckboxGroup),
 );
-const DatePicker = defineAsyncComponent(
-  () => import('ant-design-vue/es/date-picker'),
-);
+
 const Divider = defineAsyncComponent(() => import('ant-design-vue/es/divider'));
 const Input = defineAsyncComponent(() => import('ant-design-vue/es/input'));
 const InputNumber = defineAsyncComponent(
@@ -110,6 +110,7 @@ export type ComponentType =
   | 'ApiTreeSelect'
   | 'PermissionPicker'
   | 'FkPicker'
+  | 'Text'
   | 'AutoComplete'
   | 'Checkbox'
   | 'CheckboxGroup'
@@ -170,6 +171,7 @@ async function initComponentAdapter() {
       },
     ),
     FkPicker,
+    Text,
     AutoComplete,
     Checkbox,
     CheckboxGroup,
