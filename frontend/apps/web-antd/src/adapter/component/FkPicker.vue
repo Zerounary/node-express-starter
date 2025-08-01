@@ -1,6 +1,5 @@
 <template>
   <div class="w-full">
-    {{ mask }}
     <div v-if="!disabled" class="w-full flex">
       <Select
         class="flex-grow"
@@ -8,12 +7,14 @@
         :default-active-first-option="false"
         show-search
         label-in-value
+        :field-names="{ label: 'name', value: 'id' }"
         :filter-option="false"
         allow-clear
         :mode="mode"
         :options="
-          selections.map((item) => ({ label: item.name, value: item.id }))
+          selections
         "
+        @change="handleSelectChange"
         @search="search"
       >
         <template #suffixIcon>
@@ -53,16 +54,13 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineModel, ref, watch, computed } from 'vue';
+import { defineProps, defineModel, ref, watch, computed, onMounted } from 'vue';
 import { getPage } from '#/api/system/crud';
 import { Select, Modal, Table, Button, Input } from 'ant-design-vue';
 import { getPageConfig, keywordSearch } from '#/api';
 import type { TableColumnType } from 'ant-design-vue';
 import { FilterOutlined } from '@ant-design/icons-vue'
 const props = defineProps({
-  mask: {
-    type: String,
-  },
   disabled: {
     type: Boolean,
     default: false,
@@ -109,6 +107,11 @@ const selectedRows = ref<any[]>([]); // To hold selected rows from the table
 
 const currentFilters = ref<any>({});
 
+onMounted(() => {
+  console.log('🚀 ~ modelValue.value:', modelValue.value)
+
+})
+
 const fetchData = async (params = {}) => {
   loading.value = true;
   try {
@@ -152,6 +155,16 @@ const search = async (value: string) => {
     selections.value = [];
   }
 };
+
+watch(modelValue, (newVal) => {
+  console.log('🚀 ~ newVal:', newVal)
+  if(newVal?.id) {
+    let copyValue = JSON.parse(JSON.stringify(newVal));
+    selections.value =  [ copyValue ];
+    console.log('🚀 ~ selections.value:', selections.value)
+    modelValue.value = copyValue.id;
+  }
+})
 
 watch(isModalVisible, (newVal) => {
   if (newVal) {
@@ -258,6 +271,10 @@ const handleTableChange = (pag: any, filters: any, sorter: any) => {
   currentFilters.value = newFilters;
   fetchData();
 };
+
+const handleSelectChange = (val) => {
+  modelValue.value = val?.value;
+}
 </script>
 
 <style scoped></style>

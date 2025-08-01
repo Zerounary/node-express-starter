@@ -45,7 +45,6 @@ export const defaultColumns = (columns = []) => {
       dataType: ColumnDataTypes.ID,
       required: true,
       description: "ID",
-      relationshipType: undefined,
       relatedToTableId: undefined,
       enumValues: undefined,
       ui: {
@@ -62,8 +61,7 @@ export const defaultColumns = (columns = []) => {
       dataType: ColumnDataTypes.ID,
       required: true,
       description: "创建人",
-      relationshipType: undefined,
-      relatedToTableId: undefined,
+      relatedToTableId: 3,
       enumValues: undefined,
       ui: {
         mask: "0010101001",
@@ -81,7 +79,6 @@ export const defaultColumns = (columns = []) => {
       dataType: ColumnDataTypes.DATE,
       required: true,
       description: "创建时间",
-      relationshipType: undefined,
       relatedToTableId: undefined,
       enumValues: undefined,
       ui: {
@@ -97,8 +94,7 @@ export const defaultColumns = (columns = []) => {
       dataType: ColumnDataTypes.ID,
       required: true,
       description: "修改人",
-      relationshipType: undefined,
-      relatedToTableId: undefined,
+      relatedToTableId: 3,
       enumValues: undefined,
       ui: {
         mask: "0010101001",
@@ -116,7 +112,6 @@ export const defaultColumns = (columns = []) => {
       dataType: ColumnDataTypes.DATE,
       required: false,
       description: "更新时间",
-      relationshipType: undefined,
       relatedToTableId: undefined,
       enumValues: undefined,
       ui: {
@@ -132,7 +127,6 @@ export const defaultColumns = (columns = []) => {
       dataType: ColumnDataTypes.BOOLEAN,
       required: false,
       description: "可用",
-      relationshipType: undefined,
       relatedToTableId: undefined,
       enumValues: undefined,
       ui: {
@@ -166,7 +160,6 @@ export const systemTables = [
         dataType: ColumnDataTypes.STRING,
         required: true,
         description: "表",
-        relationshipType: undefined,
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: {
@@ -180,7 +173,6 @@ export const systemTables = [
         dataType: ColumnDataTypes.STRING,
         required: true,
         description: "描述",
-        relationshipType: undefined,
         relatedToTableId: undefined,
         enumValues: undefined,
         ak: true,
@@ -196,7 +188,6 @@ export const systemTables = [
         dataType: ColumnDataTypes.STRING,
         required: true,
         description: "表别名",
-        relationshipType: undefined,
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: {
@@ -217,7 +208,6 @@ export const systemTables = [
         dataType: ColumnDataTypes.STRING,
         required: true,
         description: "数据库名称",
-        relationshipType: undefined,
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: {
@@ -231,7 +221,6 @@ export const systemTables = [
         dataType: ColumnDataTypes.STRING,
         required: true,
         description: "描述",
-        relationshipType: undefined,
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: undefined,
@@ -241,7 +230,6 @@ export const systemTables = [
         dataType: ColumnDataTypes.STRING,
         required: true,
         description: "字段类型",
-        relationshipType: undefined,
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: undefined,
@@ -251,8 +239,7 @@ export const systemTables = [
         dataType: ColumnDataTypes.ID,
         required: true,
         description: "所属表",
-        relationshipType: undefined,
-        relatedToTableId: undefined,
+        relatedToTableId: 1,
         enumValues: undefined,
         ui: {
           component: "FkPicker",
@@ -263,31 +250,25 @@ export const systemTables = [
         },
       },
       {
-        name: "relationshipType",
-        dataType: ColumnDataTypes.STRING,
-        required: true,
-        description: "外键关联类型",
-        relationshipType: undefined,
-        relatedToTableId: undefined,
-        enumValues: undefined,
-        ui: undefined,
-      },
-      {
         name: "relatedToTableId",
         dataType: ColumnDataTypes.ID,
         required: true,
         description: "外键表",
-        relationshipType: undefined,
-        relatedToTableId: undefined,
+        relatedToTableId: 1,
         enumValues: undefined,
-        ui: undefined,
+        ui: {
+          component: "FkPicker",
+          table: "table",
+          componentProps: {
+            table: "table",
+          },
+        },
       },
       {
         name: "enumValues",
         dataType: ColumnDataTypes.JSON,
         required: true,
         description: "枚举值",
-        relationshipType: undefined,
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: undefined,
@@ -297,17 +278,16 @@ export const systemTables = [
         dataType: ColumnDataTypes.JSON,
         required: true,
         description: "界面配置",
-        relationshipType: undefined,
+        
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: undefined,
       },
       {
         name: "orderno",
-        dataType: ColumnDataTypes.ID,
+        dataType: ColumnDataTypes.INTEGER,
         required: true,
         description: "序号",
-        relationshipType: undefined,
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: undefined,
@@ -324,7 +304,6 @@ export const systemTables = [
         dataType: ColumnDataTypes.STRING,
         required: true,
         description: "用户名",
-        relationshipType: undefined,
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: {
@@ -338,7 +317,6 @@ export const systemTables = [
         dataType: ColumnDataTypes.STRING,
         required: true,
         description: "姓名",
-        relationshipType: undefined,
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: undefined,
@@ -355,7 +333,6 @@ export const systemTables = [
         dataType: ColumnDataTypes.STRING,
         required: true,
         description: "名称",
-        relationshipType: undefined,
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: {
@@ -369,7 +346,6 @@ export const systemTables = [
         dataType: ColumnDataTypes.STRING,
         required: true,
         description: "描述",
-        relationshipType: undefined,
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: undefined,
@@ -380,7 +356,6 @@ export const systemTables = [
         required: false,
         is_virtual: true,
         description: "授权",
-        relationshipType: undefined,
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: {
@@ -415,6 +390,12 @@ export const initSystemData = async () => {
       await DynamicTable.update(table, { where: { id: tableId } });
     }
 
+  }
+
+  // 先创建表后，再创建字段， 确保能创建字段关联
+  for (const table of systemTables) {
+    const exists = await DynamicTable.findOne({ where: { name: table.name } });
+    let tableId = exists?.id;
     // 初始化列
     for (const column of table.columns) {
       if(column.is_virtual) continue; // 跳过虚拟列

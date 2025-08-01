@@ -12,7 +12,6 @@ class DynamicColumn extends Model {
   public created!: string;
   public updated!: string;
   public description!: string;
-  public relationshipType?: 'one-to-one' | 'one-to-many' | null;
   public relatedToTableId?: number | null;
   public enumValues?: string[] | null;
   public ui?: any | null;
@@ -71,17 +70,13 @@ DynamicColumn.init({
     },
     allowNull: false,
   },
-  relationshipType: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
   relatedToTableId: {
     type: DataTypes.INTEGER,
     allowNull: true,
     references: {
       model: 'dynamic_tables',
       key: 'id',
-    }
+    },
   },
   enumValues: {
     type: DataTypes.JSON,

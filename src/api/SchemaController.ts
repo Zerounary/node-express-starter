@@ -8,7 +8,6 @@ import { logError } from "../logger";
 const columnSchema = z.object({
   name: z.string().regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/),
   dataType: z.enum(['STRING', 'TEXT', 'INTEGER', 'FLOAT', 'DOUBLE', 'DECIMAL', 'BOOLEAN', 'DATE', 'JSON', 'RELATIONSHIP', 'ENUM']),
-  relationshipType: z.enum(['one-to-one', 'one-to-many']).optional().nullable(),
   relatedToTableId: z.number().int().optional().nullable(),
   enumValues: z.array(z.string()).optional().nullable(),
 });

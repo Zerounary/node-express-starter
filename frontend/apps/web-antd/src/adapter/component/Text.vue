@@ -18,6 +18,9 @@ const props = defineProps({
 
 const Textof = (val, dataType) => {
   switch (dataType) {
+    case ColumnDataTypes.ID:
+      const fieldName = props.schema?.fieldName;
+      return val?.name;
     case ColumnDataTypes.DATENUMBER:
       return dayjs(val).format('YYYY-MM-DD');
     case ColumnDataTypes.DATE:

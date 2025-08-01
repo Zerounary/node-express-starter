@@ -9,9 +9,79 @@ import WorkflowService from '../services/WorkflowService';
 import Papa from 'papaparse';
 import sequelize from '../db/sequelize';
 import { getTableConfig } from "@/hooks/table";
+import { ColumnDataTypes } from "@/utils";
 
 @Controller("/data/:tableName")
 export default class DynamicController {
+
+  /**
+   * 手动查询外键关联数据
+   * @param data 主表数据
+   * @param columns 表字段配置
+   * @param tenantId 租户ID
+   * @returns 包含关联数据的结果
+   */
+  private async populateRelatedData(data: any[], columns: any[], tenantId: number): Promise<any[]> {
+    if (!data || data.length === 0) return data;
+    
+    const result = data.map(item => ({ ...item }));
+    
+    for (const column of columns) {
+      if (column.dataType === ColumnDataTypes.ID && column.relatedToTableId) {
+        try {
+          // 根据relatedToTableId获取关联表的信息
+          const { DynamicTable } = await import('../db/models');
+          const relatedTableDef = await DynamicTable.findByPk(column.relatedToTableId);
+          
+          if (relatedTableDef) {
+            const relatedTableName = relatedTableDef.alias_name || relatedTableDef.name;
+            const relatedModel = await DynamicDataService.getModelForTable(relatedTableName, tenantId);
+            
+            // 收集所有需要查询的外键ID
+            const foreignKeyIds = result
+              .map(item => item[column.fieldName])
+              .filter(id => id != null);
+            
+            if (foreignKeyIds.length > 0) {
+              // 批量查询关联数据
+              const dk = columns.find(col => col.dk === true);
+              const attributes: any[] = ['id'];
+              if (dk && dk !== 'id') {
+                attributes.push([dk.fieldName, 'name']);
+              }
+
+              const relatedData = await relatedModel.findAll({
+                attributes,
+                where: {
+                  id: { [Op.in]: foreignKeyIds },
+                  tenantId
+                }
+              });
+              
+              // 创建ID到数据的映射
+              const relatedDataMap = new Map();
+              relatedData.forEach(item => {
+                const jsonItem = item.toJSON();
+                relatedDataMap.set(jsonItem.id, jsonItem);
+              });
+              
+              // 将关联数据添加到结果中
+              const aliasName = column.fieldName;
+              result.forEach(item => {
+                if (item[column.fieldName] && relatedDataMap.has(item[column.fieldName])) {
+                  item[aliasName] = relatedDataMap.get(item[column.fieldName]);
+                }
+              });
+            }
+          }
+        } catch (error) {
+          logError(new Error(`Failed to populate related data for ${column.fieldName}: ${error instanceof Error ? error.message : String(error)}`));
+        }
+      }
+    }
+    
+    return result;
+  }
 
   private async getParsedWhere(filters: any, tenantId: number) {
       const where: any = { tenantId };
@@ -49,9 +119,22 @@ export default class DynamicController {
       const { ...filters } = req.query;
       const where = await this.getParsedWhere(filters, req.user.tenantId);
       
+      // 获取表配置
+      const tableConfig = await getTableConfig(tableName);
+      if (!tableConfig) {
+        return fail("表配置未找到", 404);
+      }
+      
       const Model = await DynamicDataService.getModelForTable(tableName, req.user.tenantId);
+      
+      // 查询主表数据
       const data = await Model.findAll({ where });
-      return ok(data);
+      const jsonData = data.map(item => item.toJSON());
+      
+      // 手动填充关联数据
+      const populatedData = await this.populateRelatedData(jsonData, tableConfig.columns, req.user.tenantId);
+      
+      return ok(populatedData);
     } catch (error) {
       logError(error);
       return fail(error.message);
@@ -65,19 +148,31 @@ export default class DynamicController {
       const { page = 1, pageSize = 10, ...filters } = req.query;
       const where = await this.getParsedWhere(filters, req.user.tenantId);
 
+      // 获取表配置
+      const tableConfig = await getTableConfig(tableName);
+      if (!tableConfig) {
+        return fail("表配置未找到", 404);
+      }
+
       const Model = await DynamicDataService.getModelForTable(tableName, req.user.tenantId);
       
       const nPage = parseInt(page, 10);
       const nPageSize = parseInt(pageSize, 10);
 
+      // 查询主表数据
       const { count, rows } = await Model.findAndCountAll({
         where,
         limit: nPageSize,
         offset: (nPage - 1) * nPageSize,
       });
 
+      const jsonData = rows.map(item => item.toJSON());
+      
+      // 手动填充关联数据
+      const populatedData = await this.populateRelatedData(jsonData, tableConfig.columns, req.user.tenantId);
+
       return ok({
-        items: rows,
+        items: populatedData,
         total: count,
       });
     } catch (error) {
@@ -170,12 +265,30 @@ export default class DynamicController {
   async findOne(req, res) {
     try {
       const { tableName, id } = req.params;
+      
+      // 获取表配置
+      const tableConfig = await getTableConfig(tableName);
+      if (!tableConfig) {
+        return fail("表配置未找到", 404);
+      }
+      
       const Model = await DynamicDataService.getModelForTable(tableName, req.user.tenantId);
-      const instance = await Model.findOne({ where: { id, tenantId: req.user.tenantId } });
+      
+      // 查询主表数据
+      const instance = await Model.findOne({ 
+        where: { id, tenantId: req.user.tenantId }
+      });
+      
       if (!instance) {
         return fail("Instance not found", 404);
       }
-      return ok(instance);
+      
+      const jsonData = instance.toJSON();
+      
+      // 手动填充关联数据
+      const populatedData = await this.populateRelatedData([jsonData], tableConfig.columns, req.user.tenantId);
+      
+      return ok(populatedData);
     } catch (error) {
       logError(error);
       return fail(error.message);

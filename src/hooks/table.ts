@@ -50,6 +50,7 @@ export async function getTableConfig(tableName) {
       ak: col.ak,
       dk: col.dk,
       dataType: col.dataType,
+      relatedToTableId: col.relatedToTableId,
       ...col.ui,
     })),
   };
