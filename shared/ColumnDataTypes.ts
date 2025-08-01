@@ -13,4 +13,5 @@ export const ColumnDataTypes = {
   BOOLEAN: 'BOOLEAN',
   DECIMAL: 'DECIMAL',
   BIGINT: 'BIGINT',
+  VIRTUAL: 'VIRTUAL',
 };

@@ -358,9 +358,8 @@ export const systemTables = [
       },
       {
         name: "perms",
-        dataType: ColumnDataTypes.STRING,
+        dataType: ColumnDataTypes.VIRTUAL,
         required: false,
-        is_virtual: true,
         description: "授权",
         relatedToTableId: undefined,
         enumValues: undefined,
@@ -404,7 +403,6 @@ export const initSystemData = async () => {
     let tableId = exists?.id;
     // 初始化列
     for (const column of table.columns) {
-      if(column.is_virtual) continue; // 跳过虚拟列
       const existsColumn = await DynamicColumn.findOne({
         where: { name: column.name, tableId },
       });

@@ -25,6 +25,9 @@ Role.init({
   tenantId: { type: DataTypes.INTEGER, allowNull: false, references: { model: Tenant, key: 'id' } },
   name: { type: DataTypes.STRING, allowNull: false },
   description: { type: DataTypes.STRING, allowNull: true },
+  perms: { type: DataTypes.VIRTUAL, get() {
+    return null;
+  }},
   ...commontFields,
 }, { sequelize, tableName: 'roles', indexes: [{ unique: true, fields: ['tenantId', 'name'] }] });
 

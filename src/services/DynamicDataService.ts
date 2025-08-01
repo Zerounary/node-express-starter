@@ -15,7 +15,6 @@ class DynamicDataService {
   }
 
   private getSequelizeAttributes(columns: DynamicColumn[]) {
-    let facts = columns.filter(e => !e.is_virtual)
     const attributes: { [key: string]: any } = {
       id: {
         type: DataTypes.INTEGER,
@@ -24,7 +23,7 @@ class DynamicDataService {
       },
     };
 
-    for (const column of facts) {
+    for (const column of columns) {
       if (column.name === 'id') continue;
       if (column.dataType === 'RELATIONSHIP') {
         attributes[column.name] = { type: DataTypes.INTEGER, allowNull: true };
@@ -47,17 +46,15 @@ class DynamicDataService {
       case ColumnDataTypes.ID: return DataTypes.INTEGER;
       case ColumnDataTypes.DOCNO: return DataTypes.STRING;
       case ColumnDataTypes.DATENUMBER: return DataTypes.INTEGER;
-      case ColumnDataTypes.DATE: return DataTypes.DATE;
       case ColumnDataTypes.QTY: return DataTypes.INTEGER;
       case ColumnDataTypes.AMT: return DataTypes.DECIMAL;
-      case ColumnDataTypes.STRING: return DataTypes.STRING;
-      case ColumnDataTypes.TEXT: return DataTypes.TEXT;
-      case ColumnDataTypes.JSON: return DataTypes.JSON;
-      case ColumnDataTypes.INTEGER: return DataTypes.INTEGER;
-      case ColumnDataTypes.BOOLEAN: return DataTypes.BOOLEAN;
-      case ColumnDataTypes.DECIMAL: return DataTypes.DECIMAL;
-      case ColumnDataTypes.BIGINT: return DataTypes.BIGINT;
-      default: throw new Error(`Unsupported data type: ${dataType}`);
+      default: 
+        let defaultType = DataTypes[ColumnDataTypes[dataType.toUpperCase()]];
+        if (!defaultType) {
+          throw new Error(`Unsupported data type: ${dataType}`);
+        } else {
+          return defaultType;
+        }
     }
   }
 
