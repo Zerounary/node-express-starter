@@ -39,6 +39,7 @@ const autoFill = (column, index) => {
 };
 
 export const defaultColumns = (columns = []) => {
+  // 如果 column中没有字段维护了 ak dk  则自动用第一个字段做 ak dk
   return [
     {
       name: "id",
@@ -210,6 +211,8 @@ export const systemTables = [
         description: "数据库名称",
         relatedToTableId: undefined,
         enumValues: undefined,
+        ak: true,
+        dk: true,
         ui: {
           mask: "1111111111",
           width: 200,
@@ -278,7 +281,6 @@ export const systemTables = [
         dataType: ColumnDataTypes.JSON,
         required: true,
         description: "界面配置",
-        
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: undefined,
@@ -306,6 +308,8 @@ export const systemTables = [
         description: "用户名",
         relatedToTableId: undefined,
         enumValues: undefined,
+        ak: true,
+        dk: true,
         ui: {
           mask: "1111111111",
           width: 200,
@@ -335,6 +339,8 @@ export const systemTables = [
         description: "名称",
         relatedToTableId: undefined,
         enumValues: undefined,
+        ak: true,
+        dk: true,
         ui: {
           mask: "1111111111",
           width: 200,

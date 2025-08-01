@@ -36,6 +36,7 @@ export default class DynamicController {
           if (relatedTableDef) {
             const relatedTableName = relatedTableDef.alias_name || relatedTableDef.name;
             const relatedModel = await DynamicDataService.getModelForTable(relatedTableName, tenantId);
+            const relatedTableConfig = await getTableConfig(relatedTableName);
             
             // 收集所有需要查询的外键ID
             const foreignKeyIds = result
@@ -44,7 +45,7 @@ export default class DynamicController {
             
             if (foreignKeyIds.length > 0) {
               // 批量查询关联数据
-              const dk = columns.find(col => col.dk === true);
+              const dk = relatedTableConfig.columns.find(col => col.dk === true);
               const attributes: any[] = ['id'];
               if (dk && dk !== 'id') {
                 attributes.push([dk.fieldName, 'name']);

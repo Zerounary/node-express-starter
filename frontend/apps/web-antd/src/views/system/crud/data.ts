@@ -50,6 +50,11 @@ const mapToListSchemaColumn = (col) => {
 };
 
 const mapToGridColumn = (col) => ({
+  cellRender: {
+    name: 'CellText', props: {
+      schema: col,
+    }
+  },
   ...col,
   field: col.fieldName,
   title: col.label,

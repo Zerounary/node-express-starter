@@ -13,6 +13,7 @@ import { Button, Image, Popconfirm, Switch, Tag } from 'ant-design-vue';
 import { $t } from '#/locales';
 
 import { useVbenForm } from './form';
+import Text from './component/Text.vue';
 
 setupVbenVxeTable({
   configVxeTable: (vxeUI) => {
@@ -52,6 +53,15 @@ setupVbenVxeTable({
       if (key.startsWith('Cell')) {
         vxeUI.renderer.delete(key);
       }
+    });
+
+    // 表格配置项可以用 cellRender: { name: 'CellText' },
+    vxeUI.renderer.add('CellText', {
+      renderTableDefault(_renderOpts, params) {
+        const { props } = _renderOpts;
+        const { column, row } = params;
+        return h(Text, { ...props, row, modelValue: row[column.field] });
+      },
     });
 
     // 表格配置项可以用 cellRender: { name: 'CellImage' },
