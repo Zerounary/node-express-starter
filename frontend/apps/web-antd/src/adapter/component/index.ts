@@ -172,6 +172,7 @@ async function initComponentAdapter() {
     ),
     FkPicker,
     Text,
+    PermissionPicker,
     AutoComplete,
     Checkbox,
     CheckboxGroup,

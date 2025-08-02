@@ -3,7 +3,7 @@ import { requestClient } from '#/api/request';
 /**
  * 关键字搜索
  */
-async function getKeywordList(table: string, params) {
+async function getKeywordList(table: string, params = {}) {
   return requestClient.get<Array<any>>(`/data/${table}/search`, {
     params,
   });
@@ -12,7 +12,7 @@ async function getKeywordList(table: string, params) {
 /**
  * 获取分页列表
  */
-async function getPage(table: string, params) {
+async function getPage(table: string, params = {}) {
   return requestClient.get<Array<any>>(`/data/${table}/page`, {
     params,
   });
@@ -21,7 +21,7 @@ async function getPage(table: string, params) {
 /**
  * 获取列表
  */
-async function getList(table: string, params) {
+async function getList(table: string, params = {}) {
   return requestClient.get<Array<any>>(`/data/${table}/list`, {
     params,
   });
