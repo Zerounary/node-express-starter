@@ -52,4 +52,15 @@ async function deleteRole(id: string) {
   return requestClient.delete(`/system/role/${id}`);
 }
 
-export { createRole, deleteRole, getRoleList, updateRole };
+/**
+ * 为角色分配权限
+ * @param data - 请求数据
+ * @param data.roleId - 角色ID
+ * @param data.permissions - 权限字符串数组
+ */
+function assignPermission(data: { roleId: number | string; permissions: string[] }) {
+  // 假设 api 对象有一个 post 方法可以发送请求
+  return requestClient.post('/roles/assign-permission', data);
+}
+
+export { createRole, deleteRole, getRoleList, updateRole, assignPermission };

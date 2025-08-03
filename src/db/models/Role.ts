@@ -1,4 +1,4 @@
-import { Model, DataTypes, BelongsToManyAddAssociationMixin, BelongsToManyGetAssociationsMixin } from 'sequelize';
+import { Model, DataTypes, BelongsToManyAddAssociationMixin, BelongsToManyGetAssociationsMixin, BelongsToManySetAssociationsMixin } from 'sequelize';
 import sequelize from '../sequelize';
 import Tenant from './Tenant';
 import User from './User';
@@ -11,6 +11,7 @@ class Role extends Model {
   public description!: string;
   public addPermission!: BelongsToManyAddAssociationMixin<Permission, number>;
   public getPermissions!: BelongsToManyGetAssociationsMixin<Permission>;
+  public setPermissions!: BelongsToManySetAssociationsMixin<Permission, number>;
   public Permissions?: Permission[];
 }
 

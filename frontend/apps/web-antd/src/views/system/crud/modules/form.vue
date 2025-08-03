@@ -21,7 +21,7 @@ const emits = defineEmits(['success']);
 const formData = ref<SystemTableApi.SystemTable>();
 
 const [Form, formApi] = useVbenForm({
-  schema: useFormCreateSchema(props.table),
+  schema: [],
   showDefaultActions: false,
 });
 
@@ -50,13 +50,13 @@ const [Drawer, drawerApi] = useVbenDrawer({
         formData.value = data;
         id.value = data.id;
         formApi.setState({
-          schema: useFormUpdateSchema(props.table),
+          schema: useFormUpdateSchema(props.table, {formApi, data}),
         })
         formApi.setValues(data);
       } else {
         id.value = undefined;
         formApi.setState({
-          schema: useFormCreateSchema(props.table),
+          schema: useFormCreateSchema(props.table, {formApi, data}),
         })
       }
     }

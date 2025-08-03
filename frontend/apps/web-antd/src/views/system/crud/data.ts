@@ -11,23 +11,40 @@ const isUpdateEditable = (col) => col.mask?.charAt(3) == '1';
 const isListVisable = (col) => col.mask?.charAt(4) == '1';
 const isFilterVisable = (col) => col.mask?.charAt(5) == '1';
 
-export function useFormCreateSchema(table): VbenFormSchema[] {
+export function useFormCreateSchema(table, { formApi, data}): VbenFormSchema[] {
   const dynColumns = (table.columns || [])
     .filter(isCreateVisable)
-    .map(mapToCreateSchemaColumn);
+    .map(mapToCreateSchemaColumn)
+    .map(enhanceComponentProps(formApi, data));
   console.log('🚀 ~ useFormCreateSchema ~ dynColumns:', dynColumns);
   return [...dynColumns];
 }
 
-export function useFormUpdateSchema(table): VbenFormSchema[] {
+export function useFormUpdateSchema(table, { formApi, data}): VbenFormSchema[] {
   const dynColumns = (table.columns || [])
     .filter(isUpdateVisable)
-    .map(mapToUpdateSchemaColumn);
+    .map(mapToUpdateSchemaColumn)
+    .map(enhanceComponentProps(formApi, data));
   console.log('🚀 ~ useFormUpdateSchema ~ dynColumns:', dynColumns);
   return [...dynColumns];
 }
 
+const enhanceComponentProps = (formApi, data) => {
+  const fn = (col) => {
+    return {
+      ...col,
+      componentProps: {
+        ...col.componentProps,
+        formApi,
+        row: data,
+      },
+    };
+  };
+    return fn;
+  };
+
 const mapToUpdateSchemaColumn = (col) => {
+  console.log("🚀 ~ mapToUpdateSchemaColumn ~ col:", col)
   let component = isUpdateEditable(col) ? col.component : 'Text';
   return {
     ...col,
