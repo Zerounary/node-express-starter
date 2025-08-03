@@ -20,6 +20,19 @@ const fallbackNotFoundRoute: RouteRecordRaw = {
   path: '/:path(.*)*',
 };
 
+/** 全局404页面 */
+const fallbackForbidden: RouteRecordRaw = {
+  component: () => import('#/views/_core/fallback/forbidden.vue'),
+  meta: {
+    hideInBreadcrumb: true,
+    hideInMenu: true,
+    hideInTab: true,
+    title: '403',
+  },
+  name: 'FallbackForbidden',
+  path: '/:path(.*)*',
+};
+
 /** 基本路由，这些路由是必须存在的 */
 const coreRoutes: RouteRecordRaw[] = [
   /**
@@ -94,4 +107,4 @@ const coreRoutes: RouteRecordRaw[] = [
   },
 ];
 
-export { coreRoutes, fallbackNotFoundRoute };
+export { coreRoutes, fallbackNotFoundRoute, fallbackForbidden };
