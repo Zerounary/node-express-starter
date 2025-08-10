@@ -40,8 +40,10 @@ Permission.init({
 }, { sequelize, tableName: 'permissions'  });
 
 const UserRoles = sequelize.define('user_roles', {
-  userId: { type: DataTypes.INTEGER, primaryKey: true },
-  roleId: { type: DataTypes.INTEGER, primaryKey: true },
+  id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+  tenantId: { type: DataTypes.INTEGER, allowNull: true },
+  userId: { type: DataTypes.INTEGER, primaryKey: false },
+  roleId: { type: DataTypes.INTEGER, primaryKey: false },
   ...commontFields,
 });
 

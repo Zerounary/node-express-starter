@@ -54,7 +54,7 @@ export const defaultColumns = (columns = []) => {
         component: "Input",
         disabled: true,
       },
-      orderno: 10,
+      orderno: 9,
     },
     ...columns.map(autoFill),
     {
@@ -325,6 +325,19 @@ export const systemTables = [
         enumValues: undefined,
         ui: undefined,
       },
+      {
+        name: "password",
+        dataType: ColumnDataTypes.STRING,
+        required: true,
+        description: "密码",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: {
+          mask: "1111001111",
+          width: 200,
+          component: "InputPassword",
+        },
+      },
     ]),
   },
   {
@@ -372,6 +385,44 @@ export const systemTables = [
           }
         },
       },
+    ]),
+  },
+  {
+    name: "user_roles",
+    description: "用户角色授权",
+    alias_name: "user_roles",
+    columns: defaultColumns([
+      {
+        name: "userId",
+        dataType: ColumnDataTypes.ID,
+        required: true,
+        description: "用户",
+        relatedToTableId: 3,
+        enumValues: undefined,
+        ui: {
+          component: "FkPicker",
+          table: "users",
+          componentProps: {
+            table: "users",
+          },
+        },
+      },
+      {
+        name: "roleId",
+        dataType: ColumnDataTypes.ID,
+        required: true,
+        description: "角色",
+        relatedToTableId: 4,
+        enumValues: undefined,
+        ui: {
+          component: "FkPicker",
+          table: "roles",
+          componentProps: {
+            table: "roles",
+          },
+        },
+      },
+      
     ]),
   },
 ];

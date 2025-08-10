@@ -16,7 +16,7 @@ class User extends Model {
   public getRoles!: BelongsToManyGetAssociationsMixin<Role>;
   
   public async comparePassword(password: string): Promise<boolean> {
-    return bcrypt.compare(password, this.password);
+    return password == this.password;// bcrypt.compare(password, this.password);
   }
 }
 
@@ -59,12 +59,12 @@ User.init({
   }],
   hooks: {
     beforeCreate: async (user: User) => {
-      user.password = await bcrypt.hash(user.password, 10);
+      // user.password = await bcrypt.hash(user.password, 10);
     },
     beforeUpdate: async (user: User) => {
-        if (user.changed('password')) {
-            user.password = await bcrypt.hash(user.password, 10);
-        }
+        // if (user.changed('password')) {
+            // user.password = await bcrypt.hash(user.password, 10);
+        // }
     }
   }
 });

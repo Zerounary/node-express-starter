@@ -8,5 +8,8 @@
   },
   "permission": {
     "name": "权限"
+  },
+  "user_roles": {
+    "name": "角色授权"
   }
 }

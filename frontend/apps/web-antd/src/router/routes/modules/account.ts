@@ -33,6 +33,16 @@ const routes: RouteRecordRaw[] = [
         path: '/account/roles',
         component: () => import('#/views/system/crud/index.vue'),
       },
+      {
+        meta: {
+          title: $t('account.user_roles.name'),
+          dyn: true,
+          table: 'user_roles',
+        },
+        name: 'AccountUserRoles',
+        path: '/account/user_roles',
+        component: () => import('#/views/system/crud/index.vue'),
+      },
     ],
   }
 ];
