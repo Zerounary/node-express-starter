@@ -1,12 +1,14 @@
-import { Model, DataTypes, HasManyGetAssociationsMixin } from 'sequelize';
+import { Model, DataTypes, HasManyGetAssociationsMixin, BelongsToGetAssociationMixin } from 'sequelize';
 import sequelize from '../sequelize';
 import type DynamicColumn from './DynamicColumn';
 import Tenant from './Tenant';
+import TableCategory from './TableCategory';
 import { commontFields } from './common';
 
 class DynamicTable extends Model {
   public id!: number;
   public tenantId!: number;
+  public categoryId!: number | null;
   public name!: string;
   public alias_name!: string;
   public description!: string | null;
@@ -15,6 +17,8 @@ class DynamicTable extends Model {
 
   public getColumns!: HasManyGetAssociationsMixin<DynamicColumn>;
   public columns?: DynamicColumn[];
+  public getCategory!: BelongsToGetAssociationMixin<TableCategory>;
+  public category?: TableCategory;
 }
 
 DynamicTable.init({
@@ -30,6 +34,15 @@ DynamicTable.init({
         model: Tenant,
         key: 'id'
     }
+  },
+  categoryId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+        model: TableCategory,
+        key: 'id'
+    },
+    comment: '表类别ID，关联到表分类表'
   },
   name: {
     type: new DataTypes.STRING(128),

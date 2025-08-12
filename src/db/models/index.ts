@@ -1,20 +1,15 @@
 import DynamicTable from './DynamicTable';
+import TableCategory from './TableCategory';
+import Tenant from './Tenant';
 import DynamicColumn from './DynamicColumn';
+import setupAssociations from './associations';
 
-// 设置关联关系
-DynamicTable.hasMany(DynamicColumn, {
-  sourceKey: 'id',
-  foreignKey: 'tableId',
-  as: 'columns',
-});
+// 设置模型之间的关联关系
+setupAssociations();
 
-DynamicColumn.belongsTo(DynamicTable, {
-  foreignKey: 'tableId',
-  as: 'table',
-});
-
-// 重新导出模型
 export {
   DynamicTable,
   DynamicColumn,
-}; 
+  TableCategory,
+  Tenant,
+};
