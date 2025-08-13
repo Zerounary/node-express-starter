@@ -1,3 +1,4 @@
+import DynamicColumn from './DynamicColumn';
 import DynamicTable from './DynamicTable';
 import TableCategory from './TableCategory';
 
@@ -21,6 +22,18 @@ TableCategory.belongsTo(TableCategory, {
 TableCategory.hasMany(TableCategory, {
   foreignKey: 'parentId',
   as: 'children'
+});
+
+// 设置关联关系
+DynamicTable.hasMany(DynamicColumn, {
+  sourceKey: 'id',
+  foreignKey: 'tableId',
+  as: 'columns',
+});
+
+DynamicColumn.belongsTo(DynamicTable, {
+  foreignKey: 'tableId',
+  as: 'table',
 });
 
 export default function setupAssociations() {
