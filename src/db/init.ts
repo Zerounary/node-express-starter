@@ -1,5 +1,5 @@
 import { ColumnDataTypes } from "@/utils";
-import { DynamicColumn, DynamicTable } from "./models";
+import { DynamicColumn, DynamicTable, TableCategory } from "./models";
 import { Permission, Role } from "./models/Role";
 import Tenant from "./models/Tenant";
 import User from "./models/User";
@@ -149,12 +149,37 @@ export const defaultColumns = (columns = []) => {
   ];
 };
 
+export const tableCategories = [
+  {
+    name: "用户管理",
+    description: "",
+  },
+  {
+    name: "系统管理",
+    description: "",
+  },
+]
+
+export const initTableCategories = async () => {
+  for (const category of tableCategories) {
+    const [cat, created] = await TableCategory.findOrCreate({
+      where: { name: category.name },
+      defaults: {
+        tenantId: 1,
+        description: category.description,
+        level: 1,
+      }
+    });
+  }
+}
+
 // 系统表字段配置
 export const systemTables = [
   {
     name: "dynamic_tables",
     description: "表",
     alias_name: "table",
+    categoryId: 2,
     columns: defaultColumns([
       {
         name: "name",
@@ -197,12 +222,28 @@ export const systemTables = [
           component: "Input",
         },
       },
+      {
+        name: "categoryId",
+        dataType: ColumnDataTypes.ID,
+        required: true,
+        description: "表类别",
+        relatedToTableId: 6,
+        enumValues: undefined,
+        ui: {
+          component: "FkPicker",
+          table: "table_categories",
+          componentProps: {
+            table: "table_categories",
+          },
+        },
+      },
     ]),
   },
   {
     name: "dynamic_columns",
     description: "字段",
     alias_name: "column",
+    categoryId: 2,
     columns: defaultColumns([
       {
         name: "name",
@@ -300,6 +341,7 @@ export const systemTables = [
     name: "users",
     description: "用户",
     alias_name: "users",
+    categoryId: 1,
     columns: defaultColumns([
       {
         name: "username",
@@ -344,6 +386,7 @@ export const systemTables = [
     name: "roles",
     description: "角色",
     alias_name: "roles",
+    categoryId: 1,
     columns: defaultColumns([
       {
         name: "name",
@@ -391,6 +434,7 @@ export const systemTables = [
     name: "user_roles",
     description: "用户角色授权",
     alias_name: "user_roles",
+    categoryId: 1,
     columns: defaultColumns([
       {
         name: "userId",
@@ -425,6 +469,87 @@ export const systemTables = [
       
     ]),
   },
+  {
+    name: 'table_categories',
+    description: '表类别',
+    alias_name: 'table_categories',
+    categoryId: 2,
+    columns: defaultColumns([
+      {
+        name: "name",
+        dataType: ColumnDataTypes.STRING,
+        required: true,
+        description: "名称",
+        ak: true,
+        dk: true,
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: {
+          mask: "1111111111",
+          width: 200,
+          component: "Input",
+        },
+      },
+      {
+        name: "description",
+        dataType: ColumnDataTypes.STRING,
+        required: true,
+        description: "描述",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: {
+          mask: "1111111111",
+          width: 200,
+          component: "Input",
+        },
+      },
+      {
+        name: "parentId",
+        dataType: ColumnDataTypes.ID,
+        required: true,
+        description: "父类别",
+        relatedToTableId: 6,
+        enumValues: undefined,
+        ui: {
+          component: "FkPicker",
+          table: "table_categories",
+          componentProps: {
+            table: "table_categories",
+          },
+        },
+      },
+      {
+        name: "level",
+        dataType: ColumnDataTypes.STRING,
+        required: true,
+        description: "层级",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ak: true,
+        dk: true,
+        ui: {
+          mask: "1111111111",
+          width: 200,
+          component: "Input",
+        },
+      },
+      {
+        name: "path",
+        dataType: ColumnDataTypes.STRING,
+        required: true,
+        description: "路径",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ak: true,
+        dk: true,
+        ui: {
+          mask: "1111111111",
+          width: 200,
+          component: "Input",
+        },
+      },
+    ]),
+  }
 ];
 
 export const initSystemData = async () => {
@@ -438,6 +563,7 @@ export const initSystemData = async () => {
         name: table.name,
         alias_name: table.alias_name || table.name,
         description: table.description,
+        categoryId: table.categoryId || null,
         createdAt: new Date(),
         updatedAt: new Date(),
       });

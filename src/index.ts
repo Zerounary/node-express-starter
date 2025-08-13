@@ -4,6 +4,7 @@ import { initAssets } from "./assets";
 import { RouteLoader } from "./utils/routeLoader";
 import { start } from "./server";
 import DynamicColumn from "./db/models/DynamicColumn";
+import { TableCategory } from "./db/models";
 import DynamicTable from "./db/models/DynamicTable";
 import SchemaService from "./services/SchemaService";
 import { logError } from "./logger";
@@ -15,7 +16,7 @@ import { authMiddleware } from "./router/auth";
 import { logMiddleware } from "./router/middlewares/logMiddleware";
 import { Permission, Role, RolePermissions, UserRoles } from "./db/models/Role";
 import { Workflow, WorkflowStage, WorkflowStageApprover, WorkflowInstance, WorkflowInstanceLog } from './db/models/Workflow';
-import { initAdminUser, initSystemData } from "./db/init";
+import { initAdminUser, initSystemData, initTableCategories } from "./db/init";
 
 
 async function bootstrap() {
@@ -47,6 +48,7 @@ async function bootstrap() {
         await Tenant.sync({ alter: true });
         await User.sync({ alter: true });
         await ActionLog.sync({ alter: true });
+        await TableCategory.sync({ alter: true });
         await DynamicTable.sync({ alter: true });
         await DynamicColumn.sync({ alter: true });
         await Report.sync({ alter: true });
@@ -64,6 +66,8 @@ async function bootstrap() {
 
         // 初始化系统管理用户
         await initAdminUser();
+        // 初始化表类别
+        await initTableCategories();
         // 初始化系统结构数据
         await initSystemData();
 
