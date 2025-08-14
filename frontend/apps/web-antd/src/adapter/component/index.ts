@@ -24,6 +24,8 @@ import FkPicker from './FkPicker.vue';
 import PermissionPicker from './PermissionPicker.vue'
 import Text from './Text.vue'
 import DatePicker from './DatePicker.vue'
+import UIInput from './UIInput.vue'
+import MetaInput from './MetaInput.vue'
 
 const AutoComplete = defineAsyncComponent(
   () => import('ant-design-vue/es/auto-complete'),
@@ -172,6 +174,8 @@ async function initComponentAdapter() {
     ),
     FkPicker,
     Text,
+    MetaInput,
+    UIInput,
     PermissionPicker,
     AutoComplete,
     Checkbox,

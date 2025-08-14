@@ -383,7 +383,11 @@ export const systemTables = [
         description: "界面配置",
         relatedToTableId: undefined,
         enumValues: undefined,
-        ui: undefined,
+        ui: {
+          component: "UIInput",
+          componentProps: {
+          },
+        },
       },
       {
         name: "orderno",
@@ -584,7 +588,11 @@ export const systemTables = [
         description: "界面配置",
         relatedToTableId: undefined,
         enumValues: undefined,
-        ui: undefined,
+        ui: {
+          component: "MetaInput",
+          componentProps: {
+          },
+        },
       },
       {
         name: "path",
