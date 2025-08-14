@@ -38,6 +38,13 @@ const autoFill = (column, index) => {
   };
 };
 
+const idOf = (arr = [], name = '', key = 'name') => {
+  const idx = arr.findIndex((i) => i[key] === name);
+  if (idx === -1) return null;
+  return idx + 1;
+}
+
+
 export const defaultColumns = (columns = []) => {
   // 如果 column中没有字段维护了 ak dk  则自动用第一个字段做 ak dk
   return [
@@ -62,7 +69,7 @@ export const defaultColumns = (columns = []) => {
       dataType: ColumnDataTypes.ID,
       required: true,
       description: "创建人",
-      relatedToTableId: 3,
+      relatedToTableId: "users",
       enumValues: undefined,
       ui: {
         mask: "0010101001",
@@ -95,7 +102,7 @@ export const defaultColumns = (columns = []) => {
       dataType: ColumnDataTypes.ID,
       required: true,
       description: "修改人",
-      relatedToTableId: 3,
+      relatedToTableId: "users",
       enumValues: undefined,
       ui: {
         mask: "0010101001",
@@ -151,12 +158,26 @@ export const defaultColumns = (columns = []) => {
 
 export const tableCategories = [
   {
+    name: "概览",
+    description: "",
+  },
+  {
     name: "用户管理",
     description: "",
   },
   {
     name: "系统管理",
     description: "",
+  },
+  {
+    name: "分析页",
+    description: "",
+    parentId: "概览"
+  },
+  {
+    name: "工作台",
+    description: "",
+    parentId: "概览"
   },
 ]
 
@@ -167,7 +188,7 @@ export const initTableCategories = async () => {
       defaults: {
         tenantId: 1,
         description: category.description,
-        level: 1,
+        parentId: categoryIdOf(category.parentId) || null,
       }
     });
   }
@@ -179,7 +200,7 @@ export const systemTables = [
     name: "dynamic_tables",
     description: "表",
     alias_name: "table",
-    categoryId: 2,
+    categoryId: categoryIdOf("系统管理"),
     columns: defaultColumns([
       {
         name: "name",
@@ -227,7 +248,7 @@ export const systemTables = [
         dataType: ColumnDataTypes.ID,
         required: true,
         description: "表类别",
-        relatedToTableId: 6,
+        relatedToTableId: "table_categories",
         enumValues: undefined,
         ui: {
           component: "FkPicker",
@@ -243,7 +264,7 @@ export const systemTables = [
     name: "dynamic_columns",
     description: "字段",
     alias_name: "column",
-    categoryId: 2,
+    categoryId: categoryIdOf("系统管理"),
     columns: defaultColumns([
       {
         name: "name",
@@ -283,7 +304,7 @@ export const systemTables = [
         dataType: ColumnDataTypes.ID,
         required: true,
         description: "所属表",
-        relatedToTableId: 1,
+        relatedToTableId: "dynamic_tables",
         enumValues: undefined,
         ui: {
           component: "FkPicker",
@@ -298,7 +319,7 @@ export const systemTables = [
         dataType: ColumnDataTypes.ID,
         required: true,
         description: "外键表",
-        relatedToTableId: 1,
+        relatedToTableId: "dynamic_tables",
         enumValues: undefined,
         ui: {
           component: "FkPicker",
@@ -341,7 +362,7 @@ export const systemTables = [
     name: "users",
     description: "用户",
     alias_name: "users",
-    categoryId: 1,
+    categoryId: categoryIdOf("用户管理"),
     columns: defaultColumns([
       {
         name: "username",
@@ -386,7 +407,7 @@ export const systemTables = [
     name: "roles",
     description: "角色",
     alias_name: "roles",
-    categoryId: 1,
+    categoryId: categoryIdOf("用户管理"),
     columns: defaultColumns([
       {
         name: "name",
@@ -434,14 +455,14 @@ export const systemTables = [
     name: "user_roles",
     description: "用户角色授权",
     alias_name: "user_roles",
-    categoryId: 1,
+    categoryId: categoryIdOf("用户管理"),
     columns: defaultColumns([
       {
         name: "userId",
         dataType: ColumnDataTypes.ID,
         required: true,
         description: "用户",
-        relatedToTableId: 3,
+        relatedToTableId: "users",
         enumValues: undefined,
         ui: {
           component: "FkPicker",
@@ -456,7 +477,7 @@ export const systemTables = [
         dataType: ColumnDataTypes.ID,
         required: true,
         description: "角色",
-        relatedToTableId: 4,
+        relatedToTableId: "roles",
         enumValues: undefined,
         ui: {
           component: "FkPicker",
@@ -473,7 +494,7 @@ export const systemTables = [
     name: 'table_categories',
     description: '表类别',
     alias_name: 'table_categories',
-    categoryId: 2,
+    categoryId: categoryIdOf("系统管理"),
     columns: defaultColumns([
       {
         name: "name",
@@ -508,7 +529,7 @@ export const systemTables = [
         dataType: ColumnDataTypes.ID,
         required: true,
         description: "父类别",
-        relatedToTableId: 6,
+        relatedToTableId: "table_categories",
         enumValues: undefined,
         ui: {
           component: "FkPicker",
@@ -517,6 +538,15 @@ export const systemTables = [
             table: "table_categories",
           },
         },
+      },
+      {
+        name: "meta",
+        dataType: ColumnDataTypes.JSON,
+        required: true,
+        description: "界面配置",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: undefined,
       },
       {
         name: "level",
@@ -538,6 +568,36 @@ export const systemTables = [
         dataType: ColumnDataTypes.STRING,
         required: true,
         description: "路径",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ak: true,
+        dk: true,
+        ui: {
+          mask: "1111111111",
+          width: 200,
+          component: "Input",
+        },
+      },
+      {
+        name: "url",
+        dataType: ColumnDataTypes.STRING,
+        required: true,
+        description: "路由",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ak: true,
+        dk: true,
+        ui: {
+          mask: "1111111111",
+          width: 200,
+          component: "Input",
+        },
+      },
+      {
+        name: "redirect",
+        dataType: ColumnDataTypes.STRING,
+        required: true,
+        description: "重定向",
         relatedToTableId: undefined,
         enumValues: undefined,
         ak: true,
@@ -579,7 +639,9 @@ export const initSystemData = async () => {
     const exists = await DynamicTable.findOne({ where: { name: table.name } });
     let tableId = exists?.id;
     // 初始化列
-    for (const column of table.columns) {
+    for (let column of table.columns) {
+      // 转成ID
+      column.relatedToTableId = tableIdOf(column.relatedToTableId) || null;
       const existsColumn = await DynamicColumn.findOne({
         where: { name: column.name, tableId },
       });
@@ -638,3 +700,11 @@ export const initAdminUser = async () => {
   // 关联角色
   await user.addRole(adminRole);
 };
+
+function tableIdOf (name = '') {
+  return idOf(systemTables, name, 'name');
+}
+
+function categoryIdOf (name = '') {
+  return idOf(tableCategories, name, 'name');
+}

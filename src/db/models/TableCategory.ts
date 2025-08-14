@@ -44,17 +44,26 @@ TableCategory.init({
       key: 'id'
     }
   },
-  level: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 1,
-    comment: '分类层级，1为顶级分类，2为子系统等二级分类'
+  meta: {
+    type: DataTypes.JSON,
+    allowNull: true,
   },
   path: {
     type: new DataTypes.STRING(255),
-    allowNull: false,
+    allowNull: true,
     defaultValue: '',
-    comment: '分类路径，格式为1,2,3表示分类的层级路径'
+  },
+  url: {
+    type: new DataTypes.STRING(255),
+    allowNull: true,
+  },
+  redirect: {
+    type: new DataTypes.STRING(255),
+    allowNull: true,
+  },
+  orderno: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
   },
   ...commontFields,
 }, {
