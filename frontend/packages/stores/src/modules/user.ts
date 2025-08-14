@@ -1,4 +1,5 @@
 import { acceptHMRUpdate, defineStore } from 'pinia';
+import { useSystem } from '../../../../apps/web-antd/src/store/system';
 
 interface BasicUserInfo {
   [key: string]: any;
@@ -14,6 +15,10 @@ interface BasicUserInfo {
    * 用户角色
    */
   roles?: string[];
+  /**
+   * 菜单
+   */
+  menus?: any[];
   /**
    * 用户id
    */
@@ -45,6 +50,9 @@ export const useUserStore = defineStore('core-user', {
       this.userInfo = userInfo;
       // 设置角色信息
       const roles = userInfo?.roles ?? [];
+      const menus = userInfo?.menus ?? [];
+      const system = useSystem()
+      system.menus = menus;
       this.setUserRoles(roles);
     },
     setUserRoles(roles: string[]) {

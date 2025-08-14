@@ -4,6 +4,7 @@ import User from "../db/models/User";
 import AuthService from "../services/AuthService";
 import { z } from 'zod';
 import { logError } from "../logger";
+import { getMenus } from "@/hooks/tableCategories";
 
 const userSchema = z.object({
   username: z.string().min(3),
@@ -23,7 +24,14 @@ export default class UserController {
   async getUserInfo(req, res) {
     const { id: userId } = req.user;
     const user = await User.findByPk(userId);
-    return ok(user);
+    const menus = await getMenus();
+    return ok({
+      id: user.id,
+      username: user.username,
+      tenantId: user.tenantId,
+      realName: user.realName,
+      menus,
+    });
   }
 
   @Post("/register")

@@ -8,7 +8,6 @@ class TableCategory extends Model {
   public name!: string;
   public description!: string | null;
   public parentId!: number | null;
-  public level!: number;
   public path!: string;
   public created!: string;
   public updated!: string;
@@ -27,6 +26,12 @@ TableCategory.init({
         model: Tenant,
         key: 'id'
     }
+  },
+  type: {
+    type: new DataTypes.ENUM('catelog', 'menu', 'embedded', 'link', 'button'),
+    allowNull: false,
+    defaultValue: 'menu',
+    comment: '菜单类型，catelog: 目录, menu: 菜单, embedded: 嵌入式页面, link: 外链, button: 按钮',
   },
   name: {
     type: new DataTypes.STRING(128),
@@ -47,6 +52,7 @@ TableCategory.init({
   meta: {
     type: DataTypes.JSON,
     allowNull: true,
+    defaultValue: {}
   },
   path: {
     type: new DataTypes.STRING(255),

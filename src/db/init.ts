@@ -158,31 +158,64 @@ export const defaultColumns = (columns = []) => {
 
 export const tableCategories = [
   {
-    name: "概览",
-    description: "",
-  },
-  {
     name: "用户管理",
     description: "",
+    type: 'catelog',
+    path: '/users'
+  },
+  {
+    name: "用户",
+    description: "",
+    parentId: "用户管理",
+    type: 'menu',
+    path: '/crud/users'
+  },
+  {
+    name: "角色",
+    description: "",
+    parentId: "用户管理",
+    type: 'menu',
+    path: '/crud/roles'
+  },
+  {
+    name: "用户授权",
+    description: "",
+    parentId: "用户管理",
+    type: 'menu',
+    path: '/crud/user_roles'
   },
   {
     name: "系统管理",
     description: "",
+    type: 'catelog',
+    path: '/system'
   },
   {
-    name: "分析页",
+    name: "表",
     description: "",
-    parentId: "概览"
+    parentId: "系统管理",
+    type: 'menu',
+    path: '/crud/table'
   },
   {
-    name: "工作台",
+    name: "字段",
     description: "",
-    parentId: "概览"
+    parentId: "系统管理",
+    type: 'menu',
+    path: '/crud/column'
+  },
+  {
+    name: "表类别",
+    description: "",
+    parentId: "系统管理",
+    type: 'menu',
+    path: '/crud/table_categories'
   },
 ]
 
 export const initTableCategories = async () => {
-  for (const category of tableCategories) {
+  for (let category of tableCategories) {
+    category.parentId = categoryIdOf(category.parentId)?.toLocaleString() || null;
     const [cat, created] = await TableCategory.findOrCreate({
       where: { name: category.name },
       defaults: {
@@ -191,6 +224,11 @@ export const initTableCategories = async () => {
         parentId: categoryIdOf(category.parentId) || null,
       }
     });
+    if(created) {
+      await TableCategory.update(category, {
+        where: { id: cat.id },
+      });
+    }
   }
 }
 
@@ -547,21 +585,6 @@ export const systemTables = [
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: undefined,
-      },
-      {
-        name: "level",
-        dataType: ColumnDataTypes.STRING,
-        required: true,
-        description: "层级",
-        relatedToTableId: undefined,
-        enumValues: undefined,
-        ak: true,
-        dk: true,
-        ui: {
-          mask: "1111111111",
-          width: 200,
-          component: "Input",
-        },
       },
       {
         name: "path",
