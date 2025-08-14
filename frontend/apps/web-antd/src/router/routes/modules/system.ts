@@ -45,7 +45,7 @@ const routes: RouteRecordRaw[] = [
   //   ],
   // },
   {
-    meta: { title: '...', hideInMenu: true, dyn: true },
+    meta: { title: '', hideInMenu: true, dyn: true },
     name: 'Crud',
     path: 'crud/:table',
     component: () => import('#/views/system/crud/index.vue'),

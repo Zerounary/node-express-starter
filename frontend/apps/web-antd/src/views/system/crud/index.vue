@@ -34,6 +34,7 @@ console.log('🚀 ~ route.params:', route.params)
 const table  = route.params
 
 setTabTitle(table?.name);
+document.title = table?.name
 
 const [FormDrawer, formDrawerApi] = useVbenDrawer({
   connectedComponent: Form,
@@ -176,7 +177,7 @@ function onRefresh() {
       <template #toolbar-tools>
         <Button type="primary" @click="onCreate">
           <Plus class="size-5" />
-          {{ $t('ui.actionTitle.create', [$t('system.table.table')]) }}
+          {{ $t('ui.actionTitle.create', []) }}
         </Button>
       </template>
     </Grid>
