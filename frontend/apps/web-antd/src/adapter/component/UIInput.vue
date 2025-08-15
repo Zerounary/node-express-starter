@@ -1,13 +1,13 @@
 <template>
   <div class="ui-input">
-    <a-collapse accordion>
+    <a-collapse>
       <!-- General Settings -->
       <a-collapse-panel key="general" header="通用设置">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <a-form-item label="UI组件">
             <a-select v-model:value="model.component" style="width: 100%">
-              <a-select-option v-for="comp in componentTypes" :key="comp" :value="comp">
-                {{ comp }}
+              <a-select-option v-for="comp in componentTypes" :key="comp.value" :value="comp.value">
+                {{ comp.label }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -103,14 +103,14 @@ const model = defineModel<ColumnUI>({
 });
 
 const componentTypes = [
-  'Input',
-  'InputPassword',
-  'DatePicker',
-  'FkPicker',
-  'RadioGroup',
-  'UIInput',
-  'PermissionPicker',
-  'MetaInput'
+  { value: 'Input', label: '输入框' },
+  { value: 'InputPassword', label: '密码框' },
+  { value: 'DatePicker', label: '日期选择器' },
+  { value: 'FkPicker', label: '外键选择器' },
+  { value: 'RadioGroup', label: '单选按钮组' },
+  { value: 'UIInput', label: 'UI配置输入' },
+  { value: 'PermissionPicker', label: '权限选择器' },
+  { value: 'MetaInput', label: '元数据输入' }
 ];
 
 const filterOps = [
