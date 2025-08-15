@@ -115,12 +115,32 @@ export default class DynamicController {
       return where;
   }
 
+  private getParsedSorts(sorts: any): any[] {
+    if (!sorts || !Array.isArray(sorts)) {
+        return [];
+    }
+
+    const order = [];
+    for (const sort of sorts) {
+        if (typeof sort === 'object' && sort !== null) {
+            for (const field in sort) {
+                const direction = (sort[field] || '').toString().toUpperCase();
+                if (direction === 'ASC' || direction === 'DESC') {
+                    order.push([field, direction]);
+                }
+            }
+        }
+    }
+    return order;
+  }
+
   @Get("/list", [checkPermission('data:list::tableName')])
   async list(req, res) {
     try {
       const { tableName } = req.params;
-      const { ...filters } = req.query;
+      const { sorts, ...filters } = req.query;
       const where = await this.getParsedWhere(filters, req.user.tenantId);
+      const order = this.getParsedSorts(sorts);
       
       // 获取表配置
       const tableConfig = await getTableConfig(tableName);
@@ -131,7 +151,7 @@ export default class DynamicController {
       const Model = await DynamicDataService.getModelForTable(tableName, req.user.tenantId);
       
       // 查询主表数据
-      const data = await Model.findAll({ where });
+      const data = await Model.findAll({ where, order });
       const jsonData = data.map(item => item.toJSON());
       
       // 手动填充关联数据
@@ -148,8 +168,9 @@ export default class DynamicController {
   async find(req, res) {
     try {
       const { tableName } = req.params;
-      const { page = 1, pageSize = 10, ...filters } = req.query;
+      const { page = 1, pageSize = 10, sorts, ...filters } = req.query;
       const where = await this.getParsedWhere(filters, req.user.tenantId);
+      const order = this.getParsedSorts(sorts);
 
       // 获取表配置
       const tableConfig = await getTableConfig(tableName);
@@ -165,6 +186,7 @@ export default class DynamicController {
       // 查询主表数据
       const { count, rows } = await Model.findAndCountAll({
         where,
+        order,
         limit: nPageSize,
         offset: (nPage - 1) * nPageSize,
       });
