@@ -161,67 +161,27 @@ export const tableCategories = [
     name: "用户管理",
     description: "",
     type: 'catelog',
+    parentId: null,
     path: '/users'
-  },
-  {
-    name: "用户",
-    description: "",
-    parentId: "用户管理",
-    type: 'menu',
-    path: '/crud/users'
-  },
-  {
-    name: "角色",
-    description: "",
-    parentId: "用户管理",
-    type: 'menu',
-    path: '/crud/roles'
-  },
-  {
-    name: "用户授权",
-    description: "",
-    parentId: "用户管理",
-    type: 'menu',
-    path: '/crud/user_roles'
   },
   {
     name: "系统管理",
     description: "",
     type: 'catelog',
+    parentId: null,
     path: '/system'
-  },
-  {
-    name: "表",
-    description: "",
-    parentId: "系统管理",
-    type: 'menu',
-    path: '/crud/table'
-  },
-  {
-    name: "字段",
-    description: "",
-    parentId: "系统管理",
-    type: 'menu',
-    path: '/crud/column'
-  },
-  {
-    name: "表类别",
-    description: "",
-    parentId: "系统管理",
-    type: 'menu',
-    path: '/crud/table_categories'
   },
 ]
 
 export const initTableCategories = async () => {
   for (let category of tableCategories) {
-    category.parentId = categoryIdOf(category.parentId)?.toLocaleString() || null;
+    category.parentId = categoryIdOf(category?.parentId)?.toLocaleString() || null;
     const [cat, created] = await TableCategory.findOrCreate({
       where: { name: category.name },
       defaults: {
         tenantId: 1,
         description: category.description,
-        parentId: categoryIdOf(category.parentId) || null,
+        parentId: categoryIdOf(category?.parentId) || null,
       }
     });
     if(created) {

@@ -36,10 +36,25 @@ export async function getMenus() {
   let categories = await TableCategory.findAll();
   // categories 转成树形结构
   let list = categories.map(cat => cat.toJSON());
-  let tree = listToTree(list, 'parentId');
+  // TODO 自动按照表的分类ID来插入分类。 同时校验权限，如果没有权限就不展示菜单。
+  let tables = await DynamicTable.findAll({
+    where: {
+      isActive: true,
+    }
+  });
+  let mixins = tables.map(table => table.toJSON()).map(table=>{
+    return {
+      id: -table.id,
+      parentId: table.categoryId || null,
+      type: 'menu',
+      name: table.description,
+      path: `/crud/${table.alias_name}`,
+      meta: {}
+    }
+  })
 
+  let tree = listToTree([...list, ...mixins], 'parentId');
 
-  // let tables = await DynamicTable.findAll();
 
   return tree
 }
