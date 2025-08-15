@@ -172,7 +172,7 @@ function onRefresh() {
 </script>
 <template>
   <Page auto-content-height>
-    <FormDrawer :table="table" />
+    <FormDrawer class="w-full" :table="table" />
     <Grid :table-title="$t('system.table.list')">
       <template #toolbar-tools>
         <Button type="primary" @click="onCreate">

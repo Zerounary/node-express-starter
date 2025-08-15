@@ -1,13 +1,148 @@
 <template>
-  <div>
-    ui-input
+  <div class="ui-input">
+    <a-collapse accordion>
+      <!-- General Settings -->
+      <a-collapse-panel key="general" header="通用设置">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <a-form-item label="UI组件">
+            <a-select v-model:value="model.component" style="width: 100%">
+              <a-select-option v-for="comp in componentTypes" :key="comp" :value="comp">
+                {{ comp }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+          <a-form-item label="宽度">
+            <a-input-number v-model:value="model.width" :min="0" style="width: 100%" />
+          </a-form-item>
+          <a-form-item label="禁用">
+            <a-switch v-model:checked="model.disabled" />
+          </a-form-item>
+        </div>
+      </a-collapse-panel>
+
+      <!-- Data Settings -->
+      <a-collapse-panel key="data" header="数据设置">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <a-form-item label="过滤操作">
+            <a-select v-model:value="model.filterOp" style="width: 100%" allow-clear>
+              <a-select-option v-for="op in filterOps" :key="op" :value="op">
+                {{ op }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+        </div>
+      </a-collapse-panel>
+
+      <!-- Layout Settings -->
+      <a-collapse-panel key="layout" header="布局设置">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <a-form-item label="可见性掩码" class="md:col-span-2">
+            <a-input v-model:value="model.mask" />
+          </a-form-item>
+        </div>
+      </a-collapse-panel>
+
+      <!-- Advanced Settings -->
+      <a-collapse-panel key="advanced" header="高级设置">
+        <div class="grid grid-cols-1">
+          <a-form-item label="组件属性 (JSON)">
+            <a-textarea v-model:value="componentPropsString" :rows="5" @blur="handlePropsChange" />
+            <div class="text-xs text-gray-500 mt-1">请输入合法的JSON格式</div>
+          </a-form-item>
+        </div>
+      </a-collapse-panel>
+    </a-collapse>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+import {
+  Collapse as ACollapse,
+  CollapsePanel as ACollapsePanel,
+  FormItem as AFormItem,
+  Input as AInput,
+  InputNumber as AInputNumber,
+  Select as ASelect,
+  SelectOption as ASelectOption,
+  Switch as ASwitch,
+  Textarea as ATextarea
+} from 'ant-design-vue';
 
+// Define the interface based on the provided structure
+interface ColumnUI {
+  mask?: string;
+  width?: number;
+  component:
+    | 'Input'
+    | 'InputPassword'
+    | 'DatePicker'
+    | 'FkPicker'
+    | 'RadioGroup'
+    | 'UIInput'
+    | 'PermissionPicker'
+    | 'MetaInput';
+  disabled?: boolean;
+  filterOp?: 'like' | 'eq' | 'neq' | 'gt' | 'lt' | 'gte' | 'lte' | 'in';
+  componentProps?: {
+    table?: string;
+    buttonStyle?: 'outline' | 'solid';
+    options?: { label: string; value: any }[];
+    optionType?: 'default' | 'button';
+    [key: string]: any;
+  };
+}
+
+// Use defineModel to create a two-way binding
+const model = defineModel<ColumnUI>({
+  default: () => ({ component: 'Input' })
+});
+
+const componentTypes = [
+  'Input',
+  'InputPassword',
+  'DatePicker',
+  'FkPicker',
+  'RadioGroup',
+  'UIInput',
+  'PermissionPicker',
+  'MetaInput'
+];
+
+const filterOps = ['like', 'eq', 'neq', 'gt', 'lt', 'gte', 'lte', 'in'];
+
+// Computed property to handle JSON conversion for componentProps
+const componentPropsString = computed({
+  get() {
+    try {
+      return model.value.componentProps ? JSON.stringify(model.value.componentProps, null, 2) : '';
+    } catch (e) {
+      return '';
+    }
+  },
+  set(val: string) {
+    try {
+      if (val.trim()) {
+        model.value.componentProps = JSON.parse(val);
+      } else {
+        model.value.componentProps = {};
+      }
+    } catch (e) {
+      console.error('Invalid JSON format for componentProps', e);
+      // Optionally, handle the error in the UI
+    }
+  }
+});
+
+// Update the model on blur event from the textarea
+const handlePropsChange = (e: Event) => {
+  const target = e.target as HTMLTextAreaElement;
+  componentPropsString.value = target.value;
+};
 </script>
 
 <style scoped>
-
+.ui-input {
+  width: 100%;
+}
 </style>
