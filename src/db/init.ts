@@ -162,6 +162,9 @@ export const tableCategories = [
     description: "",
     type: 'catelog',
     parentId: null,
+    meta: {
+      icon: "tabler:user"
+    },
     path: '/users'
   },
   {
@@ -169,6 +172,9 @@ export const tableCategories = [
     description: "",
     type: 'catelog',
     parentId: null,
+    meta: {
+      icon: "ic:baseline-view-in-ar"
+    },
     path: '/system'
   },
 ]
@@ -182,6 +188,7 @@ export const initTableCategories = async () => {
         tenantId: 1,
         description: category.description,
         parentId: categoryIdOf(category?.parentId) || null,
+        meta: category.meta || {},
       }
     });
     if(created) {
