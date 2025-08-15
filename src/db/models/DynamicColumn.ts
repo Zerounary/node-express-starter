@@ -17,6 +17,7 @@ class DynamicColumn extends Model {
   public ui?: any | null;
   public ak?: boolean| null;
   public dk?: boolean| null;
+  public sortable?: boolean| null;
   public orderno?: number | null;
 
   public getTable!: BelongsToGetAssociationMixin<DynamicTable>;
@@ -56,6 +57,11 @@ DynamicColumn.init({
   dk: {
     type: DataTypes.BOOLEAN,
     allowNull: true,
+  },
+  sortable: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+    defaultValue: false,
   },
   tableId: {
     type: DataTypes.INTEGER,

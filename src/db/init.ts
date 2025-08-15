@@ -335,6 +335,39 @@ export const systemTables = [
         },
       },
       {
+        name: "ak",
+        dataType: ColumnDataTypes.BOOLEAN,
+        required: false,
+        description: "输入键",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: {
+          component: "Checkbox",
+        },
+      },
+      {
+        name: "dk",
+        dataType: ColumnDataTypes.BOOLEAN,
+        required: false,
+        description: "显示键",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: {
+          component: "Checkbox",
+        },
+      },
+      {
+        name: "sortable",
+        dataType: ColumnDataTypes.BOOLEAN,
+        required: false,
+        description: "可排序",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: {
+          component: "Checkbox",
+        },
+      },
+      {
         name: "enumValues",
         dataType: ColumnDataTypes.JSON,
         required: true,
@@ -351,6 +384,7 @@ export const systemTables = [
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: {
+          mask: "0011001111",
           component: "UIInput",
           componentProps: {
           },

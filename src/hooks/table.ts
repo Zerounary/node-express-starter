@@ -49,6 +49,7 @@ export async function getTableConfig(tableName) {
       label: col.description,
       ak: col.ak,
       dk: col.dk,
+      sortable: col.sortable,
       dataType: col.dataType,
       relatedToTableId: col.relatedToTableId,
       ...col.ui,

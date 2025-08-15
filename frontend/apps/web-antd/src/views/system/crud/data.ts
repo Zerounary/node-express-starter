@@ -53,7 +53,6 @@ const mapToUpdateSchemaColumn = (col) => {
 };
 
 const mapToCreateSchemaColumn = (col) => {
-  let component = isCreateEditable(col) ? col.component : 'Text';
   return {
     ...col,
     component,
@@ -66,16 +65,19 @@ const mapToListSchemaColumn = (col) => {
   };
 };
 
-const mapToGridColumn = (col) => ({
-  cellRender: {
-    name: 'CellText', props: {
-      schema: col,
-    }
-  },
-  ...col,
-  field: col.fieldName,
-  title: col.label,
-});
+const mapToGridColumn = (col) => {
+    console.log('🚀 ~ mapToGridColumn ~ col:', col)
+    return ({
+        cellRender: {
+            name: 'CellText', props: {
+                schema: col,
+            }
+        },
+        ...col,
+        field: col.fieldName,
+        title: col.label,
+    });
+};
 
 const mapToOpFilterColumn = (col) => ({
   ...col,

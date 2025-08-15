@@ -71,7 +71,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
     rowConfig: {
       keyField: 'id',
     },
-
+    sortConfig: {
+      remote: true,
+    },
     toolbarConfig: {
       custom: true,
       export: false,
@@ -80,6 +82,16 @@ const [Grid, gridApi] = useVbenVxeGrid({
       zoom: true,
     },
   } as VxeTableGridOptions<SystemTableApi.SystemTable>,
+  gridEvents: {
+    sortChange: ({ field, order }) => {
+      console.log('🚀 ~ sortChange ~ field, order:', field, order);
+      gridApi.query({
+        sorts: [
+          {[field]: order}
+        ]
+      });
+    },
+  }
 });
 
 function onActionClick(e: OnActionClickParams<SystemTableApi.SystemTable>) {
@@ -169,6 +181,7 @@ function onDelete(row: SystemTableApi.SystemTable) {
 function onRefresh() {
   gridApi.query();
 }
+
 </script>
 <template>
   <Page auto-content-height>
