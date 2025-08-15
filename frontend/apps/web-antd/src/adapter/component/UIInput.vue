@@ -25,8 +25,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <a-form-item label="过滤操作">
             <a-select v-model:value="model.filterOp" style="width: 100%" allow-clear>
-              <a-select-option v-for="op in filterOps" :key="op" :value="op">
-                {{ op }}
+              <a-select-option v-for="op in filterOps" :key="op.value" :value="op.value">
+                {{ op.label }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -36,8 +36,12 @@
       <!-- Layout Settings -->
       <a-collapse-panel key="layout" header="布局设置">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <a-form-item label="可见性掩码" class="md:col-span-2">
-            <a-input v-model:value="model.mask" />
+          <a-form-item
+            label="可见性掩码"
+            class="md:col-span-2"
+            :rules="[{ pattern: /^[01]{10}$/, message: '请输入10位由0或1组成的字符串' }]"
+          >
+            <a-input v-model:value="model.mask" maxlength="10" placeholder="10位0或1的组合" />
           </a-form-item>
         </div>
       </a-collapse-panel>
@@ -109,7 +113,16 @@ const componentTypes = [
   'MetaInput'
 ];
 
-const filterOps = ['like', 'eq', 'neq', 'gt', 'lt', 'gte', 'lte', 'in'];
+const filterOps = [
+  { value: 'like', label: '包含' },
+  { value: 'eq', label: '等于' },
+  { value: 'neq', label: '不等于' },
+  { value: 'gt', label: '大于' },
+  { value: 'lt', label: '小于' },
+  { value: 'gte', label: '大于等于' },
+  { value: 'lte', label: '小于等于' },
+  { value: 'in', label: '在...中' }
+];
 
 // Computed property to handle JSON conversion for componentProps
 const componentPropsString = computed({
