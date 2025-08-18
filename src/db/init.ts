@@ -158,6 +158,16 @@ export const defaultColumns = (columns = []) => {
 
 export const tableCategories = [
   {
+    name: "概览",
+    description: "",
+    type: 'catelog',
+    parentId: null,
+    meta: {
+      icon: "lucide:layout-dashboard"
+    },
+    path: '/dashboard'
+  },
+  {
     name: "用户管理",
     description: "",
     type: 'catelog',
@@ -168,14 +178,34 @@ export const tableCategories = [
     path: '/users'
   },
   {
-    name: "系统管理",
+    name: "开发平台",
     description: "",
     type: 'catelog',
     parentId: null,
     meta: {
-      icon: "ic:baseline-view-in-ar"
+      icon: "carbon:development"
     },
     path: '/system'
+  },
+  {
+    name: "分析页",
+    description: "",
+    type: 'menu',
+    parentId: "概览",
+    meta: {
+      icon: "lucide:area-chart"
+    },
+    path: '/analytics',
+  },
+  {
+    name: "工作台",
+    description: "",
+    type: 'menu',
+    parentId: "概览",
+    meta: {
+      icon: "carbon:workspace"
+    },
+    path: '/workspace',
   },
 ]
 
@@ -639,6 +669,15 @@ export const systemTables = [
           width: 200,
           component: "Input",
         },
+      },
+      {
+        name: "orderno",
+        dataType: ColumnDataTypes.INTEGER,
+        required: true,
+        description: "序号",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: undefined,
       },
     ]),
   }

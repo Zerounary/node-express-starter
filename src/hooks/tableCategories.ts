@@ -33,14 +33,17 @@ export async function afterDelete(id) {
 } 
 
 export async function getMenus() {
-  let categories = await TableCategory.findAll();
+  let categories = await TableCategory.findAll({
+    order: [['orderno', 'ASC'], ['ID', 'ASC']],
+  });
   // categories 转成树形结构
   let list = categories.map(cat => cat.toJSON());
   // TODO 自动按照表的分类ID来插入分类。 同时校验权限，如果没有权限就不展示菜单。
   let tables = await DynamicTable.findAll({
     where: {
       isActive: true,
-    }
+    },
+    order: [['orderno', 'ASC'], ['ID', 'ASC']],
   });
   let mixins = tables.map(table => table.toJSON()).map(table=>{
     return {

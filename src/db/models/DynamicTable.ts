@@ -58,6 +58,10 @@ DynamicTable.init({
     type: new DataTypes.STRING(255),
     allowNull: true,
   },
+  orderno: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
     ...commontFields,
 }, {
   sequelize,

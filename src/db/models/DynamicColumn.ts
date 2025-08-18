@@ -61,7 +61,7 @@ DynamicColumn.init({
   sortable: {
     type: DataTypes.BOOLEAN,
     allowNull: true,
-    defaultValue: false,
+    defaultValue: true,
   },
   tableId: {
     type: DataTypes.INTEGER,
