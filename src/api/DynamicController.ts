@@ -95,8 +95,11 @@ export default class DynamicController {
           const parts = key.split('-');
           if (parts.length === 2) {
               const [field, op] = parts;
+              // 如果是true/false字符串，转换为布尔值
+              let value: any = filters[key];
+              if (value === 'true') value = true;
+              else if (value === 'false') value = false;
               if (field && op && operatorMap[op]) {
-                  let value = filters[key];
                   if(op == 'like') {
                     value = `%${value}%`;
                   }
@@ -106,7 +109,7 @@ export default class DynamicController {
                   where[field] = { [operatorMap[op]]: value };
               } else if(field) {
                 // 默认处理为等于
-                where[field] = { [Op.eq]: filters[key] };
+                where[field] = { [Op.eq]: value };
               }
           }
       }
@@ -116,20 +119,15 @@ export default class DynamicController {
   }
 
   private getParsedSorts(sorts: any): any[] {
-    if (!sorts || !Array.isArray(sorts)) {
-        return [];
-    }
-
-    const order = [];
-    for (const sort of sorts) {
-        if (typeof sort === 'object' && sort !== null) {
-            for (const field in sort) {
-                const direction = (sort[field] || '').toString().toUpperCase();
-                if (direction === 'ASC' || direction === 'DESC') {
-                    order.push([field, direction]);
-                }
-            }
-        }
+    // sorts 格式： field1-ASC,field2-DESC
+    if (!sorts) return [];
+    const order: any[] = [];
+    const sortItems = Array.isArray(sorts) ? sorts : sorts.split(',');
+    for (const sortItem of sortItems) {
+      const [field, direction] = sortItem.split('-');
+      if (field) {
+        order.push([field, (direction && direction.toUpperCase() === 'DESC') ? 'DESC' : 'ASC']);
+      }
     }
     return order;
   }

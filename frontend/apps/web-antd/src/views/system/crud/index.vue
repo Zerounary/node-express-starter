@@ -86,9 +86,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     sortChange: ({ field, order }) => {
       console.log('🚀 ~ sortChange ~ field, order:', field, order);
       gridApi.query({
-        sorts: [
-          {[field]: order}
-        ]
+        sorts: `${field}-${order}`,
       });
     },
   }
