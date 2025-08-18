@@ -53,7 +53,12 @@ export async function getMenus({ user }) {
     order: [['orderno', 'ASC'], ['ID', 'ASC']],
   });
   // categories 转成树形结构
-  let list = categories.map(cat => cat.toJSON());
+  let list = categories.map(cat => cat.toJSON()).map(e => {
+    return {
+      ...e,
+      table: e.path.replace('/', '')
+    }
+  });
   // TODO 自动按照表的分类ID来插入分类。 同时校验权限，如果没有权限就不展示菜单。
   let tables = await DynamicTable.findAll({
     where: {
@@ -68,6 +73,7 @@ export async function getMenus({ user }) {
       type: 'menu',
       name: table.description,
       path: `/crud/${table.alias_name}`,
+      table: table.name,
       meta: {}
     }
   })
