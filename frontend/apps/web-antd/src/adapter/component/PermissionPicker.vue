@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { getList } from '#/api/system/crud';
+import { execute, getList } from '#/api/system/crud';
 import { assignPermission } from '#/api/system/role';
 import { Modal, Table, Button, Checkbox, message } from 'ant-design-vue';
 import { ref, type Ref, computed } from 'vue';
@@ -131,7 +131,7 @@ const handleCancel = () => {
 };
 
 const openModal = () => {
-  getList('table').then((res) => {
+  execute("tableCategories", "getMenus").then((res) => {
     tables.value = res;
   });
   isModalVisible.value = true;
