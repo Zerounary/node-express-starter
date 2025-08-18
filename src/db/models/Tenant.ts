@@ -16,6 +16,10 @@ Tenant.init({
     autoIncrement: true,
     primaryKey: true,
   },
+  tenantId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   description: {
     type: DataTypes.STRING,
     allowNull: true,

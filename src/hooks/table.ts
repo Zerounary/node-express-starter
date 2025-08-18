@@ -26,8 +26,7 @@ export async function beforeDelete(id) {
   await DynamicColumn.destroy({ where: { tableId } });
 }
 
-export async function getPageConfig(id, params) {
-  let tableName = params.tableName;
+export async function getPageConfig({tableName}) {
   return await getTableConfig(tableName);
 }
 

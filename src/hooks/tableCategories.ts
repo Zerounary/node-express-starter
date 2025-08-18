@@ -1,4 +1,5 @@
 import { DynamicTable, TableCategory } from "@/db/models";
+import { Op } from "sequelize";
 
 export async function beforeCreate(data) {
   console.log('beforeCreate hook for demo table', data);
@@ -32,8 +33,23 @@ export async function afterDelete(id) {
   console.log('afterDelete hook for demo table', id);
 } 
 
-export async function getMenus() {
+export async function getMenus({ user }) {
+
+  const { tenantId } = user;
+
+  let where = {}
+
+  // 只有超级管理员才能查看和编辑开发平台
+  if(tenantId != 1) {
+    where = {
+      name: {
+        [Op.ne]: '开发平台'
+      }
+    }
+  }
+
   let categories = await TableCategory.findAll({
+    where,
     order: [['orderno', 'ASC'], ['ID', 'ASC']],
   });
   // categories 转成树形结构

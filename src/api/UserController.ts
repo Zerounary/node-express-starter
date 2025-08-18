@@ -24,7 +24,7 @@ export default class UserController {
   async getUserInfo(req, res) {
     const { id: userId } = req.user;
     const user = await User.findByPk(userId);
-    const menus = await getMenus();
+    const menus = await getMenus({ user: req.user });
     return ok({
       id: user.id,
       username: user.username,

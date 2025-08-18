@@ -84,7 +84,7 @@ class DynamicDataService {
     if (this.modelCache.has(cacheKey)) {
         const model = this.modelCache.get(cacheKey)!;
         // Ensure relationships are defined, even if model is from cache
-        const tableDef = await DynamicTable.findOne({where: {name: physicalTableName, tenantId}, include: [{ model: DynamicColumn, as: 'columns' }]})
+        const tableDef = await DynamicTable.findOne({where: {name: physicalTableName, }, include: [{ model: DynamicColumn, as: 'columns' }]})
         if (tableDef) {
             await this.defineRelationships(model, tableDef as DynamicTable, tenantId);
         }
@@ -92,7 +92,7 @@ class DynamicDataService {
     }
 
     let tableDefinition = await DynamicTable.findOne({
-      where: { name: physicalTableName, tenantId },
+      where: { name: physicalTableName },
       include: [{ model: DynamicColumn, as: 'columns' }],
     });
 

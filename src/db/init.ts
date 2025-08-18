@@ -235,7 +235,7 @@ export const systemTables = [
     name: "dynamic_tables",
     description: "表",
     alias_name: "table",
-    categoryId: categoryIdOf("系统管理"),
+    categoryId: categoryIdOf("开发平台"),
     columns: defaultColumns([
       {
         name: "name",
@@ -299,7 +299,7 @@ export const systemTables = [
     name: "dynamic_columns",
     description: "字段",
     alias_name: "column",
-    categoryId: categoryIdOf("系统管理"),
+    categoryId: categoryIdOf("开发平台"),
     columns: defaultColumns([
       {
         name: "name",
@@ -567,7 +567,7 @@ export const systemTables = [
     name: 'table_categories',
     description: '表类别',
     alias_name: 'table_categories',
-    categoryId: categoryIdOf("系统管理"),
+    categoryId: categoryIdOf("开发平台"),
     columns: defaultColumns([
       {
         name: "name",
@@ -680,7 +680,42 @@ export const systemTables = [
         ui: undefined,
       },
     ]),
-  }
+  },
+    {
+    name: "tenants",
+    description: "租户",
+    alias_name: "tenants",
+    categoryId: categoryIdOf("开发平台"),
+    columns: defaultColumns([
+      {
+        name: "name",
+        dataType: ColumnDataTypes.STRING,
+        required: true,
+        description: "名称",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: {
+          mask: "1111111111",
+          width: 200,
+          component: "Input",
+        },
+      },
+      {
+        name: "description",
+        dataType: ColumnDataTypes.STRING,
+        required: true,
+        description: "描述",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ak: true,
+        dk: true,
+        ui: {
+          mask: "1111111111",
+          width: 200,
+          component: "Input",
+        },
+      }])
+    }
 ];
 
 export const initSystemData = async () => {
@@ -738,10 +773,15 @@ export const adminUser = {
 };
 
 export const initAdminUser = async () => {
+  await initTenantUser(adminUser)
+};
+
+export const initTenantUser = async (userConfig) => {
   let [tenant] = await Tenant.findOrCreate({
-    where: { name: adminUser.tenant },
+    where: { name: userConfig.tenant },
     defaults: {
       description: "系统租户",
+      tenantId: 1,
     },
   });
   // 创建角色
@@ -751,7 +791,7 @@ export const initAdminUser = async () => {
   });
 
   // 创建权限
-  for (const permission of adminUser.permissions) {
+  for (const permission of userConfig.permissions) {
     let [perm] = await Permission.findOrCreate({
       where: { action: permission },
     });
@@ -760,17 +800,17 @@ export const initAdminUser = async () => {
 
   // 创建用户
   const [user] = await User.findOrCreate({
-    where: { username: adminUser.name, tenantId: tenant.id },
+    where: { username: userConfig.name, tenantId: tenant.id },
     defaults: {
       realName: "系统管理员",
-      password: adminUser.password,
+      password: userConfig.password,
       tenantId: tenant.id,
     },
   });
 
   // 关联角色
   await user.addRole(adminRole);
-};
+}
 
 function tableIdOf (name = '') {
   return idOf(systemTables, name, 'name');

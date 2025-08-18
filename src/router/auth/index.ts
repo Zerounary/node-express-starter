@@ -6,7 +6,6 @@ const ALLOWED_PATHS = [
   '/api/demo/*',
   '/api/auth/login',
   '/api/auth/register',
-  '/api/tenants/quick-create',
 ];
 
 const ALLOWED_PATHS_REGEX = ALLOWED_PATHS.map(path => {
@@ -19,11 +18,11 @@ const ALLOWED_PATHS_REGEX = ALLOWED_PATHS.map(path => {
 export const authMiddleware = (req, res, next) => {
   const isPathAllowed = ALLOWED_PATHS_REGEX.some(pattern => pattern.test(req.path));
 
-  if (NO_AUTH || isPathAllowed) {
+  if (isPathAllowed) {
     // For development, simulate a default user/tenant if none is present
-    if (NO_AUTH && !req.user) {
-        req.user = { id: 1, username: 'dev-user', tenantId: 1 };
-    }
+    // if (NO_AUTH && !req.user) {
+    //     req.user = { id: 1, username: 'dev-user', tenantId: 1 };
+    // }
     return next();
   }
 

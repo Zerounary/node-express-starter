@@ -11,16 +11,17 @@ export default class DynamicController {
   @Post("/:actionName", [checkPermission('action::actionName::tableName')])
   async performAction(req, res) {
     try {
-      const { tenantId, id: userId } = req.user;
       const { tableName, actionName } = req.params;
       const { id }  = req.query;
       let body = await req.json();
 
       // afterUpdate hook
-      let result = await HookService.executeHook(tableName, actionName, id, {
+      let result = await HookService.executeHook(tableName, actionName, {
+        id,
         ...req.params,
         ...req.query,
-        ...body
+        ...body,
+        user: req.user,
       });
 
             // Try to start a workflow for the new record

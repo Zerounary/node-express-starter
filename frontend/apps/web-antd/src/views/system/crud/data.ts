@@ -53,6 +53,7 @@ const mapToUpdateSchemaColumn = (col) => {
 };
 
 const mapToCreateSchemaColumn = (col) => {
+  let component = isCreateEditable(col) ? col.component : 'Text';
   return {
     ...col,
     component,
