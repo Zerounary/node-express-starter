@@ -24,6 +24,7 @@ export default class UserController {
   async getUserInfo(req, res) {
     const { id: userId } = req.user;
     const user = await User.findByPk(userId);
+    if(!user) return res.status(401).json(fail('登录超时,请重新登录', 401));
     const menus = await getMenus({ user: req.user });
     return ok({
       id: user.id,
