@@ -158,7 +158,10 @@ const handleOk = async () => {
   try {
     await assignPermission({
       roleId,
-      permissions: modelValue.value,
+      permissions: [
+        "action:table:getPageConfig",
+        ...modelValue.value
+      ],
     });
     message.success('权限更新成功');
     isModalVisible.value = false;

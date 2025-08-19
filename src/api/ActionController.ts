@@ -8,7 +8,7 @@ import { Controller, Post } from "@/utils/routeDecorators";
 @Controller("/action/:tableName")
 export default class DynamicController {
 
-  @Post("/:actionName", [checkPermission('action::actionName::tableName')])
+  @Post("/:actionName", [checkPermission('action::tableName::actionName')])
   async performAction(req, res) {
     try {
       const { tableName, actionName } = req.params;

@@ -158,12 +158,12 @@ setupVbenVxeTable({
             danger: true,
             text: $t('common.delete'),
           },
-          edit: {
+          update: {
             text: $t('common.edit'),
           },
         };
         const operations: Array<Recordable<any>> = (
-          options || ['edit', 'delete']
+          options || ['update', 'delete']
         )
           .map((opt) => {
             if (isString(opt)) {

@@ -3,6 +3,8 @@ import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SystemTableApi } from '#/api';
 
 import { $t } from '#/locales';
+import { useAccess } from '@vben/access';
+const { hasAccessByTable } = useAccess();
 
 export const isCreateVisable = (col) => col.mask?.charAt(0) == '1';
 export const isCreateEditable = (col) => col.mask?.charAt(1) == '1';
@@ -103,11 +105,16 @@ export function useColumns<T = SystemTableApi.SystemTable>(
     .filter(isListVisable)
     .map(mapToGridColumn);
   console.log('🚀 ~ dynColumns:', dynColumns);
+
+  let options = ['update', 'delete'].filter(perm => {
+    return hasAccessByTable(table.table, perm)
+  });
   return [
     ...dynColumns,
-    {
+    ...(options.length ? [{
       align: 'center',
       cellRender: {
+        options,
         attrs: {
           nameField: 'name',
           nameTitle: $t('system.table.name'),
@@ -119,6 +126,6 @@ export function useColumns<T = SystemTableApi.SystemTable>(
       fixed: 'right',
       title: $t('system.table.operation'),
       width: 130,
-    },
+    }] : [])
   ];
 }

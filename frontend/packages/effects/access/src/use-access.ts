@@ -33,6 +33,14 @@ function useAccess() {
     return intersection.length > 0;
   }
 
+  function hasAccessByTable(tableName: string, perm: string) {
+    return hasAccessByCodes(getTableAccessCodes(tableName, perm))
+  }
+
+  function getTableAccessCodes(tableName: string, perm: string) {
+    return ['data:*:*', `data:${tableName}:*`, `data:${tableName}:${perm}`]
+  }
+
   async function toggleAccessMode() {
     updatePreferences({
       app: {
@@ -44,6 +52,8 @@ function useAccess() {
 
   return {
     accessMode,
+    getTableAccessCodes,
+    hasAccessByTable,
     hasAccessByCodes,
     hasAccessByRoles,
     toggleAccessMode,

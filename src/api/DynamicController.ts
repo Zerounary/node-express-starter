@@ -132,7 +132,7 @@ export default class DynamicController {
     return order;
   }
 
-  @Get("/list", [checkPermission('data:list::tableName')])
+  @Get("/list", [checkPermission('data::tableName:list')])
   async list(req, res) {
     try {
       const { tableName } = req.params;
@@ -162,7 +162,7 @@ export default class DynamicController {
     }
   }
 
-  @Get("/page", [checkPermission('data:page::tableName')])
+  @Get("/page", [checkPermission('data::tableName:page')])
   async find(req, res) {
     try {
       const { tableName } = req.params;
@@ -207,7 +207,7 @@ export default class DynamicController {
   /**
     * 搜索数据，通过 ak 搜索展示id和dk
    */
-  @Get("/search", [checkPermission('data:page::tableName')])
+  @Get("/search", [checkPermission('data::tableName:page')])
   async search(req, res) {
     try {
       const { tableName } = req.params;
@@ -284,7 +284,7 @@ export default class DynamicController {
     }
   }
 
-  @Get("/:id", [checkPermission('data:read::tableName')])
+  @Get("/:id", [checkPermission('data::tableName:read')])
   async findOne(req, res) {
     try {
       const { tableName, id } = req.params;
@@ -318,7 +318,7 @@ export default class DynamicController {
     }
   }
 
-  @Post("", [checkPermission('data:create::tableName')])
+  @Post("", [checkPermission('data::tableName:create')])
   async create(req, res) {
     try {
       const { tableName } = req.params;
@@ -345,7 +345,7 @@ export default class DynamicController {
     }
   }
 
-  @Put("/:id", [checkPermission('data:update::tableName')])
+  @Put("/:id", [checkPermission('data::tableName:update')])
   async update(req, res) {
     try {
       const { tableName, id } = req.params;
@@ -374,7 +374,7 @@ export default class DynamicController {
     }
   }
 
-  @Delete("/:id", [checkPermission('data:delete::tableName')])
+  @Delete("/:id", [checkPermission('data::tableName:delete')])
   async remove(req, res) {
     try {
       const { tableName, id } = req.params;
@@ -399,7 +399,7 @@ export default class DynamicController {
     }
   }
 
-  @Get("/export", [checkPermission('data:export::tableName')])
+  @Get("/export", [checkPermission('data::tableName:export')])
   async exportData(req, res) {
     try {
       const { tenantId } = req.user;
@@ -425,7 +425,7 @@ export default class DynamicController {
     }
   }
 
-  @Post("/import", [checkPermission('data:import::tableName')])
+  @Post("/import", [checkPermission('data::tableName:import')])
   async importData(req, res) {
     let transaction;
     try {

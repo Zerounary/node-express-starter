@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Recordable } from '@vben/types';
-
+import { AccessControl, useAccess } from '@vben/access';
 import type {
   OnActionClickParams,
   VxeTableGridOptions,
@@ -22,6 +22,7 @@ import { useSystem } from '#/store/system';
 
 import { useColumns, useGridFormSchema } from './data';
 import Form from './modules/form.vue';
+const { getTableAccessCodes } = useAccess();
 
 const route = useRoute();
 const system = useSystem();
@@ -98,7 +99,7 @@ function onActionClick(e: OnActionClickParams<SystemTableApi.SystemTable>) {
       onDelete(e.row);
       break;
     }
-    case 'edit': {
+    case 'update': {
       onEdit(e.row);
       break;
     }
@@ -186,10 +187,12 @@ function onRefresh() {
     <FormDrawer class="w-full" :table="table" />
     <Grid :table-title="$t('system.table.list')">
       <template #toolbar-tools>
-        <Button type="primary" @click="onCreate">
-          <Plus class="size-5" />
-          {{ $t('ui.actionTitle.create', []) }}
-        </Button>
+        <AccessControl :codes="getTableAccessCodes(tableName, 'create')" type="code">
+          <Button type="primary" @click="onCreate">
+            <Plus class="size-5" />
+            {{ $t('ui.actionTitle.create', []) }}
+          </Button>
+        </AccessControl>
       </template>
     </Grid>
   </Page>
