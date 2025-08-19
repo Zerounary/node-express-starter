@@ -1,3 +1,4 @@
+import { getUserPerms } from "@/db/dao/auth";
 import { DynamicTable, TableCategory } from "@/db/models";
 import User from "@/db/models/User";
 import { Op } from "sequelize";
@@ -37,8 +38,36 @@ export async function afterDelete(id) {
 export async function getMenus({ user }) {
 
   const { id: userId, tenantId } = user;
-
   
+  let permissions = await getUserPerms(userId)
+
+  const permittedTables = permissions
+    .filter(e => e.endsWith(':view') || e.endsWith(':*'))
+    .map(e => {
+      // data:dashboard:view => dashboard
+      let parts = e.split(":");
+      return parts[1];
+    })
+
+  let permLimits = {}
+  let categoryPermLimits = {}
+  if (permittedTables.length === 0) {
+    return [];
+  } else {
+    let all = permittedTables.find(e => e == "*")
+    if(!all) {
+      permLimits = {
+        name: {
+          [Op.in]: permittedTables.filter(e => e != "*"),
+        }
+      }
+      categoryPermLimits = {
+        path: {
+          [Op.in]: permittedTables.filter(e => e != "*").map(e => ('/' + e )),
+        }
+      }
+    }
+  }
 
   let where = {}
 
@@ -47,7 +76,8 @@ export async function getMenus({ user }) {
     where = {
       name: {
         [Op.ne]: '开发平台'
-      }
+      },
+      ...categoryPermLimits,
     }
   }
 
@@ -62,12 +92,13 @@ export async function getMenus({ user }) {
       table: e.path.replace('/', '')
     }
   });
-  // TODO 自动按照表的分类ID来插入分类。 同时校验权限，如果没有权限就不展示菜单。
+
   let tables = await DynamicTable.findAll({
     where: {
       isActive: {
         [Op.eq]: true
       },
+      ...permLimits
     },
     order: [['orderno', 'ASC'], ['ID', 'ASC']],
   });

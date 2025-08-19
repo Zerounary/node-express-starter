@@ -8,4 +8,5 @@ export const getUserPerms = async (userId: number) => {
       const perms = await role.getPermissions();
       permissions = permissions.concat(perms.map(p => p.action));
     }
+    return permissions;
 }
