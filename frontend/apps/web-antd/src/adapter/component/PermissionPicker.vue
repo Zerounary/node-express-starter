@@ -9,7 +9,13 @@
       @cancel="handleCancel"
       width="80%"
   >
-    <Table rowKey="id" :data-source="tables" :columns="columns" :pagination="false" bordered>
+    <Table
+      rowKey="id"
+      :data-source="tables"
+      :columns="columns"
+      :pagination="false"
+      bordered
+    >
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'name'">
           {{ record.name }}
@@ -176,6 +182,7 @@ const openModal = () => {
   })
   isModalVisible.value = true;
 };
+
 </script>
 
 <style scoped>
