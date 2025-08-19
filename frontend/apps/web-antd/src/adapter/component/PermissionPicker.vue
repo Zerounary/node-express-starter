@@ -9,7 +9,7 @@
       @cancel="handleCancel"
       width="80%"
   >
-    <Table :data-source="tables" :columns="columns" :pagination="false" bordered>
+    <Table rowKey="id" :data-source="tables" :columns="columns" :pagination="false" bordered>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'name'">
           {{ record.name }}
@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import { execute, getList } from '#/api/system/crud';
-import { assignPermission } from '#/api/system/role';
+import { assignPermission, getRolePerms } from '#/api/system/role';
 import { Modal, Table, Button, Checkbox, message } from 'ant-design-vue';
 import { ref, type Ref, computed } from 'vue';
 
@@ -167,9 +167,13 @@ const handleCancel = () => {
 };
 
 const openModal = () => {
-  execute("tableCategories", "getMenus").then((res) => {
+  Promise.all([getRolePerms({
+    roleId: props.row.id
+  }), execute("tableCategories", "getMenus")])
+  .then(([currentValue, res]) => {
+    modelValue.value = currentValue || []
     tables.value = res;
-  });
+  })
   isModalVisible.value = true;
 };
 </script>

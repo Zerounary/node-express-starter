@@ -4,6 +4,7 @@ import User from "../db/models/User";
 import AuthService from "../services/AuthService";
 import { z } from 'zod';
 import { logError } from "../logger";
+import { getUserPerms } from "@/db/dao/auth";
 
 const userSchema = z.object({
   username: z.string().min(3),
@@ -45,13 +46,7 @@ export default class AuthController {
   @Get("/codes")
   async getPermission(req, res) {
     const { id: userId } = req.user;
-    const user = await User.findByPk(userId);
-    const roles = await user.getRoles();
-    let permissions = [];
-    for(let role of roles) {
-      const perms = await role.getPermissions();
-      permissions = permissions.concat(perms.map(p => p.action));
-    }
+    let permissions = await getUserPerms(userId);
     return ok(permissions);
   }
 

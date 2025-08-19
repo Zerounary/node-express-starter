@@ -23,12 +23,17 @@ export default class RoleController {
         return ok(roles);
     }
 
-    // 新增 permission
-    @Post("/permission")
-    async createPermission(req, res) {
-        const { action, description } = await req.json();
-        const permission = await Permission.create({ action, description });
-        return ok(permission);
+    @Post("/perms")
+    async getPermission(req, res) {
+        const { roleId } = await req.json();
+        // 1. 查找角色并验证其归属
+        const role = await Role.findByPk(roleId);
+        if (!role || role.tenantId !== req.user.tenantId) {
+            return fail("角色未找到 (Role not found)", 404);
+        }
+        const perms = await role.getPermissions();
+        
+        return ok(perms.map(e => e.action));
     }
 
     @Post("/assign-permission")

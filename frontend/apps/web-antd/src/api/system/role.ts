@@ -63,4 +63,14 @@ function assignPermission(data: { roleId: number | string; permissions: string[]
   return requestClient.post('/roles/assign-permission', data);
 }
 
-export { createRole, deleteRole, getRoleList, updateRole, assignPermission };
+/**
+ * 查询色权限
+ * @param data - 请求数据
+ * @param data.roleId - 角色ID
+ */
+function getRolePerms(data: { roleId: number | string; }) {
+  // 假设 api 对象有一个 post 方法可以发送请求
+  return requestClient.post('/roles/perms', data);
+}
+
+export { createRole, deleteRole, getRoleList, updateRole, assignPermission, getRolePerms };

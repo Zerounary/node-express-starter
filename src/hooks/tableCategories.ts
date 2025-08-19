@@ -1,4 +1,5 @@
 import { DynamicTable, TableCategory } from "@/db/models";
+import User from "@/db/models/User";
 import { Op } from "sequelize";
 
 export async function beforeCreate(data) {
@@ -35,7 +36,9 @@ export async function afterDelete(id) {
 
 export async function getMenus({ user }) {
 
-  const { tenantId } = user;
+  const { id: userId, tenantId } = user;
+
+  
 
   let where = {}
 
@@ -62,7 +65,9 @@ export async function getMenus({ user }) {
   // TODO 自动按照表的分类ID来插入分类。 同时校验权限，如果没有权限就不展示菜单。
   let tables = await DynamicTable.findAll({
     where: {
-      isActive: true,
+      isActive: {
+        [Op.eq]: true
+      },
     },
     order: [['orderno', 'ASC'], ['ID', 'ASC']],
   });

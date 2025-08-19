@@ -175,7 +175,7 @@ export const tableCategories = [
     meta: {
       icon: "tabler:user"
     },
-    path: '/users'
+    path: '/account'
   },
   {
     name: "开发平台",
