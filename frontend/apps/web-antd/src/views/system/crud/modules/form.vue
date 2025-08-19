@@ -11,7 +11,7 @@ import { useVbenForm } from '#/adapter/form';
 import { create, update } from '#/api/system/crud';
 import { $t } from '#/locales';
 
-import { useFormCreateSchema, useFormUpdateSchema } from '../data';
+import { isCreateEditable, isUpdateEditable, useFormCreateSchema, useFormUpdateSchema } from '../data';
 
 const props = defineProps<{
   table: Object;
@@ -31,8 +31,15 @@ const [Drawer, drawerApi] = useVbenDrawer({
     const { valid } = await formApi.validate();
     if (!valid) return;
     const values = await formApi.getValues();
+    let data = { ...values };
+    // 移除表单中不可以编辑的字段
+    props.table.columns.forEach(col => {
+      if (!((id.value ? isUpdateEditable : isCreateEditable)(col))) {
+        delete data[col.fieldName];
+      }
+    })
     drawerApi.lock();
-    (id.value ? update(tableName.value, id.value, values) : create(tableName.value, values))
+    (id.value ? update(tableName.value, id.value, data) : create(tableName.value, data))
       .then(() => {
         emits('success');
         drawerApi.close();

@@ -4,12 +4,12 @@ import type { SystemTableApi } from '#/api';
 
 import { $t } from '#/locales';
 
-const isCreateVisable = (col) => col.mask?.charAt(0) == '1';
-const isCreateEditable = (col) => col.mask?.charAt(1) == '1';
-const isUpdateVisable = (col) => col.mask?.charAt(2) == '1';
-const isUpdateEditable = (col) => col.mask?.charAt(3) == '1';
-const isListVisable = (col) => col.mask?.charAt(4) == '1';
-const isFilterVisable = (col) => col.mask?.charAt(5) == '1';
+export const isCreateVisable = (col) => col.mask?.charAt(0) == '1';
+export const isCreateEditable = (col) => col.mask?.charAt(1) == '1';
+export const isUpdateVisable = (col) => col.mask?.charAt(2) == '1';
+export const isUpdateEditable = (col) => col.mask?.charAt(3) == '1';
+export const isListVisable = (col) => col.mask?.charAt(4) == '1';
+export const isFilterVisable = (col) => col.mask?.charAt(5) == '1';
 
 export function useFormCreateSchema(table, { formApi, data}): VbenFormSchema[] {
   const dynColumns = (table.columns || [])
