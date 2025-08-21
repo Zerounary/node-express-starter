@@ -12,6 +12,9 @@ hero:
     alt: Vben Admin
   actions:
     - theme: brand
+      text: 项目文档 ->
+      link: /backend/
+    - theme: brand
       text: 快速开始 ->
       link: /guide/introduction/vben
     - theme: alt
@@ -25,6 +28,22 @@ hero:
       link: https://deepwiki.com/vbenjs/vue-vben-admin
 
 features:
+  - icon: 📚
+    title: 项目文档（后端）
+    details: 覆盖架构、开发流程、测试与与前端联动。
+    link: /backend/
+    linkText: 进入后端文档
+  - icon: 💻
+    title: 项目文档（前端）
+    details: 覆盖架构、开发流程、组件库与测试。
+    link: /frontend/
+    linkText: 进入前端文档
+  - icon: 🧪
+    title: 测试策略
+    details: 从单测到 E2E 的完整实践与配置指引。
+    link: /testing/
+    linkText: 进入测试文档
+
   - icon: 🚀
     title: 最新技术栈
     details: 基于 Vue3、Pinia、Vue Router、TypeScript、等最新技术栈。
