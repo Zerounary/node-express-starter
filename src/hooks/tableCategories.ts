@@ -1,6 +1,5 @@
-import { getUserPerms } from "@/db/dao/auth";
 import { DynamicTable, TableCategory } from "@/db/models";
-import User from "@/db/models/User";
+import PermissionService from "@/services/PermissionService";
 import { Op } from "sequelize";
 
 export async function beforeCreate(data) {
@@ -39,7 +38,7 @@ export async function getMenus({ user }) {
 
   const { id: userId, tenantId } = user;
   
-  let permissions = await getUserPerms(userId)
+  let permissions = [...(await PermissionService.getAllUserPermissions(userId))];
 
   const permittedTables = permissions
     .filter(e => e.endsWith(':view') || e.endsWith(':*'))
@@ -57,7 +56,7 @@ export async function getMenus({ user }) {
     let all = permittedTables.find(e => e == "*")
     if(!all) {
       permLimits = {
-        name: {
+        alias_name: {
           [Op.in]: permittedTables.filter(e => e != "*"),
         }
       }
@@ -69,11 +68,9 @@ export async function getMenus({ user }) {
     }
   }
 
-  let where = {}
-
   // 只有超级管理员才能查看和编辑开发平台
   if(tenantId != 1) {
-    where = {
+    categoryPermLimits = {
       name: {
         [Op.ne]: '开发平台'
       },
@@ -82,7 +79,9 @@ export async function getMenus({ user }) {
   }
 
   let categories = await TableCategory.findAll({
-    where,
+    where: {
+      ...categoryPermLimits
+    },
     order: [['orderno', 'ASC'], ['ID', 'ASC']],
   });
   // categories 转成树形结构
