@@ -112,7 +112,9 @@ class DataScopeService {
       }
       
       if (existConditions.length > 0) {
-        whereClause = this.applyExistConditions(whereClause, existConditions, resource);
+        const mainTableDef = CacheService.getTableByAliasName(resource);
+        const mainModelName = mainTableDef?.name || resource;
+        whereClause = this.applyExistConditions(whereClause, existConditions, mainModelName);
       }
       
       CacheService.setDataScope(userId, resource, whereClause);
@@ -134,18 +136,24 @@ class DataScopeService {
       return rules.map(item => this.processRules(item, variables));
     }
 
-    if (typeof rules === 'object' && rules !== null) {
+    // 仅处理“纯对象”，跳过 Sequelize 的实例（如 literal/col/fn/where）
+    if (rules !== null && typeof rules === 'object') {
+      const proto = Object.getPrototypeOf(rules);
+      const isPlain = proto === Object.prototype || proto === null;
+      if (!isPlain) {
+        return rules;
+      }
       const newObj: { [key: string | symbol]: any } = {};
       const keys = [...Object.keys(rules), ...Object.getOwnPropertySymbols(rules)];
       for (const key of keys) {
-        newObj[key] = this.processRules(rules[key], variables);
+        newObj[key] = this.processRules((rules as any)[key], variables);
       }
       return newObj;
     }
 
     if (typeof rules === 'string') {
       const match = rules.match(/^\$\{(.+)\}$/);
-      if (match && variables.hasOwnProperty(match[1])) {
+      if (match && Object.prototype.hasOwnProperty.call(variables, match[1])) {
         return variables[match[1]];
       }
     }
@@ -186,25 +194,94 @@ class DataScopeService {
     
     const subWhere = await this.parseRule({ ...subRule, logic: subRule.logic || 'AND' }, { tenantId, resource: relatedTableDef.name });
 
+    // 构建子条件 SQL（带别名）
+    const as = `__exists_${relatedModel.tableName}`;
+    const esc = (v: any) => sequelize.escape(v);
+    const toSql = (cond: any): string => {
+      if (!cond || typeof cond !== 'object') return '';
+      const parts: string[] = [];
+      const symbols = Object.getOwnPropertySymbols(cond);
+      const keys = Object.keys(cond);
+
+      // 处理逻辑运算符
+      const andKey = symbols.find(s => s === Op.and);
+      const orKey = symbols.find(s => s === Op.or);
+      if (andKey) {
+        const arr = cond[andKey] as any[];
+        const sub = arr.map(toSql).filter(Boolean);
+        return sub.length ? `(${sub.join(' AND ')})` : '';
+      }
+      if (orKey) {
+        const arr = cond[orKey] as any[];
+        const sub = arr.map(toSql).filter(Boolean);
+        return sub.length ? `(${sub.join(' OR ')})` : '';
+      }
+
+      // 字段比较
+      for (const field of keys) {
+        const cmp = cond[field];
+        if (cmp && typeof cmp === 'object') {
+          const cmpSymbols = Object.getOwnPropertySymbols(cmp);
+          for (const op of cmpSymbols) {
+            const val = cmp[op];
+            let sqlOp = '=';
+            let sqlVal = '';
+            if (op === Op.eq) { sqlOp = '='; sqlVal = esc(val); }
+            else if (op === Op.ne) { sqlOp = '!='; sqlVal = esc(val); }
+            else if (op === Op.gt) { sqlOp = '>'; sqlVal = esc(val); }
+            else if (op === Op.gte) { sqlOp = '>='; sqlVal = esc(val); }
+            else if (op === Op.lt) { sqlOp = '<'; sqlVal = esc(val); }
+            else if (op === Op.lte) { sqlOp = '<='; sqlVal = esc(val); }
+            else if (op === Op.like) { sqlOp = 'LIKE'; sqlVal = esc(val); }
+            else if (op === Op.startsWith) { sqlOp = 'LIKE'; sqlVal = esc(String(val) + '%'); }
+            else if (op === Op.endsWith) { sqlOp = 'LIKE'; sqlVal = esc('%' + String(val)); }
+            else if (op === Op.in) {
+              const list = Array.isArray(val) ? val : [val];
+              sqlOp = 'IN';
+              sqlVal = `(${list.map(esc).join(', ')})`;
+            } else if (op === Op.notIn) {
+              const list = Array.isArray(val) ? val : [val];
+              sqlOp = 'NOT IN';
+              sqlVal = `(${list.map(esc).join(', ')})`;
+            } else {
+              continue;
+            }
+            parts.push(`${as}.\`${field}\` ${sqlOp} ${sqlVal}`);
+          }
+        } else {
+          parts.push(`${as}.\`${field}\` = ${esc(cmp)}`);
+        }
+      }
+      return parts.length > 1 ? `(${parts.join(' AND ')})` : (parts[0] || '');
+    };
+
+    const subWhereSql = toSql(subWhere);
     const primaryKeyCol = relatedModel.primaryKeyAttribute;
-    const relatedInstances = await relatedModel.findAll({
-        where: subWhere,
-        attributes: [primaryKeyCol],
-        raw: true,
-    });
 
-    const relatedIds = relatedInstances.map(i => i[primaryKeyCol]);
+    const joinCondition = `${as}.\`${primaryKeyCol}\` = \`${mainTableDef.name}\`.\`${field}\``;
+    const whereClause = subWhereSql && subWhereSql.trim().length > 0
+      ? `${joinCondition} AND (${subWhereSql})`
+      : joinCondition;
 
-    return { [field]: { [Op.in]: relatedIds } };
+    const subQuery = `
+      SELECT 1 FROM \`${relatedModel.tableName}\` AS ${as}
+      WHERE ${whereClause}
+      LIMIT 1
+    `;
+
+    return sequelize.literal(`EXISTS (${subQuery})`);
   }
 
   private applyExistConditions(where: any, existConditions: any[], mainModelName: string): any {
     const subQueries = existConditions.map(condition => {
-      const { model, as, from, to, where: subWhere } = condition.exist;
-      // Note: `to` should reference a field in the main model.
+      const { model, as, from, to, whereSql } = condition.exist;
+      const joinCondition = `${as}.\`${from}\` = \`${mainModelName}\`.\`${to}\``;
+      const whereClause = whereSql && whereSql.trim().length > 0
+        ? `${joinCondition} AND (${whereSql})`
+        : joinCondition;
       const subQuery = `
-        SELECT 1 FROM ${model} AS ${as}
-        WHERE ${as}.${from} = \`${mainModelName}\`.\`${to}\`)
+        SELECT 1 FROM \`${model}\` AS ${as}
+        WHERE ${whereClause}
         LIMIT 1
       `;
       return sequelize.literal(`EXISTS (${subQuery})`);
