@@ -1,9 +1,14 @@
 import User from '../db/models/User';
 import { Role, Permission } from '../db/models/Role';
-import { Op } from 'sequelize';
+import CacheService from './CacheService';
 
 class PermissionService {
-    public async hasPermission(userId: number, requiredAction: string): Promise<boolean> {
+    public async getAllUserPermissions(userId: number): Promise<Set<string>> {
+        const cachedPermissions = CacheService.getPermissions(userId);
+        if (cachedPermissions) {
+            return cachedPermissions;
+        }
+
         const user = await User.findByPk(userId, {
             include: [{
                 model: Role,
@@ -11,7 +16,7 @@ class PermissionService {
             }]
         });
 
-        if (!user) return false;
+        if (!user) return new Set<string>();
 
         const actions = new Set<string>();
         user.Roles.forEach(role => {
@@ -19,6 +24,13 @@ class PermissionService {
                 actions.add(permission.action);
             });
         });
+        
+        CacheService.setPermissions(userId, actions);
+        return actions;
+    }
+
+    public async hasPermission(userId: number, requiredAction: string): Promise<boolean> {
+        const actions = await this.getAllUserPermissions(userId);
 
         // Check for exact match or wildcard match
         // e.g., 'data:create:*' grants permission for creating any data
@@ -35,4 +47,4 @@ class PermissionService {
     }
 }
 
-export default new PermissionService(); 
+export default new PermissionService();

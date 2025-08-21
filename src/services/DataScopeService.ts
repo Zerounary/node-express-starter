@@ -68,6 +68,11 @@ class DataScopeService {
    * @returns A Sequelize where clause object.
    */
   public async getDataScopeWhere(userId: number, resource: string): Promise<any> {
+    const cachedScope = CacheService.getDataScope(userId, resource);
+    if (cachedScope) {
+      return this.processRules(cachedScope, { currentUserId: userId });
+    }
+
     let user = await User.findByPk(userId);
     try {
       const roles = await user.getRoles({
@@ -92,14 +97,12 @@ class DataScopeService {
       const rules = (await Promise.all(rulePromises)).filter(Boolean);
 
       if (rules.length === 0) {
+        CacheService.setDataScope(userId, resource, {});
         return {}; // No rules for this resource, no restrictions
       }
-
-      // Replace runtime variables like ${currentUserId}
-      const processedRules = this.processRules(rules, { currentUserId: user.id });
       
-      const existConditions = processedRules.filter(rule => rule.exist);
-      const normalConditions = processedRules.filter(rule => !rule.exist);
+      const existConditions = rules.filter(rule => rule.exist);
+      const normalConditions = rules.filter(rule => !rule.exist);
 
       let whereClause: any = {};
       if (normalConditions.length > 0) {
@@ -109,10 +112,11 @@ class DataScopeService {
       }
       
       if (existConditions.length > 0) {
-        return this.applyExistConditions(whereClause, existConditions, resource);
+        whereClause = this.applyExistConditions(whereClause, existConditions, resource);
       }
-
-      return whereClause;
+      
+      CacheService.setDataScope(userId, resource, whereClause);
+      return this.processRules(whereClause, { currentUserId: user.id });
     } catch (error) {
       logError(new Error(`Failed to get data scope for user ${user.id} and resource ${resource}: ${error.message}`));
       return {}; // Fail safe: no restrictions

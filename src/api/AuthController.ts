@@ -2,9 +2,10 @@ import { Controller, Post, Get } from "@/utils/routeDecorators";
 import { ok, fail } from "@/router/api";
 import User from "../db/models/User";
 import AuthService from "../services/AuthService";
+import PermissionService from "../services/PermissionService";
+import CacheService from "../services/CacheService";
 import { z } from 'zod';
 import { logError } from "../logger";
-import { getUserPerms } from "@/db/dao/auth";
 
 const userSchema = z.object({
   username: z.string().min(3),
@@ -46,8 +47,8 @@ export default class AuthController {
   @Get("/codes")
   async getPermission(req, res) {
     const { id: userId } = req.user;
-    let permissions = await getUserPerms(userId);
-    return ok(permissions);
+    const permissions = await PermissionService.getAllUserPermissions(userId);
+    return ok(Array.from(permissions));
   }
 
   @Post("/login")
@@ -71,6 +72,11 @@ export default class AuthController {
       }
 
       const accessToken = AuthService.generateToken(user);
+      
+      CacheService.clearUserCache(user.id);
+      // Pre-warm caches
+      await PermissionService.getAllUserPermissions(user.id);
+
       // 返回没有密码的用户信息
       const userInfo = {
         id: user.id,
@@ -83,4 +89,16 @@ export default class AuthController {
       return fail(error.message);
     }
   }
-} 
+
+  @Post("/logout")
+  async logout(req, res) {
+    try {
+      const { id: userId } = req.user;
+      CacheService.clearUserCache(userId);
+      return ok({ message: "Logout successful, cache cleared." });
+    } catch (error) {
+      logError(error);
+      return fail(error.message);
+    }
+  }
+}

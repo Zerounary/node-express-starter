@@ -6,6 +6,11 @@ class CacheService {
     private tableCacheByAliasName: Map<string, DynamicTable> = new Map();
     private tableCacheById: Map<number, DynamicTable> = new Map();
 
+    // User Permissions Cache
+    private userPermissionsCache: Map<number, Set<string>> = new Map();
+    // User Data Scopes Cache
+    private userDataScopesCache: Map<string, any> = new Map();
+
     public async initialize() {
         logInfo('Initializing schema cache...');
         await this.loadAllTables();
@@ -79,6 +84,41 @@ class CacheService {
 
     public getTableById(id: number): (DynamicTable & { columns: DynamicColumn[] }) | undefined {
         return this.tableCacheById.get(id) as any;
+    }
+
+    // --- User Permission Cache Methods ---
+    public getPermissions(userId: number): Set<string> | undefined {
+        return this.userPermissionsCache.get(userId);
+    }
+
+    public setPermissions(userId: number, permissions: Set<string>): void {
+        this.userPermissionsCache.set(userId, permissions);
+        logInfo(`Permissions cached for user: ${userId}`);
+    }
+
+    // --- User Data Scope Cache Methods ---
+    public getDataScope(userId: number, resource: string): any | undefined {
+        const key = `${userId}:${resource}`;
+        return this.userDataScopesCache.get(key);
+    }
+
+    public setDataScope(userId: number, resource: string, scope: any): void {
+        const key = `${userId}:${resource}`;
+        this.userDataScopesCache.set(key, scope);
+        logInfo(`Data scope cached for user ${userId} on resource ${resource}`);
+    }
+    
+    // --- General User Cache Method ---
+    public clearUserCache(userId: number): void {
+        this.userPermissionsCache.delete(userId);
+
+        const prefix = `${userId}:`;
+        for (const key of this.userDataScopesCache.keys()) {
+            if (key.startsWith(prefix)) {
+                this.userDataScopesCache.delete(key);
+            }
+        }
+        logInfo(`All caches cleared for user: ${userId}`);
     }
 }
 
