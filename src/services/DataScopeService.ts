@@ -1,12 +1,9 @@
 import { Op } from 'sequelize';
 import User from '../db/models/User';
-import { Role } from '../db/models/Role';
 import { DataScope } from '../db/models/DataScope';
-import { getTableConfig } from '../hooks/table';
 import { logError } from '../logger';
 import sequelize from '../db/sequelize';
 import DynamicDataService from './DynamicDataService';
-import { DynamicTable, DynamicColumn } from '../db/models';
 import CacheService from './CacheService';
 
 const operatorMap = {

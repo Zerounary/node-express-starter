@@ -15,8 +15,14 @@ import { ColumnDataTypes } from "@/utils";
 @Controller("/data/:tableName")
 export default class DynamicController {
 
+  // 用于优化性能的请求级表元数据缓存
+  private tableMetaCache = new Map<string, any>();
+
   /**
-   * 手动查询外键关联数据
+   * 优化后的函数，用于高效地填充关联数据。
+   * - 通过批量预加载减少数据库查询。
+   * - 利用并行查询提升性能。
+   * - 缓存表元数据以避免重复获取。
    * @param data 主表数据
    * @param columns 表字段配置
    * @param tenantId 租户ID
@@ -24,64 +30,103 @@ export default class DynamicController {
    */
   private async populateRelatedData(data: any[], columns: any[], tenantId: number): Promise<any[]> {
     if (!data || data.length === 0) return data;
-    
-    const result = data.map(item => ({ ...item }));
-    
-    for (const column of columns) {
-      if (column.dataType === ColumnDataTypes.ID && column.relatedToTableId) {
-        try {
-          // 根据relatedToTableId获取关联表的信息
-          const { DynamicTable } = await import('../db/models');
-          const relatedTableDef = await DynamicTable.findByPk(column.relatedToTableId);
-          
-          if (relatedTableDef) {
-            const relatedTableName = relatedTableDef.alias_name || relatedTableDef.name;
-            const relatedModel = await DynamicDataService.getModelForTable(relatedTableName, tenantId);
-            const relatedTableConfig = await getTableConfig(relatedTableName);
-            
-            // 收集所有需要查询的外键ID
-            const foreignKeyIds = result
-              .map(item => item[column.fieldName])
-              .filter(id => id != null);
-            
-            if (foreignKeyIds.length > 0) {
-              // 批量查询关联数据
-              const dk = relatedTableConfig.columns.find(col => col.dk === true);
-              const attributes: any[] = ['id'];
-              if (dk && dk !== 'id') {
-                attributes.push([dk.fieldName, 'name']);
-              }
 
-              const relatedData = await relatedModel.findAll({
+    const fkColumns = columns.filter(c => c.dataType === ColumnDataTypes.ID && c.relatedToTableId);
+    if (fkColumns.length === 0) return data;
+
+    // 1. 按关联表对所有外键ID进行分组
+    const idsByTableId = new Map<number, Set<any>>();
+    for (const column of fkColumns) {
+        if (!idsByTableId.has(column.relatedToTableId)) {
+            idsByTableId.set(column.relatedToTableId, new Set());
+        }
+        const idSet = idsByTableId.get(column.relatedToTableId)!;
+        for (const item of data) {
+            const fkId = item[column.fieldName];
+            if (fkId != null) {
+                idSet.add(fkId);
+            }
+        }
+    }
+
+    // 2. 批量获取关联表的元数据
+    const { DynamicTable } = await import('../db/models');
+    const allRelatedTableIds = Array.from(idsByTableId.keys());
+
+    const tableDefs = await DynamicTable.findAll({ where: { id: { [Op.in]: allRelatedTableIds } } });
+    const tableDefMap = new Map(tableDefs.map(def => [def.id, def]));
+
+    // 3. 并行获取所有关联数据
+    const dataFetchPromises = [];
+    const relatedDataMap = new Map<string, Map<any, any>>(); // tableName -> {id -> data}
+
+    for (const [tableId, ids] of idsByTableId.entries()) {
+        if (ids.size === 0) continue;
+
+        const def = tableDefMap.get(tableId);
+        if (!def) continue;
+
+        const tableName = def.alias_name || def.name;
+
+        const promise = (async () => {
+            const cacheKey = `tableConfig:${tableName}`;
+            let tableConfig = this.tableMetaCache.get(cacheKey);
+            if (!tableConfig) {
+                tableConfig = await getTableConfig(tableName);
+                this.tableMetaCache.set(cacheKey, tableConfig);
+            }
+            if (!tableConfig) return;
+
+            const dk = tableConfig.columns.find(col => col.dk === true);
+            const attributes: any[] = ['id'];
+            if (dk && dk.fieldName !== 'id') {
+                attributes.push([dk.fieldName, 'name']);
+            }
+
+            const model = await DynamicDataService.getModelForTable(tableName, tenantId);
+            const relatedData = await model.findAll({
                 attributes,
                 where: {
-                  id: { [Op.in]: foreignKeyIds },
-                  tenantId
-                }
-              });
-              
-              // 创建ID到数据的映射
-              const relatedDataMap = new Map();
-              relatedData.forEach(item => {
+                    id: { [Op.in]: Array.from(ids) },
+                    tenantId,
+                },
+            });
+
+            const itemMap = new Map();
+            for (const item of relatedData) {
                 const jsonItem = item.toJSON();
-                relatedDataMap.set(jsonItem.id, jsonItem);
-              });
-              
-              // 将关联数据添加到结果中
-              const aliasName = column.fieldName;
-              result.forEach(item => {
-                if (item[column.fieldName] && relatedDataMap.has(item[column.fieldName])) {
-                  item[aliasName] = relatedDataMap.get(item[column.fieldName]);
-                }
-              });
+                itemMap.set(jsonItem.id, jsonItem);
             }
-          }
-        } catch (error) {
-          logError(new Error(`Failed to populate related data for ${column.fieldName}: ${error instanceof Error ? error.message : String(error)}`));
-        }
-      }
+            relatedDataMap.set(tableName, itemMap);
+        })().catch(error => {
+            logError(new Error(`Failed to fetch related data for table ${tableName}: ${error instanceof Error ? error.message : String(error)}`));
+        });
+
+        dataFetchPromises.push(promise);
     }
-    
+
+    await Promise.all(dataFetchPromises);
+
+    // 4. 将获取到的数据填充回结果集
+    const result = data.map(item => ({ ...item }));
+    const tableNameMap = new Map(Array.from(tableDefMap.entries()).map(([id, def]) => [id, def.alias_name || def.name]));
+
+    for (const item of result) {
+        for (const column of fkColumns) {
+            const fkId = item[column.fieldName];
+            if (fkId == null) continue;
+
+            const tableName = tableNameMap.get(column.relatedToTableId);
+            if (!tableName) continue;
+
+            const tableData = relatedDataMap.get(tableName);
+            if (tableData && tableData.has(fkId)) {
+                // 在这里，我们用获取到的对象替换了原来的ID
+                item[column.fieldName] = tableData.get(fkId);
+            }
+        }
+    }
+
     return result;
   }
 
