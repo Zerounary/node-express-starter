@@ -1,5 +1,6 @@
 import { defaultColumns, systemTables } from "@/db/init";
 import { DynamicColumn, DynamicTable } from "@/db/models";
+import CacheService from "@/services/CacheService";
 
 export async function beforeCreate(data) {
   data.alias_name = data.alias_name || data.name;
@@ -18,6 +19,11 @@ export async function afterCreate(data) {
       ...column,
     });
   }
+  await CacheService.reloadTable(data.name);
+}
+
+export async function afterUpdate(data) {
+  await CacheService.reloadTable(data.name);
 }
 
 export async function beforeDelete(id) {
@@ -26,31 +32,35 @@ export async function beforeDelete(id) {
   await DynamicColumn.destroy({ where: { tableId } });
 }
 
-export async function getPageConfig({tableName}) {
-  return await getTableConfig(tableName);
+export async function afterDelete(data) {
+  await CacheService.reloadTable(data.name);
 }
 
-export async function getTableConfig(tableName) {
-  let table = await DynamicTable.findOne({ where: { alias_name: tableName } });
+export function getPageConfig({tableName}) {
+  return getTableConfig(tableName);
+}
+
+export function getTableConfig(tableName) {
+  const table = CacheService.getTableByAliasName(tableName);
   if (!table) {
     throw new Error("Table not found");
   }
   return getTableConfigById(table.id);
 }
 
-export async function getTableConfigById(tableId: number) {
-  let table = await DynamicTable.findByPk(tableId);
+export function getTableConfigById(tableId: number) {
+  const table = CacheService.getTableById(tableId);
   if (!table) {
     throw new Error("Table not found");
   }
-  let columns = (await table.getColumns()).sort(
+  const columns = table.columns.sort(
     (a, b) => a.orderno - b.orderno
   );
 
   const relatedTables = {};
   for (const col of columns) {
     if (col.relatedToTableId) {
-      const relatedTable = await DynamicTable.findByPk(col.relatedToTableId);
+      const relatedTable = CacheService.getTableById(col.relatedToTableId);
       if (relatedTable) {
         relatedTables[col.relatedToTableId] = relatedTable.alias_name || relatedTable.name;
       }
