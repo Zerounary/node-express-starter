@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Put, Delete } from "@/utils/routeDecorators";
 import { ok, fail } from "@/router/api";
 import DynamicDataService from '../services/DynamicDataService';
+import DataScopeService from '../services/DataScopeService';
 import HookService from '../services/HookService';
 import { Op } from 'sequelize';
 import { logError } from "../logger";
@@ -84,38 +85,47 @@ export default class DynamicController {
     return result;
   }
 
-  private async getParsedWhere(filters: any, tenantId: number) {
-      const where: any = { tenantId };
-      const operatorMap = {
-          eq: Op.eq, ne: Op.ne, gte: Op.gte, gt: Op.gt, lte: Op.lte, lt: Op.lt,
-          in: Op.in, notIn: Op.notIn, like: Op.like, iLike: Op.iLike,
-      };
+  private async getParsedWhere(req: any, filters: any) {
+    const { user, params } = req;
+    const { tenantId } = user;
+    const { tableName } = params;
 
-      for (const key in filters) {
-          const parts = key.split('-');
-          if (parts.length === 2) {
-              const [field, op] = parts;
-              // 如果是true/false字符串，转换为布尔值
-              let value: any = filters[key];
-              if (value === 'true') value = true;
-              else if (value === 'false') value = false;
-              if (field && op && operatorMap[op]) {
-                  if(op == 'like') {
+    const where: any = { tenantId };
+    const operatorMap = {
+        eq: Op.eq, ne: Op.ne, gte: Op.gte, gt: Op.gt, lte: Op.lte, lt: Op.lt,
+        in: Op.in, notIn: Op.notIn, like: Op.like, iLike: Op.iLike,
+    };
+
+    for (const key in filters) {
+        const parts = key.split('-');
+        if (parts.length === 2) {
+            const [field, op] = parts;
+            let value: any = filters[key];
+            if (value === 'true') value = true;
+            else if (value === 'false') value = false;
+
+            if (field && op && operatorMap[op]) {
+                if (op === 'like') {
                     value = `%${value}%`;
-                  }
-                  if (op === 'in' || op === 'notIn') {
-                      value = value.split(',');
-                  }
-                  where[field] = { [operatorMap[op]]: value };
-              } else if(field) {
-                // 默认处理为等于
+                }
+                if (op === 'in' || op === 'notIn') {
+                    value = value.split(',');
+                }
+                where[field] = { [operatorMap[op]]: value };
+            } else if (field) {
                 where[field] = { [Op.eq]: value };
-              }
-          }
-      }
+            }
+        }
+    }
 
-      // TODO 此处根据用户角色进行数据权限过滤
-      return where;
+    // Apply data scope
+    const dataScopeWhere = await DataScopeService.getDataScopeWhere(user.id, tableName);
+    
+    if (Reflect.ownKeys(dataScopeWhere).length > 0) {
+      return { [Op.and]: [where, dataScopeWhere] };
+    }
+
+    return where;
   }
 
   private getParsedSorts(sorts: any): any[] {
@@ -137,7 +147,7 @@ export default class DynamicController {
     try {
       const { tableName } = req.params;
       const { sorts, ...filters } = req.query;
-      const where = await this.getParsedWhere(filters, req.user.tenantId);
+      const where = await this.getParsedWhere(req, filters);
       const order = this.getParsedSorts(sorts);
       
       // 获取表配置
@@ -167,7 +177,7 @@ export default class DynamicController {
     try {
       const { tableName } = req.params;
       const { page = 1, pageSize = 10, sorts, ...filters } = req.query;
-      const where = await this.getParsedWhere(filters, req.user.tenantId);
+      const where = await this.getParsedWhere(req, filters);
       const order = this.getParsedSorts(sorts);
 
       // 获取表配置
@@ -243,7 +253,7 @@ export default class DynamicController {
       }
 
       // 添加其他过滤条件
-      const additionalWhere = await this.getParsedWhere(filters, req.user.tenantId);
+      const additionalWhere = await this.getParsedWhere(req, filters);
       Object.assign(where, additionalWhere);
 
       // 确定要返回的字段
@@ -405,7 +415,7 @@ export default class DynamicController {
       const { tenantId } = req.user;
       const { tableName } = req.params;
       const { ...filters } = req.query;
-      const where = await this.getParsedWhere(filters, tenantId);
+      const where = await this.getParsedWhere(req, filters);
 
       const Model = await DynamicDataService.getModelForTable(tableName, tenantId);
       const data = await Model.findAll({ where, raw: true });

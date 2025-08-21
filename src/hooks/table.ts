@@ -35,9 +35,28 @@ export async function getTableConfig(tableName) {
   if (!table) {
     throw new Error("Table not found");
   }
+  return getTableConfigById(table.id);
+}
+
+export async function getTableConfigById(tableId: number) {
+  let table = await DynamicTable.findByPk(tableId);
+  if (!table) {
+    throw new Error("Table not found");
+  }
   let columns = (await table.getColumns()).sort(
     (a, b) => a.orderno - b.orderno
   );
+
+  const relatedTables = {};
+  for (const col of columns) {
+    if (col.relatedToTableId) {
+      const relatedTable = await DynamicTable.findByPk(col.relatedToTableId);
+      if (relatedTable) {
+        relatedTables[col.relatedToTableId] = relatedTable.alias_name || relatedTable.name;
+      }
+    }
+  }
+
   return {
     id: table.id,
     table: table.alias_name || table.name,
@@ -51,6 +70,7 @@ export async function getTableConfig(tableName) {
       sortable: col.sortable,
       dataType: col.dataType,
       relatedToTableId: col.relatedToTableId,
+      relatedToTableName: relatedTables[col.relatedToTableId],
       ...col.ui,
     })),
   };

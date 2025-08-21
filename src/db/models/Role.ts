@@ -1,8 +1,9 @@
-import { Model, DataTypes, BelongsToManyAddAssociationMixin, BelongsToManyGetAssociationsMixin, BelongsToManySetAssociationsMixin } from 'sequelize';
+import { Model, DataTypes, BelongsToManyAddAssociationMixin, BelongsToManyGetAssociationsMixin, BelongsToManySetAssociationsMixin, HasManyAddAssociationMixin, HasManyGetAssociationsMixin } from 'sequelize';
 import sequelize from '../sequelize';
 import Tenant from './Tenant';
 import User from './User';
 import { commontFields } from './common';
+import { DataScope } from './DataScope';
 
 class Role extends Model {
   public id!: number;
@@ -13,6 +14,8 @@ class Role extends Model {
   public getPermissions!: BelongsToManyGetAssociationsMixin<Permission>;
   public setPermissions!: BelongsToManySetAssociationsMixin<Permission, number>;
   public Permissions?: Permission[];
+  public getDataScopes!: HasManyGetAssociationsMixin<DataScope>;
+  public addDataScope!: HasManyAddAssociationMixin<DataScope, number>;
 }
 
 class Permission extends Model {

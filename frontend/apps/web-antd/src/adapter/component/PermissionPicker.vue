@@ -1,7 +1,6 @@
 <template>
   <div>
     <Button @click="openModal">授权</Button>
-  </div>
   <Modal
       title="设置权限"
       v-model:open="isModalVisible"
@@ -25,10 +24,12 @@
             :checked="isPermissionSelected(record.table, column.key as string)"
             @update:checked="(checked) => handleCheckboxChange(record.table, column.key as string, checked)"
           />
+          <DataScopePicker v-if="!record.children && column.key == 'view'" :table="record" :role="row" />
         </template>
       </template>
     </Table>
   </Modal>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -36,6 +37,7 @@ import { execute, getList } from '#/api/system/crud';
 import { assignPermission, getRolePerms } from '#/api/system/role';
 import { Modal, Table, Button, Checkbox, message } from 'ant-design-vue';
 import { ref, type Ref, computed } from 'vue';
+import DataScopePicker from './DataScopePicker.vue';
 
 const props = defineProps<{
   row: any;

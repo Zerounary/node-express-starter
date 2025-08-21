@@ -1,5 +1,19 @@
 import { requestClient } from '#/api/request';
 
+async function get(url: string, params = {}) {
+  return requestClient.get<Array<any>>(url, {
+    params,
+  });
+}
+
+async function post(url: string, data) {
+  return requestClient.post(url, data);
+}
+
+async function put(url: string, data) {
+  return requestClient.put(url, data);
+}
+
 /**
  * 关键字搜索
  */
@@ -99,4 +113,4 @@ async function search(table: string, params) {
   });
 }
 
-export { create, update, remove, getPage, getList, getKeywordList, getById, execute, exportData, importData, search };
+export { get, post, put, create, update, remove, getPage, getList, getKeywordList, getById, execute, exportData, importData, search };

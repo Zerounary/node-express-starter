@@ -109,7 +109,7 @@ export async function getMenus({ user }) {
       type: 'menu',
       name: table.description,
       path: `/crud/${table.alias_name}`,
-      table: table.name,
+      table: table.alias_name,
       meta: {}
     }
   })

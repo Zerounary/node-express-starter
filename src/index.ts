@@ -17,6 +17,7 @@ import { logMiddleware } from "./router/middlewares/logMiddleware";
 import { Permission, Role, RolePermissions, UserRoles } from "./db/models/Role";
 import { Workflow, WorkflowStage, WorkflowStageApprover, WorkflowInstance, WorkflowInstanceLog } from './db/models/Workflow';
 import { initAdminUser, initSystemData, initTableCategories } from "./db/init";
+import { DataScope } from "./db/models/DataScope";
 
 
 async function bootstrap() {
@@ -59,6 +60,7 @@ async function bootstrap() {
         await WorkflowInstanceLog.sync({ alter: true });
         await Role.sync({ alter: true });
         await Permission.sync({ alter: true});
+        await DataScope.sync({ alter: true});
         await RolePermissions.sync({ alter: true});
         await UserRoles.sync({ alter: true});
 
