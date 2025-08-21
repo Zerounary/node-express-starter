@@ -63,7 +63,7 @@ export function start() {
 
 建议
 - 路由命名与资源语义：REST 优先（/api/roles、/api/users/{id}）
-- 统一响应结构：{ code, message, data }
+- 统一响应结构：`{ code, message, data }`
 - 错误码规范：可在 logger 或统一错误处理中间件中维护字典
 
 伪代码：一个典型 Controller
@@ -229,3 +229,130 @@ test('GET /api/roles', async () => {
 - 开发流程与最佳实践：/backend/development
 - 测试方法与实现：/backend/testing
 - 与前端联动：/frontend/integration
+
+## 补充：核心模块映射与UML
+
+- 核心文件映射
+  - 动态控制器：src/api/DynamicController.ts（CRUD/分页/搜索/导入导出、权限中间件、数据权限注入、关联数据批量填充）
+  - 动态模型生成：src/services/DynamicDataService.ts（从 DynamicTable/DynamicColumn 生成 Sequelize 模型与关系）
+  - 动态结构变更：src/services/SchemaService.ts（createTableFromDefinition/add/change/drop）
+  - 数据权限：src/services/DataScopeService.ts（ruleBuilder → Sequelize where，EXISTS 子查询）
+  - 权限聚合：src/services/PermissionService.ts（用户 → 角色 → 权限模式字符串，支持*通配）
+  - 钩子机制：src/services/HookService.ts（before/after create/update/delete）
+  - 缓存：src/services/CacheService.ts（表结构、权限、数据范围缓存；支持按表/用户刷新）
+  - 启动流程：src/index.ts（中间件/路由/模型同步/系统初始化/动态表初始化/缓存预热）
+
+- UML：动态表与字段
+```text
+classDiagram
+  class DynamicTable {
+    +id: number
+    +tenantId: number
+    +categoryId: number
+    +name: string
+    +alias_name: string
+    +description: string
+    +orderno: number
+  }
+  class DynamicColumn {
+    +id: number
+    +tenantId: number
+    +tableId: number
+    +name: string
+    +description: string
+    +dataType: string
+    +relatedToTableId: number
+    +enumValues: string[]
+    +ui: json
+    +ak: boolean
+    +dk: boolean
+    +sortable: boolean
+    +orderno: number
+  }
+  class TableCategory {
+    +id: number
+    +tenantId: number
+    +type: enum
+    +name: string
+    +parentId: number
+    +meta: json
+    +path: string
+    +url: string
+    +redirect: string
+    +orderno: number
+  }
+  DynamicTable "1" --> "many" DynamicColumn : columns
+  DynamicTable "*" --> "1" TableCategory : category
+  TableCategory "1" --> "many" TableCategory : children
+```
+
+- UML：服务与调用关系
+```text
+classDiagram
+  class DynamicDataService {
+    -modelCache
+    -relationsCache
+    +getModelForTable(tableName, tenantId)
+    +defineRelationships(model, tableDefinition, tenantId)
+  }
+  class SchemaService {
+    +createTableFromDefinition(tableId)
+    +addColumnFromDefinition(columnId)
+    +changeColumn(tableName, columnName, def, tenantId)
+    +dropColumn(tableName, columnName, tenantId)
+  }
+  class DataScopeService {
+    -parseRule(ruleBuilder, context)
+    -buildExistsCondition(field, subRule, tenantId, mainTable)
+    +getDataScopeWhere(userId, resource)
+  }
+  class PermissionService {
+    +getAllUserPermissions(userId)
+    +hasPermission(userId, action)
+  }
+  class HookService {
+    -hooks: Map
+    +executeHook(tableName, hookName, ...args)
+  }
+  class CacheService {
+    -tableCacheByName
+    -userPermissionsCache
+    -userDataScopesCache
+    +initialize()
+    +getTableByName(name)
+    +setPermissions(userId, perms)
+    +setDataScope(userId, resource, scope)
+  }
+  class DynamicController {
+    -tableMetaCache
+    +list/find/search/findOne/create/update/remove/exportData/importData
+  }
+  DynamicController --> DynamicDataService
+  DynamicController --> DataScopeService
+  DynamicController --> HookService
+  DynamicDataService --> SchemaService
+  PermissionService --> CacheService
+  DataScopeService --> CacheService
+```
+
+- 时序：动态分页查询
+```text
+sequenceDiagram
+  actor U as User
+  participant R as Router (/api/data/:tableName)
+  participant DC as DynamicController
+  participant DS as DataScopeService
+  participant DDS as DynamicDataService
+  participant DB as Sequelize/DB
+
+  U->>R: GET /api/data/products/page?status-eq=enabled
+  R->>DC: 命中控制器
+  DC->>DS: getDataScopeWhere(userId,"products")
+  DS->>DB: 读取角色+DataScope
+  DS-->>DC: 返回 where 片段
+  DC->>DDS: getModelForTable("products", tenantId)
+  DDS->>DB: 动态/缓存模型与关系
+  DC->>DB: findAndCountAll(where, order, page)
+  DC->>DB: 批量预取关联数据
+  DC-->>U: { code:0, data:{items,total} }
+```

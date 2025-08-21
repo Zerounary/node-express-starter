@@ -54,8 +54,8 @@ export default function register(router: Router) {
 
 - 参数校验：在 Controller 层做轻量校验（必填/范围/格式），复杂校验放 Service
 - 统一响应结构
-  - 成功：{ code: 0, message: 'ok', data }
-  - 失败：{ code: 非0, message, data?: any }
+  - 成功：`{ code: 0, message: 'ok', data }`
+  - 失败：`{ code: 非0, message, data?: any }`
 - 错误传递：Controller 中尽量 next(e)，交由全局错误处理中间件统一处理与记录
 
 示例（Controller 精简范式）：
@@ -138,3 +138,70 @@ await sequelize.transaction(async (t) => {
 - 架构与设计：/backend/architecture
 - 测试方法与实现：/backend/testing
 - 全局测试总览：/testing/
+
+## 补充：按模块的开发指南（结合现有代码）
+
+- 动态表与字段（示例：产品）
+```ts
+import { DynamicTable, DynamicColumn } from '@/db/models';
+
+const table = await DynamicTable.create({
+  tenantId: 1, name: 'products', alias_name: 'products', description: '产品主数据'
+});
+await DynamicColumn.bulkCreate([
+  { tenantId: 1, tableId: table.id, name: 'code', description: '产品编码', dataType: 'STRING', ak: true },
+  { tenantId: 1, tableId: table.id, name: 'name', description: '产品名称', dataType: 'STRING', dk: true },
+  { tenantId: 1, tableId: table.id, name: 'price', description: '含税价', dataType: 'DECIMAL' },
+  { tenantId: 1, tableId: table.id, name: 'status', description: '状态', dataType: 'ENUM', enumValues: ['enabled', 'disabled'] },
+]);
+```
+
+- 物理表生成/变更
+```ts
+import SchemaService from '@/services/SchemaService';
+await SchemaService.createTableFromDefinition(table.id);
+// 新增字段：
+await SchemaService.addColumnFromDefinition(newColumnId);
+```
+
+- 动态接口与权限（控制器：src/api/DynamicController.ts）
+  - 列表分页：GET /api/data/products/page?page=1&pageSize=20&status-eq=enabled
+  - 详情：GET /api/data/products/:id
+  - 新建：POST /api/data/products
+  - 更新：PUT /api/data/products/:id
+  - 删除：DELETE /api/data/products/:id
+  - 搜索：GET /api/data/products/search?keyword=xxx
+  - 导出/导入：GET /export / POST /import（CSV）
+  - 权限中间件：checkPermission('data::tableName:action')，例如 data:page:products、data:create:products
+
+- 数据权限配置（行级 DataScope：src/services/DataScopeService.ts）
+```json
+{
+  "logic": "AND",
+  "conditions": [
+    { "field": "createdBy", "operator": "eq", "value": "$CURRENT_USER_ID" }
+  ]
+}
+```
+说明：
+- ruleBuilder 将在运行时解析为 Sequelize where，并注入 DynamicController 的查询条件。
+- 支持 exists 子查询，按关系字段生成 EXISTS 子查询进行跨表过滤。
+
+- 钩子机制（src/services/HookService.ts）
+  - 在 src/hooks/{table}.ts 定义同名导出函数
+```ts
+// src/hooks/products.ts
+export async function beforeCreate(body, req) {
+  body.createdBy = req.user.id;
+  return body;
+}
+export async function afterCreate(instance) {
+  // 审计/通知
+}
+export async function beforeUpdate(id, body, req) {
+  return body;
+}
+```
+
+- 关联填充优化（DynamicController.populateRelatedData）
+  - 批量收集外键ID → 并行批量查询 → 以 map 缓存 → 一次性回填，减少 N+1 查询。

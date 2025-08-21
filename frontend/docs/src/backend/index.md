@@ -138,8 +138,87 @@ server: {
   2) 新建/编辑角色调用相应接口
   3) 分配权限后刷新缓存或拉取最新数据
 
-## 8. 部署与运维
+## 8. 核心模块速览与代码索引
 
-- 端口：默认 80（容器中通过端口映射暴露）
-- 迁移策略：生产环境避免 `alter:true`，改为显式迁移脚本
-- 观测性：接入结构化日志与告警；关键接口埋点耗时
+- 动态表字段配置系统
+  - 模型：`src/db/models/DynamicTable.ts`、`src/db/models/DynamicColumn.ts`
+  - 关联：`src/db/models/associations.ts`（表-字段、类别自关联）
+  - 物理表：`src/services/SchemaService.ts`（创建/变更）
+  - 运行期模型：`src/services/DynamicDataService.ts`（属性映射、关系定义、缓存）
+  - 渲染/表单：`DynamicColumn.ui` 字段承载，`getTableConfig(tableName)` 提供元数据
+- 动态接口功能
+  - 控制器：`src/api/DynamicController.ts`
+  - 装饰器/装载：`utils/routeDecorators`、`src/utils/routeLoader.ts`
+  - 导入/导出：papaparse CSV（/export /import）
+- 菜单控制系统
+  - 模型：`src/db/models/TableCategory.ts`（type/meta/path/url/redirect/orderno）
+  - 绑定：`DynamicTable.belongsTo(TableCategory)`，前端据 `meta.perms` 过滤
+- 数据权限体系
+  - 权限字符串：`Role/Permission`（`src/db/models/Role.ts`）
+  - 路由校验：`checkPermission('data::tableName:action')`
+  - 行级权限：`src/services/DataScopeService.ts`（ruleBuilder→Sequelize where/EXISTS）
+  - 缓存：`src/services/CacheService.ts`（用户动作集/数据范围）
+
+## 9. 动态接口端点清单（/api/data/:tableName）
+
+- GET `/list`：条件查询（支持 `field-op=value`，如 `status-eq=enabled`）
+- GET `/page`：分页查询（`page/pageSize` + 过滤 + 排序 `sorts=field-ASC`）
+- GET `/search`：检索（使用 ak 作为关键字字段，dk 作为显示字段）
+- GET `/:id`：详情
+- POST ``：创建（支持 hooks：beforeCreate/afterCreate）
+- PUT `/:id`：更新（支持 hooks：beforeUpdate/afterUpdate）
+- DELETE `/:id`：删除（支持 hooks：beforeDelete/afterDelete）
+- GET `/export`：导出 CSV
+- POST `/import`：导入 CSV
+
+权限字符串模板：`data:{action}:{tableName}`，如 `data:page:products`、`data:create:products`、`data:*:products`、`data:read:*`
+
+## 10. 数据权限配置示例
+
+仅可查看“自己创建”的数据：
+```json
+{
+  "logic": "AND",
+  "conditions": [
+    { "field": "createdBy", "operator": "eq", "value": "$CURRENT_USER_ID" }
+  ]
+}
+```
+
+基于关系 exists（仅能查看 “customer.ownerId = 当前用户” 的订单）：
+```json
+{
+  "logic": "AND",
+  "conditions": [
+    {
+      "field": "customerId",
+      "operator": "exists",
+      "value": {
+        "table": "customers",
+        "conditions": [
+          { "field": "ownerId", "operator": "eq", "value": "$CURRENT_USER_ID" }
+        ]
+      }
+    }
+  ]
+}
+```
+
+## 11. 菜单与动态表绑定约定
+
+- `TableCategory` 记录层级菜单与路由元信息（`meta`）
+- `DynamicTable` 通过 `categoryId` 归属某一菜单节点
+- 前端可据 `TableCategory` 构建路由/菜单树，并以 `meta.perms` 与用户权限集合进行前端过滤；后端路由仍进行权限校验
+
+## 12. 关键UML与时序参考
+
+- 类图（动态表/字段/类别）与服务依赖图、分页查询时序，详见：
+  - 架构与设计：/backend/architecture
+  - 开发流程与最佳实践：/backend/development
+  - 测试方法与实现：/backend/testing
+
+## 文档导航
+
+- [架构与设计](./architecture.md)
+- [开发流程与最佳实践](./development.md)
+- [测试方法与实现](./testing.md)
