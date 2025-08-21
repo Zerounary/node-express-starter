@@ -25,6 +25,10 @@ const parseErrorStack = (error: Error): { file: string; line: string } => {
     return { file: 'unknown', line: 'unknown' };
 };
 
+export const logInfo = (msg) => {
+    logger.info(msg)
+}
+
 export const logError = (error: Error) => {
     const { file, line } = parseErrorStack(error);
     console.error(`[ERROR] ${new Date().toISOString()}`);

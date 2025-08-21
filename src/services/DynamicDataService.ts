@@ -4,6 +4,7 @@ import { DynamicTable, DynamicColumn } from '../db/models';
 import { logError } from '../logger';
 import { systemTables } from '@/db/init';
 import { ColumnDataTypes } from '@/utils';
+import CacheService from './CacheService';
 
 class DynamicDataService {
   private modelCache: Map<string, ModelCtor<Model<any, any>>> = new Map();
@@ -65,7 +66,7 @@ class DynamicDataService {
     for (const column of tableDefinition.columns!) {
         try {
             if (column.dataType === 'RELATIONSHIP' && column.relatedToTableId) {
-                const relatedTableDef = await DynamicTable.findByPk(column.relatedToTableId);
+                const relatedTableDef = CacheService.getTableById(column.relatedToTableId);
                 if (relatedTableDef) {
                     const RelatedModel = await this.getModelForTable(relatedTableDef.name, tenantId);
                     model.belongsTo(RelatedModel, { foreignKey: column.name, as: column.name.replace(/Id$/, '') });
@@ -83,21 +84,29 @@ class DynamicDataService {
     const cacheKey = physicalTableName;
     if (this.modelCache.has(cacheKey)) {
         const model = this.modelCache.get(cacheKey)!;
-        // Ensure relationships are defined, even if model is from cache
-        const tableDef = await DynamicTable.findOne({where: {name: physicalTableName, }, include: [{ model: DynamicColumn, as: 'columns' }]})
+        const tableDef = CacheService.getTableByName(physicalTableName);
         if (tableDef) {
-            await this.defineRelationships(model, tableDef as DynamicTable, tenantId);
+            await this.defineRelationships(model, tableDef, tenantId);
         }
         return model;
     }
 
-    let tableDefinition = await DynamicTable.findOne({
-      where: { name: physicalTableName },
-      include: [{ model: DynamicColumn, as: 'columns' }],
-    });
+    let tableDefinition = CacheService.getTableByName(physicalTableName);
 
     if (!tableDefinition) {
-      throw new Error(`Table '${physicalTableName}' not found for the current tenant.`);
+      // Fallback to database if not in cache, and then reload the cache for this table
+      const dbTableDef = await DynamicTable.findOne({
+          where: { name: physicalTableName },
+          include: [{ model: DynamicColumn, as: 'columns' }],
+      });
+      if (dbTableDef) {
+          await CacheService.reloadTable(physicalTableName);
+          tableDefinition = CacheService.getTableByName(physicalTableName);
+      }
+    }
+
+    if (!tableDefinition) {
+        throw new Error(`Table '${physicalTableName}' not found for the current tenant.`);
     }
 
     const attributes = this.getSequelizeAttributes(tableDefinition.columns!);

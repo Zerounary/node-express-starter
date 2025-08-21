@@ -17,6 +17,7 @@ import { logMiddleware } from "./router/middlewares/logMiddleware";
 import { Permission, Role, RolePermissions, UserRoles } from "./db/models/Role";
 import { Workflow, WorkflowStage, WorkflowStageApprover, WorkflowInstance, WorkflowInstanceLog } from './db/models/Workflow';
 import { initAdminUser, initSystemData, initTableCategories } from "./db/init";
+import CacheService from "./services/CacheService";
 import { DataScope } from "./db/models/DataScope";
 
 
@@ -75,6 +76,11 @@ async function bootstrap() {
 
         // 初始化动态表
         await initDynamicTables();
+
+        // 初始化缓存
+        console.log('Initializing cache...');
+        await CacheService.initialize();
+        console.log('Cache initialized.');
         
         // 启动服务器
         start();

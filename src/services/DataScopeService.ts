@@ -7,6 +7,7 @@ import { logError } from '../logger';
 import sequelize from '../db/sequelize';
 import DynamicDataService from './DynamicDataService';
 import { DynamicTable, DynamicColumn } from '../db/models';
+import CacheService from './CacheService';
 
 const operatorMap = {
   equals: Op.eq,
@@ -159,10 +160,7 @@ class DataScopeService {
    * @returns The combined where clause.
    */
   private async buildExistsCondition(field: string, subRule: any, tenantId: number, mainTableName: string) {
-    const mainTableDef = await DynamicTable.findOne({
-        where: { alias_name: mainTableName },
-        include: [{ model: DynamicColumn, as: 'columns' }]
-    });
+    const mainTableDef = CacheService.getTableByAliasName(mainTableName);
 
     if (!mainTableDef) {
         throw new Error(`Table definition for ${mainTableName} not found.`);
@@ -179,10 +177,7 @@ class DataScopeService {
     }
 
     const relatedModel = await DynamicDataService.getModelForTable(relatedTableAlias, tenantId);
-    const relatedTableDef = await DynamicTable.findOne({
-        where: { name: relatedModel.tableName },
-        include: [{ model: DynamicColumn, as: 'columns' }]
-    });
+    const relatedTableDef = CacheService.getTableByName(relatedModel.tableName);
 
     if (!relatedTableDef) {
         throw new Error(`Related table definition for ${relatedTableAlias} not found.`);
