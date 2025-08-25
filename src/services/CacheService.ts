@@ -1,125 +1,221 @@
 import { DynamicTable, DynamicColumn } from '../db/models';
 import { logError, logInfo } from '../logger';
 
+type TableWithColumns = DynamicTable & { columns: DynamicColumn[] };
+
+function deepFreeze<T>(obj: T, seen = new WeakSet<object>()): T {
+  if (obj && typeof obj === 'object') {
+    const o = obj as unknown as object;
+    if (seen.has(o)) return obj;
+    seen.add(o);
+    // @ts-ignore
+    const props = Array.isArray(o) ? o : Object.values(o);
+    for (const v of props) deepFreeze(v as any, seen);
+    Object.freeze(o);
+  }
+  return obj;
+}
+
 class CacheService {
-    private tableCacheByName: Map<string, DynamicTable> = new Map();
-    private tableCacheByAliasName: Map<string, DynamicTable> = new Map();
-    private tableCacheById: Map<number, DynamicTable> = new Map();
+  // 全局开关：默认开启，设置 CACHE_ENABLED=false 可关闭
+  private enabled = process.env.CACHE_ENABLED !== 'false';
 
-    // User Permissions Cache
-    private userPermissionsCache: Map<number, Set<string>> = new Map();
-    // User Data Scopes Cache
-    private userDataScopesCache: Map<string, any> = new Map();
+  // 原子快照，避免多 Map 更新时的中间态
+  private tables: {
+    byName: Map<string, TableWithColumns>;
+    byAlias: Map<string, TableWithColumns>;
+    byId: Map<number, TableWithColumns>;
+  } = {
+    byName: new Map(),
+    byAlias: new Map(),
+    byId: new Map(),
+  };
 
-    public async initialize() {
-        logInfo('Initializing schema cache...');
-        await this.loadAllTables();
-        logInfo('Schema cache initialized.');
+  // 针对 reloadTable 的按表名串行队列，避免并发覆盖
+  private reloadQueue = new Map<string, Promise<void>>();
+
+  // User caches
+  private userPermissionsCache: Map<number, Set<string>> = new Map();
+  private userDataScopesCache: Map<string, any> = new Map();
+
+  public isEnabled(): boolean {
+    return this.enabled;
+  }
+
+  public setEnabled(v: boolean): void {
+    if (this.enabled === v) return;
+    this.enabled = v;
+    logInfo(`CacheService enabled=${v}`);
+    if (!v) {
+      this.clearAll();
     }
+  }
 
-    public async loadAllTables() {
-        try {
-            const tables = await DynamicTable.findAll({
-                include: [{ model: DynamicColumn, as: 'columns' }]
-            });
+  public clearAll(): void {
+    this.tables = { byName: new Map(), byAlias: new Map(), byId: new Map() };
+    this.userPermissionsCache.clear();
+    this.userDataScopesCache.clear();
+    logInfo('CacheService cleared all caches.');
+  }
 
-            const newTableCacheByName = new Map<string, DynamicTable>();
-            const newTableCacheByAliasName = new Map<string, DynamicTable>();
-            const newTableCacheById = new Map<number, DynamicTable>();
+  public async initialize() {
+    logInfo('Initializing schema cache...');
+    if (!this.enabled) {
+      logInfo('Cache disabled, skip preloading schema cache.');
+      return;
+    }
+    await this.loadAllTables();
+    logInfo('Schema cache initialized.');
+  }
 
-            for (const table of tables) {
-                const tableData = table.get({ plain: true }) as DynamicTable & { columns: DynamicColumn[] };
-                newTableCacheByName.set(tableData.name, tableData);
-                newTableCacheByAliasName.set(tableData.alias_name, tableData);
-                newTableCacheById.set(tableData.id, tableData);
-            }
+  public async loadAllTables() {
+    if (!this.enabled) return;
+    try {
+      const tables = await DynamicTable.findAll({
+        include: [{ model: DynamicColumn, as: 'columns' }],
+      });
 
-            this.tableCacheByName = newTableCacheByName;
-            this.tableCacheByAliasName = newTableCacheByAliasName;
-            this.tableCacheById = newTableCacheById;
-            logInfo('All dynamic tables and columns have been cached.');
-        } catch (error) {
-            logError(error);
-            throw error;
+      const byName = new Map<string, TableWithColumns>();
+      const byAlias = new Map<string, TableWithColumns>();
+      const byId = new Map<number, TableWithColumns>();
+
+      for (const table of tables) {
+        const tableData = table.get({ plain: true }) as unknown as TableWithColumns;
+        const frozen = deepFreeze(tableData);
+        // @ts-ignore name/alias_name/id 由模型定义
+        byName.set((frozen as any).name, frozen);
+        // @ts-ignore
+        byAlias.set((frozen as any).alias_name, frozen);
+        // @ts-ignore
+        byId.set((frozen as any).id, frozen);
+      }
+
+      // 原子替换快照
+      this.tables = { byName, byAlias, byId };
+      logInfo('All dynamic tables and columns have been cached.');
+    } catch (error) {
+      logError(error);
+      throw error;
+    }
+  }
+
+  private enqueueReload(key: string, fn: () => Promise<void>): Promise<void> {
+    const prev = this.reloadQueue.get(key) || Promise.resolve();
+    const next = prev
+      .then(fn)
+      .catch((e) => {
+        logError(e);
+      })
+      .finally(() => {
+        // 仅当链到当前 next 时删除，避免竞态
+        if (this.reloadQueue.get(key) === next) this.reloadQueue.delete(key);
+      });
+    this.reloadQueue.set(key, next);
+    return next;
+  }
+
+  // Expects physical table name
+  public async reloadTable(tableName: string) {
+    if (!this.enabled) return;
+    return this.enqueueReload(tableName, async () => {
+      try {
+        const table = await DynamicTable.findOne({
+          where: { name: tableName },
+          include: [{ model: DynamicColumn, as: 'columns' }],
+        });
+
+        const current = this.tables;
+        const byName = new Map(current.byName);
+        const byAlias = new Map(current.byAlias);
+        const byId = new Map(current.byId);
+
+        if (!table) {
+          const old = byName.get(tableName) as any;
+          if (old) {
+            byAlias.delete(old.alias_name);
+            byId.delete(old.id);
+            byName.delete(tableName);
+          }
+          this.tables = { byName, byAlias, byId };
+          logInfo(`Table ${tableName} not found, removed from cache.`);
+          return;
         }
-    }
 
-    public async reloadTable(tableName: string) { // Expects physical table name
-        try {
-            const oldData = this.tableCacheByName.get(tableName);
-            if (oldData) {
-                this.tableCacheByAliasName.delete(oldData.alias_name);
-                this.tableCacheById.delete(oldData.id);
-            }
+        const tableData = table.get({ plain: true }) as unknown as TableWithColumns;
+        const frozen = deepFreeze(tableData) as any;
 
-            const table = await DynamicTable.findOne({
-                where: { name: tableName },
-                include: [{ model: DynamicColumn, as: 'columns' }]
-            });
-
-            if (!table) {
-                this.tableCacheByName.delete(tableName);
-                logInfo(`Table ${tableName} not found, removed from cache.`);
-                return;
-            }
-
-            const tableData = table.get({ plain: true }) as DynamicTable & { columns: DynamicColumn[] };
-            this.tableCacheByName.set(tableData.name, tableData);
-            this.tableCacheByAliasName.set(tableData.alias_name, tableData);
-            this.tableCacheById.set(tableData.id, tableData);
-            logInfo(`Cache reloaded for table: ${tableName}`);
-        } catch (error) {
-            logError(error);
-            throw error;
+        const old = byName.get(tableName) as any;
+        if (old) {
+          byAlias.delete(old.alias_name);
+          byId.delete(old.id);
         }
-    }
 
-    public getTableByName(name: string): (DynamicTable & { columns: DynamicColumn[] }) | undefined {
-        return this.tableCacheByName.get(name) as any;
-    }
-    
-    public getTableByAliasName(aliasName: string): (DynamicTable & { columns: DynamicColumn[] }) | undefined {
-        return this.tableCacheByAliasName.get(aliasName) as any;
-    }
+        byName.set(frozen.name, frozen);
+        byAlias.set(frozen.alias_name, frozen);
+        byId.set(frozen.id, frozen);
 
-    public getTableById(id: number): (DynamicTable & { columns: DynamicColumn[] }) | undefined {
-        return this.tableCacheById.get(id) as any;
-    }
+        this.tables = { byName, byAlias, byId };
+        logInfo(`Cache reloaded for table: ${tableName}`);
+      } catch (error) {
+        logError(error);
+        throw error;
+      }
+    });
+  }
 
-    // --- User Permission Cache Methods ---
-    public getPermissions(userId: number): Set<string> | undefined {
-        return this.userPermissionsCache.get(userId);
-    }
+  public getTableByName(name: string): (TableWithColumns) | undefined {
+    return this.tables.byName.get(name) as any;
+  }
 
-    public setPermissions(userId: number, permissions: Set<string>): void {
-        this.userPermissionsCache.set(userId, permissions);
-        logInfo(`Permissions cached for user: ${userId}`);
-    }
+  public getTableByAliasName(aliasName: string): (TableWithColumns) | undefined {
+    return this.tables.byAlias.get(aliasName) as any;
+  }
 
-    // --- User Data Scope Cache Methods ---
-    public getDataScope(userId: number, resource: string): any | undefined {
-        const key = `${userId}:${resource}`;
-        return this.userDataScopesCache.get(key);
-    }
+  public getTableById(id: number): (TableWithColumns) | undefined {
+    return this.tables.byId.get(id) as any;
+  }
 
-    public setDataScope(userId: number, resource: string, scope: any): void {
-        const key = `${userId}:${resource}`;
-        this.userDataScopesCache.set(key, scope);
-        logInfo(`Data scope cached for user ${userId} on resource ${resource}`);
-    }
-    
-    // --- General User Cache Method ---
-    public clearUserCache(userId: number): void {
-        this.userPermissionsCache.delete(userId);
+  // --- User Permission Cache Methods ---
+  public getPermissions(userId: number): Set<string> | undefined {
+    const val = this.userPermissionsCache.get(userId);
+    return val ? new Set(val) : undefined; // 返回副本，避免外部修改内部 Set
+  }
 
-        const prefix = `${userId}:`;
-        for (const key of this.userDataScopesCache.keys()) {
-            if (key.startsWith(prefix)) {
-                this.userDataScopesCache.delete(key);
-            }
-        }
-        logInfo(`All caches cleared for user: ${userId}`);
+  public setPermissions(userId: number, permissions: Set<string>): void {
+    if (!this.enabled) return;
+    // 存储副本，避免引用被外部持有后修改
+    this.userPermissionsCache.set(userId, new Set(permissions));
+    logInfo(`Permissions cached for user: ${userId}`);
+  }
+
+  // --- User Data Scope Cache Methods ---
+  public getDataScope(userId: number, resource: string): any | undefined {
+    const key = `${userId}:${resource}`;
+    return this.userDataScopesCache.get(key);
+  }
+
+  public setDataScope(userId: number, resource: string, scope: any): void {
+    if (!this.enabled) return;
+    const key = `${userId}:${resource}`;
+    // 存入冻结对象，降低误改风险
+    const val = typeof scope === 'object' && scope !== null ? deepFreeze(scope) : scope;
+    this.userDataScopesCache.set(key, val);
+    logInfo(`Data scope cached for user ${userId} on resource ${resource}`);
+  }
+
+  // --- General User Cache Method ---
+  public clearUserCache(userId: number): void {
+    if (!this.enabled) return;
+    this.userPermissionsCache.delete(userId);
+
+    const prefix = `${userId}:`;
+    for (const key of Array.from(this.userDataScopesCache.keys())) {
+      if (key.startsWith(prefix)) {
+        this.userDataScopesCache.delete(key);
+      }
     }
+    logInfo(`All caches cleared for user: ${userId}`);
+  }
 }
 
 export default new CacheService();

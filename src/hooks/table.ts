@@ -53,7 +53,7 @@ export function getTableConfigById(tableId: number) {
   if (!table) {
     throw new Error("Table not found");
   }
-  const columns = table.columns.sort(
+  const columns = [...table.columns].sort(
     (a, b) => a.orderno - b.orderno
   );
 
