@@ -66,7 +66,7 @@ class DynamicDataService {
     for (const column of tableDefinition.columns!) {
         try {
             if (column.dataType === 'RELATIONSHIP' && column.relatedToTableId) {
-                const relatedTableDef = CacheService.getTableById(column.relatedToTableId);
+                const relatedTableDef = await CacheService.getTableById(column.relatedToTableId);
                 if (relatedTableDef) {
                     const RelatedModel = await this.getModelForTable(relatedTableDef.name, tenantId);
                     model.belongsTo(RelatedModel, { foreignKey: column.name, as: column.name.replace(/Id$/, '') });
@@ -84,14 +84,14 @@ class DynamicDataService {
     const cacheKey = physicalTableName;
     if (this.modelCache.has(cacheKey)) {
         const model = this.modelCache.get(cacheKey)!;
-        const tableDef = CacheService.getTableByName(physicalTableName);
+        const tableDef = await CacheService.getTableByName(physicalTableName);
         if (tableDef) {
             await this.defineRelationships(model, tableDef, tenantId);
         }
         return model;
     }
 
-    let tableDefinition = CacheService.getTableByName(physicalTableName);
+    let tableDefinition = await CacheService.getTableByName(physicalTableName);
 
     if (!tableDefinition) {
       // Fallback to database if not in cache, and then reload the cache for this table
@@ -101,7 +101,7 @@ class DynamicDataService {
       });
       if (dbTableDef) {
           await CacheService.reloadTable(physicalTableName);
-          tableDefinition = CacheService.getTableByName(physicalTableName);
+          tableDefinition = await CacheService.getTableByName(physicalTableName);
       }
     }
 

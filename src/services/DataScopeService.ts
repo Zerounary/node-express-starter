@@ -61,19 +61,20 @@ class DataScopeService {
   }
 
   /**
-   * 获取指定用户在某资源上的数据范围 where 子句
-   * - 优先使用缓存
-   * - 聚合角色上的 DataScope 规则
-   * - 将 ruleBuilder 转换为 where；保留已定义的 exist 规则
-   * - 合并普通规则与 exists 子查询
+   * Computes the data scope where clause directly from the database.
+   * This method is intended for use by the CacheService when the cache is disabled,
+   * or for cache warming.
+   * @param userId The ID of the user.
+   * @param resource The resource name (table alias).
+   * @returns A promise that resolves to the Sequelize where clause.
    */
-  public async getDataScopeWhere(userId: number, resource: string): Promise<any> {
-    const cachedScope = CacheService.getDataScope(userId, resource);
-    if (cachedScope) {
-      return processRules(cachedScope, { currentUserId: userId });
+  public async computeDataScope(userId: number, resource: string): Promise<any> {
+    const user = await User.findByPk(userId);
+    if (!user) {
+      logError(new Error(`User not found for data scope computation: ${userId}`));
+      return {}; // No user, no permissions.
     }
 
-    const user = await User.findByPk(userId);
     try {
       const roles = await (user as any).getRoles({
         include: [
@@ -85,11 +86,10 @@ class DataScopeService {
         ],
       });
 
-      if (!roles) {
-        return {}; // 无角色，无限制
+      if (!roles || roles.length === 0) {
+        return {}; // No roles with relevant data scopes, no restrictions.
       }
 
-      // 收集并解析所有角色的规则
       const rulePromises =
         roles.flatMap((role: any) => {
           const scopes: any[] = role?.DataScopes || [];
@@ -104,33 +104,53 @@ class DataScopeService {
       const rules = (await Promise.all(rulePromises)).filter(Boolean);
 
       if (rules.length === 0) {
-        CacheService.setDataScope(userId, resource, {});
-        return {}; // 该资源无规则，无限制
+        return {}; // No rules found for this resource.
       }
 
-      // 分离 exist 与普通条件（exist 来自 scope.rule 中的结构化 exist 定义）
       const existConditions = rules.filter((rule: any) => rule?.exist);
       const normalConditions = rules.filter((rule: any) => !rule?.exist);
 
       let whereClause: any = {};
       if (normalConditions.length > 0) {
-        whereClause = {
-          [Op.or]: normalConditions,
-        };
+        whereClause = { [Op.or]: normalConditions };
       }
 
       if (existConditions.length > 0) {
-        const mainTableDef = CacheService.getTableByAliasName(resource);
+        const mainTableDef = await CacheService.getTableByAliasName(resource);
         const mainModelName = mainTableDef?.name || resource;
         whereClause = this.applyExistConditions(whereClause, existConditions, mainModelName);
       }
 
-      CacheService.setDataScope(userId, resource, whereClause);
-      return processRules(whereClause, { currentUserId: (user as any).id });
+      return whereClause;
     } catch (error: any) {
-      logError(new Error(`Failed to get data scope for user ${(user as any)?.id} and resource ${resource}: ${error.message}`));
-      return {}; // 失败兜底：无限制
+      logError(new Error(`Failed to compute data scope for user ${userId} and resource ${resource}: ${error.message}`));
+      return {}; // Fallback: no restrictions on failure.
     }
+  }
+
+  /**
+   * Retrieves the data scope where clause for a user and resource, using cache if available.
+   * If the cache is disabled or the scope is not cached, it computes the scope from the DB.
+   * @param userId The ID of the user.
+   * @param resource The resource name (table alias).
+   * @returns A promise that resolves to the processed Sequelize where clause.
+   */
+  public async getDataScopeWhere(userId: number, resource: string): Promise<any> {
+    const user = await User.findByPk(userId);
+    if (!user) return {};
+
+    // getDataScope will fetch from DB if cache is disabled.
+    const cachedScope = await CacheService.getDataScope(userId, resource);
+    if (cachedScope) {
+      return processRules(cachedScope, { currentUserId: userId });
+    }
+
+    // If we are here, it means cache is enabled, but this scope is not cached.
+    // So, we compute it, cache it, and return it.
+    const whereClause = await this.computeDataScope(userId, resource);
+
+    CacheService.setDataScope(userId, resource, whereClause);
+    return processRules(whereClause, { currentUserId: (user as any).id });
   }
 
   /**
@@ -138,7 +158,7 @@ class DataScopeService {
    * 返回 sequelize.literal，以便可直接放入 where 数组中
    */
   private async buildExistsCondition(field: string, subRule: any, tenantId: number, mainTableName: string) {
-    const mainTableDef = CacheService.getTableByAliasName(mainTableName);
+    const mainTableDef = await CacheService.getTableByAliasName(mainTableName);
     if (!mainTableDef) {
       throw new Error(`Table definition for ${mainTableName} not found.`);
     }
@@ -156,7 +176,7 @@ class DataScopeService {
     }
 
     const relatedModel = await DynamicDataService.getModelForTable(relatedTableAlias, tenantId);
-    const relatedTableDef = CacheService.getTableByName((relatedModel as any).tableName);
+    const relatedTableDef = await CacheService.getTableByName((relatedModel as any).tableName);
     if (!relatedTableDef) {
       throw new Error(`Related table definition for ${relatedTableAlias} not found.`);
     }

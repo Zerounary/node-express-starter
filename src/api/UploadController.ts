@@ -1,3 +1,4 @@
+import { Controller, Post } from "@/utils/routeDecorators";
 import path from "path";
 import multer from "multer";
 
@@ -21,11 +22,12 @@ const upload = multer({
   limits: { fileSize: 1024 * 1024 * 300, }, // 限制300MB
 });
 
-export default (api) => {
-  // 单文件上传路由
-  api.post("/upload", upload.single("file"), (req, res) => {
-    console.log("uploading");
 
+@Controller("/upload")
+export default class UploadController {
+
+  @Post("/file", [upload.single("file")])
+  async upload(req, res) {
     if (!req.file) {
       return res.status(400).send("No file uploaded");
     }
@@ -37,5 +39,5 @@ export default (api) => {
       size: req.file.size,
       path: req.file.path?.replaceAll("\\", "/"),
     });
-  });
-};
+  }
+}

@@ -36,20 +36,20 @@ export async function afterDelete(data) {
   await CacheService.reloadTable(data.name);
 }
 
-export function getPageConfig({tableName}) {
-  return getTableConfig(tableName);
+export async function getPageConfig({tableName}) {
+  return await getTableConfig(tableName);
 }
 
-export function getTableConfig(tableName) {
-  const table = CacheService.getTableByAliasName(tableName);
+export async function getTableConfig(tableName) {
+  const table = await CacheService.getTableByAliasName(tableName);
   if (!table) {
     throw new Error("Table not found");
   }
   return getTableConfigById(table.id);
 }
 
-export function getTableConfigById(tableId: number) {
-  const table = CacheService.getTableById(tableId);
+export async function getTableConfigById(tableId: number) {
+  const table = await CacheService.getTableById(tableId);
   if (!table) {
     throw new Error("Table not found");
   }
@@ -60,7 +60,7 @@ export function getTableConfigById(tableId: number) {
   const relatedTables = {};
   for (const col of columns) {
     if (col.relatedToTableId) {
-      const relatedTable = CacheService.getTableById(col.relatedToTableId);
+      const relatedTable = await CacheService.getTableById(col.relatedToTableId);
       if (relatedTable) {
         relatedTables[col.relatedToTableId] = relatedTable.alias_name || relatedTable.name;
       }

@@ -3,12 +3,14 @@ import { Role, Permission } from '../db/models/Role';
 import CacheService from './CacheService';
 
 class PermissionService {
-    public async getAllUserPermissions(userId: number): Promise<Set<string>> {
-        const cachedPermissions = CacheService.getPermissions(userId);
-        if (cachedPermissions) {
-            return cachedPermissions;
-        }
-
+    /**
+     * Computes user permissions directly from the database, without consulting the cache.
+     * This method is intended for use by the CacheService when the cache is disabled,
+     * or for cache warming.
+     * @param userId The ID of the user.
+     * @returns A promise that resolves to a set of permission strings.
+     */
+    public async computeUserPermissions(userId: number): Promise<Set<string>> {
         const user = await User.findByPk(userId, {
             include: [{
                 model: Role,
@@ -25,8 +27,28 @@ class PermissionService {
             });
         });
         
-        CacheService.setPermissions(userId, actions);
         return actions;
+    }
+
+    /**
+     * Retrieves all permissions for a given user, utilizing the cache if available.
+     * If the cache is disabled, it will fetch permissions directly from the database.
+     * @param userId The ID of the user.
+     * @returns A promise that resolves to a set of permission strings.
+     */
+    public async getAllUserPermissions(userId: number): Promise<Set<string>> {
+        // getPermissions will fetch from DB if cache is disabled.
+        const cachedPermissions = await CacheService.getPermissions(userId);
+        if (cachedPermissions) {
+            return cachedPermissions;
+        }
+
+        // If we are here, it means cache is enabled, but this user's permissions are not cached.
+        // So, we compute them, cache them, and return them.
+        const permissions = await this.computeUserPermissions(userId);
+        
+        CacheService.setPermissions(userId, permissions);
+        return permissions;
     }
 
     public async hasPermission(userId: number, requiredAction: string): Promise<boolean> {

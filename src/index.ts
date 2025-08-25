@@ -41,7 +41,7 @@ async function bootstrap() {
             prefix: "/api",
             middlewares: [],
         });
-        routeLoader.load();
+        await routeLoader.load();
 
         // Register log middleware after routes are loaded
         webserver.use(logMiddleware);

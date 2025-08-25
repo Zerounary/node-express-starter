@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import db from '../index'
+import db from '../sequelize'
 
 const Demo = db.define(
   'demo',
@@ -22,7 +22,7 @@ const Demo = db.define(
   },
   {
     // Other model options go here
-    tableName: 'BPM_DEMO',
+    tableName: 'TEST_DEMO',
   },
 );
 

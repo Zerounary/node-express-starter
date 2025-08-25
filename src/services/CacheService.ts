@@ -163,22 +163,59 @@ class CacheService {
     });
   }
 
-  public getTableByName(name: string): (TableWithColumns) | undefined {
-    return this.tables.byName.get(name) as any;
+  public async getTableByName(name: string): Promise<TableWithColumns | undefined> {
+    if (this.enabled) {
+      return this.tables.byName.get(name);
+    }
+    logInfo(`Cache disabled, fetching table by name '${name}' from DB.`);
+    const table = await DynamicTable.findOne({
+      where: { name },
+      include: [{ model: DynamicColumn, as: 'columns' }],
+    });
+    return table ? (table.get({ plain: true }) as TableWithColumns) : undefined;
   }
 
-  public getTableByAliasName(aliasName: string): (TableWithColumns) | undefined {
-    return this.tables.byAlias.get(aliasName) as any;
+  public async getTableByAliasName(aliasName: string): Promise<TableWithColumns | undefined> {
+    if (this.enabled) {
+      return this.tables.byAlias.get(aliasName);
+    }
+    logInfo(`Cache disabled, fetching table by alias name '${aliasName}' from DB.`);
+    const table = await DynamicTable.findOne({
+      where: { alias_name: aliasName },
+      include: [{ model: DynamicColumn, as: 'columns' }],
+    });
+    return table ? (table.get({ plain: true }) as TableWithColumns) : undefined;
   }
 
-  public getTableById(id: number): (TableWithColumns) | undefined {
-    return this.tables.byId.get(id) as any;
+  public async getTableById(id: number): Promise<TableWithColumns | undefined> {
+    if (this.enabled) {
+      return this.tables.byId.get(id);
+    }
+    logInfo(`Cache disabled, fetching table by id ${id} from DB.`);
+    const table = await DynamicTable.findOne({
+      where: { id },
+      include: [{ model: DynamicColumn, as: 'columns' }],
+    });
+    return table ? (table.get({ plain: true }) as TableWithColumns) : undefined;
   }
 
   // --- User Permission Cache Methods ---
-  public getPermissions(userId: number): Set<string> | undefined {
-    const val = this.userPermissionsCache.get(userId);
-    return val ? new Set(val) : undefined; // 返回副本，避免外部修改内部 Set
+  public async getPermissions(userId: number): Promise<Set<string> | undefined> {
+    if (this.enabled) {
+      const val = this.userPermissionsCache.get(userId);
+      return val ? new Set(val) : undefined; // 返回副本，避免外部修改内部 Set
+    }
+
+    logInfo(`Cache disabled, fetching permissions for user ${userId} from DB.`);
+    try {
+      // Dynamic import to prevent circular dependencies
+      const { default: permissionService } = await import('./PermissionService');
+      // Assuming PermissionService has a method to compute permissions without caching
+      return await permissionService.computeUserPermissions(userId);
+    } catch (error) {
+      logError(error);
+      return new Set<string>(); // Return empty set on error to avoid breaking consumers
+    }
   }
 
   public setPermissions(userId: number, permissions: Set<string>): void {
@@ -189,9 +226,22 @@ class CacheService {
   }
 
   // --- User Data Scope Cache Methods ---
-  public getDataScope(userId: number, resource: string): any | undefined {
-    const key = `${userId}:${resource}`;
-    return this.userDataScopesCache.get(key);
+  public async getDataScope(userId: number, resource: string): Promise<any | undefined> {
+    if (this.enabled) {
+      const key = `${userId}:${resource}`;
+      return this.userDataScopesCache.get(key);
+    }
+
+    logInfo(`Cache disabled, fetching data scope for user ${userId} on resource ${resource} from DB.`);
+    try {
+      // Dynamic import to prevent circular dependencies
+      const { default: dataScopeService } = await import('./DataScopeService');
+      // Assuming DataScopeService has a method to compute scope without caching
+      return await dataScopeService.computeDataScope(userId, resource);
+    } catch (error) {
+      logError(error);
+      return undefined; // Return undefined on error
+    }
   }
 
   public setDataScope(userId: number, resource: string, scope: any): void {
