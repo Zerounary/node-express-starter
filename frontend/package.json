@@ -48,7 +48,7 @@
     "preinstall": "npx only-allow pnpm",
     "preview": "turbo-run preview",
     "publint": "vsh publint",
-    "reinstall": "pnpm clean --del-lock && pnpm install",
+    "reinstall": "pnpm clean --del-lock && pnpm install && pnpm build",
     "test:unit": "vitest run --dom",
     "test:e2e": "turbo run test:e2e",
     "update:deps": "npx taze -r -w",

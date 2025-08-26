@@ -27,6 +27,8 @@
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
+    "@tiptap/starter-kit": "^3.3.0",
+    "@tiptap/vue-3": "^3.3.0",
     "@vben-core/menu-ui": "workspace:*",
     "@vben/access": "workspace:*",
     "@vben/common-ui": "workspace:*",
@@ -46,6 +48,7 @@
     "ant-design-vue": "catalog:",
     "dayjs": "catalog:",
     "pinia": "catalog:",
+    "qrcode": "catalog:",
     "uuid": "^11.1.0",
     "vue": "catalog:",
     "vue-router": "catalog:"
