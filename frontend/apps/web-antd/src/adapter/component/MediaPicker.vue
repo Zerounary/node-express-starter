@@ -641,7 +641,7 @@ async function batchDelete() {
 .mp-selected-list { display: flex; gap: 8px; flex-wrap: wrap; }
 .mp-thumb { width: 64px; height: 64px; overflow: hidden; border-radius: 4px; border: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: center; }
 .mp-video-thumb { position: relative; width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center; }
-.mp-video-thumb video { width: 100%; height: 100%; object-fit: cover; }
+.mp-video-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .mp-video-thumb.large { width: 100%; height: 160px; }
 .mp-badge { position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.65); color: #fff; font-size: 10px; padding: 2px 4px; border-radius: 3px; }
 
@@ -693,11 +693,13 @@ async function batchDelete() {
 :deep(.mp-main-content .ant-tabs-tabpane) { height: 100%; display: flex; flex-direction: column; }
 
 .mp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; padding-right: 8px; }
-.mp-card { border: 1px solid #f0f0f0; border-radius: 6px; cursor: pointer; transition: all .15s ease; background: #fff; overflow: hidden; }
+.mp-card { border: 1px solid #f0f0f0; border-radius: 6px; cursor: pointer; transition: all .15s ease; background: #fff; overflow: hidden; display: flex; flex-direction: column; }
 .mp-card:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
 .mp-card.is-selected { border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,0.15); }
-.mp-card-img { width: 100%; height: 160px; object-fit: cover; display: block; }
-.mp-card .mp-card-meta { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; }
+.mp-card-img { position: relative; width: 100%; height: 160px; display: block; overflow: hidden; line-height: 0; z-index: 0; }
+:deep(.mp-card-img .ant-image-img) { position: static; width: 100%; height: 100%; object-fit: cover; display: block; }
+:deep(.mp-card .ant-image) { width: 100%; height: 160px; display: block; line-height: 0; }
+.mp-card .mp-card-meta { background-color: white; display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; position: relative; z-index: 1; }
 .mp-card .name { max-width: 120px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: #333; font-size: 12px; }
 .mp-card .action { font-size: 12px; }
 
