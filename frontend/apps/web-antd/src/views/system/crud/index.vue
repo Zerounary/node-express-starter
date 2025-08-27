@@ -22,6 +22,7 @@ import { useSystem } from '#/store/system';
 
 import { useColumns, useGridFormSchema } from './data';
 import Form from './modules/form.vue';
+import { onMounted } from 'vue';
 const { getTableAccessCodes } = useAccess();
 
 const route = useRoute();
@@ -61,6 +62,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     proxyConfig: {
       ajax: {
         query: async ({ page }, formValues) => {
+          console.log('loadx')
           return await getPage(table.table, {
             page: page.currentPage,
             pageSize: page.pageSize,
@@ -180,6 +182,10 @@ function onDelete(row: SystemTableApi.SystemTable) {
 function onRefresh() {
   gridApi.query();
 }
+
+onMounted(() => {
+  gridApi.query();
+});
 
 </script>
 <template>
