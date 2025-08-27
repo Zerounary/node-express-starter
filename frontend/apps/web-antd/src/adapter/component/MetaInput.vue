@@ -17,10 +17,10 @@
       <a-collapse-panel key="icon" header="图标设置">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <a-form-item :label="$t('system.menu.icon')">
-            <IconPicker v-model="meta.icon" prefix="carbon" />
+            <IconPicker v-model="meta.icon" prefix="fluent" />
           </a-form-item>
           <a-form-item :label="$t('system.menu.activeIcon')">
-            <IconPicker v-model="meta.activeIcon" prefix="carbon" />
+            <IconPicker v-model="meta.activeIcon" prefix="fluent" />
           </a-form-item>
         </div>
       </a-collapse-panel>

@@ -207,6 +207,16 @@ export const tableCategories = [
     },
     path: '/workspace',
   },
+  {
+    name: "组件页",
+    description: "",
+    type: 'menu',
+    parentId: "概览",
+    meta: {
+      icon: "uiw:component"
+    },
+    path: '/playground',
+  },
 ]
 
 export const initTableCategories = async () => {

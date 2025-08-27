@@ -34,6 +34,16 @@ const routes: RouteRecordRaw[] = [
           title: $t('page.dashboard.workspace'),
         },
       },
+      {
+        name: 'PlayGround',
+        path: '/playground',
+        component: () => import('#/views/dashboard/playground/index.vue'),
+        meta: {
+          hideInMenu: true,
+          icon: 'uiw:component',
+          title: $t('page.dashboard.playground'),
+        },
+      },
     ],
   },
 ];
