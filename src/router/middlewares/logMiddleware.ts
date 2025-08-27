@@ -3,13 +3,18 @@ import { logError } from '../../logger';
 
 export const logMiddleware = async (req, res) => {
   try {
+    let body = null;
+    // 不处理 content-type 不是 application/json 的请求体
+    if (req.headers['content-type']?.includes('application/json')) {
+      body = await req.json();
+    }
     const logData = {
       userId: req.user?.id || null,
       action: `${req.method} ${req.path}`,
       method: req.method,
       path: req.path,
       params: req.params,
-      body: await req.json(),
+      body,
       ip: req.ip,
     };
     ActionLog.create(logData);
