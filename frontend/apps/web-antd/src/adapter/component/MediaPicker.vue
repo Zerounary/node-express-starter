@@ -24,6 +24,8 @@ import {
 } from 'ant-design-vue'
 import { DownOutlined } from '@ant-design/icons-vue'
 
+const FALLBACK_IMAGE_SRC = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNmMGYyZjUiLz48L3N2Zz4=`
+
 type MediaType = 'image' | 'video'
 
 /**
@@ -412,7 +414,7 @@ async function batchDelete() {
       <div class="mp-selected-list">
         <div v-for="it in valuePreview" :key="it.id" class="mp-thumb">
           <template v-if="it.type === 'image'">
-            <AImage :src="it.thumbUrl || it.url" :alt="it.name" :width="64" :height="64" :preview="false" />
+            <AImage :src="it.thumbUrl || it.url" :alt="it.name" :width="64" :height="64" :preview="false" :fallback="FALLBACK_IMAGE_SRC" />
           </template>
           <template v-else>
             <div class="mp-video-thumb">
@@ -427,7 +429,7 @@ async function batchDelete() {
     <AModal
       :open="visible"
       :title="title || '媒体库'"
-      :width="width || 1200"
+      :width="width || 900"
       :maskClosable="false"
       @cancel="closeModal"
       :footer="null"
@@ -474,7 +476,10 @@ async function batchDelete() {
         <div class="mp-main-content">
           <ATabs>
             <ATabPane key="library" tab="素材库">
-              <ASpin :spinning="loading">
+               <div class="pane-content">
+                <div class="media-grid">
+
+              <ASpin :spinning="loading" class="mp-scroll-wrapper">
                 <div v-if="items.length > 0" class="mp-grid">
                   <div
                     v-for="it in items"
@@ -490,6 +495,7 @@ async function batchDelete() {
                           :alt="it.name"
                           :preview="false"
                           class="mp-card-img"
+                          :fallback="FALLBACK_IMAGE_SRC"
                         />
                       </template>
                       <template v-else>
@@ -507,7 +513,7 @@ async function batchDelete() {
                 </div>
                 <AEmpty v-else description="暂无媒体" />
               </ASpin>
-
+                </div>
               <div class="mp-pagination">
                 <APagination
                   :current="pager.page"
@@ -518,26 +524,30 @@ async function batchDelete() {
                   @change="onPageChange"
                   @update:pageSize="(ps:number) => onPageChange(1, ps)"
                 />
-              </div>
+              </div>             
+            </div>
             </ATabPane>
 
-            <ATabPane key="upload" tab="上传" v-if="allowUpload">
-              <AUpload
-                :multiple="multiple"
-                list-type="picture-card"
-                :customRequest="handleCustomUpload"
-                :accept="selectedTypes.includes('image') && selectedTypes.includes('video') ? 'image/*,video/*' : (selectedTypes.includes('image') ? 'image/*' : 'video/*')"
-                :showUploadList="true"
-                :disabled="!uploader"
-              >
-                <div>
-                  <span>点击或拖拽上传</span>
-                  <div style="color:#999; font-size:12px; margin-top:6px">支持图片/视频</div>
+            <ATabPane key="upload" tab="上传" v-if="allowUpload" class="upload-tab-pane">
+                <div class="pane-content">
+                    <AUpload
+                        :multiple="multiple"
+                        list-type="picture-card"
+                        :customRequest="handleCustomUpload"
+                        :accept="selectedTypes.includes('image') && selectedTypes.includes('video') ? 'image/*,video/*' : (selectedTypes.includes('image') ? 'image/*' : 'video/*')"
+                        :showUploadList="true"
+                        :disabled="!uploader"
+                        class="mp-uploader"
+                    >
+                        <div>
+                        <span>点击或拖拽上传</span>
+                        <div style="color:#999; font-size:12px; margin-top:6px">支持图片/视频</div>
+                        </div>
+                    </AUpload>
+                    <div style="color:#999; font-size:12px; margin-top:8px">
+                        上传成功后将自动加入已选与素材库
+                    </div>
                 </div>
-              </AUpload>
-              <div style="color:#999; font-size:12px; margin-top:8px">
-                上传成功后将自动加入已选与素材库
-              </div>
             </ATabPane>
           </ATabs>
         </div>
@@ -573,7 +583,7 @@ async function batchDelete() {
       <div v-if="previewItem" class="mp-preview-body">
         <div class="media-display">
           <template v-if="previewItem.type === 'image'">
-            <AImage :src="previewItem.url" :alt="previewItem.name" />
+            <AImage :src="previewItem.url" :alt="previewItem.name" :fallback="FALLBACK_IMAGE_SRC" />
           </template>
           <template v-else>
             <video :src="previewItem.url" style="max-width: 100%;" controls />
@@ -635,10 +645,43 @@ async function batchDelete() {
 .mp-video-thumb.large { width: 100%; height: 160px; }
 .mp-badge { position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.65); color: #fff; font-size: 10px; padding: 2px 4px; border-radius: 3px; }
 
-.mp-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+:deep(.media-picker-modal .ant-modal) {
+  top: 20px;
+  height: calc(100vh - 40px);
+}
+
+:deep(.media-picker-modal .ant-modal-content) {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+:deep(.media-picker-modal .ant-modal-body) {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-height: 0;
+}
+
+.mp-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  flex-shrink: 0;
+}
 .mp-toolbar-right { display: flex; gap: 8px; }
 
-.mp-body-layout { display: flex; gap: 16px; margin-top: 12px; min-height: 500px; max-height: 60vh; }
+.mp-body-layout {
+  display: flex;
+  gap: 16px;
+  padding: 16px 24px;
+  flex-grow: 1;
+  min-height: 0;
+}
 .mp-sidebar { width: 180px; flex-shrink: 0; border-right: 1px solid #f0f0f0; overflow-y: auto; }
 .mp-sidebar .ant-menu { border-right: none; }
 .mp-sidebar .ant-menu-item { display: flex; justify-content: space-between; align-items: center; }
@@ -646,7 +689,7 @@ async function batchDelete() {
 .mp-sidebar .cat-count { color: #999; font-size: 12px; flex-shrink: 0; margin-left: 8px; }
 .mp-main-content { flex-grow: 1; min-width: 0; display: flex; flex-direction: column; }
 .mp-main-content .ant-tabs { flex-grow: 1; display: flex; flex-direction: column; }
-:deep(.mp-main-content .ant-tabs-content-holder) { flex-grow: 1; overflow-y: auto; }
+:deep(.mp-main-content .ant-tabs-content-holder) { flex-grow: 1; overflow: hidden; }
 :deep(.mp-main-content .ant-tabs-tabpane) { height: 100%; display: flex; flex-direction: column; }
 
 .mp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; padding-right: 8px; }
@@ -659,8 +702,44 @@ async function batchDelete() {
 .mp-card .action { font-size: 12px; }
 
 .mp-pagination { display: flex; justify-content: flex-end; margin-top: 12px; flex-shrink: 0; }
+.pane-content {
+    width: 100%;
+    height: 300px;
+}
+.media-grid {
+    height: 300px;
+    overflow-y: auto;
+}
+.mp-scroll-wrapper {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
 
-.mp-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; }
+.upload-tab-pane {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 24px;
+}
+:deep(.mp-uploader.ant-upload-wrapper) {
+  width: 100%;
+}
+:deep(.mp-uploader .ant-upload.ant-upload-select) {
+  width: 100%;
+  height: 200px;
+}
+
+.mp-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  border-top: 1px solid #f0f0f0;
+  flex-shrink: 0;
+}
 .mp-footer .left { display: flex; align-items: center; gap: 8px; }
 .mp-footer .left .tip { color: #999; font-size: 12px; }
 .danger-action { color: #ff4d4f; }
