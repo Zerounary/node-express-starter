@@ -134,7 +134,7 @@ export default class MediaController {
     }
     const { originalname, size, mimetype } = req.file;
     const { location: url, key: name } = req.file as any;
-    const { categoryId } = req.body;
+    const { categoryId, filename } = req.body;
 
     const type = mimetype.startsWith('image/') ? 'image' : (mimetype.startsWith('video/') ? 'video' : undefined);
     if (!type) {
@@ -143,7 +143,7 @@ export default class MediaController {
 
     try {
       const media = await Media.create({
-        name: name || originalname,
+        name: filename || name || originalname,
         url,
         size,
         type,

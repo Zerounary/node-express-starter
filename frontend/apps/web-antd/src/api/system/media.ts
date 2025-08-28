@@ -17,6 +17,7 @@ async function uploadMedia(file: File, options?: { categoryId?: string | number,
     console.log('Uploading file:', file.name, 'with options:', options);
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('filename', file.name);
     if (options?.categoryId) {
         formData.append('categoryId', String(options.categoryId));
     }

@@ -241,7 +241,7 @@
         </div>
         <div class="right">
           <AButton @click="closeModal">取消</AButton>
-          <AButton type="primary" :disabled="selectedCount===0" @click="confirmSelection">确定</AButton>
+          <AButton class="ml-3" type="primary" :disabled="selectedCount===0" @click="confirmSelection">确定</AButton>
         </div>
       </div>
     </AModal>
