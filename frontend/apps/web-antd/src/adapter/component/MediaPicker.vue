@@ -229,18 +229,17 @@
                 <AEmpty v-else description="暂无媒体" />
               </ASpin>
                 </div>
+            </div>
+
               <div class="mp-pagination">
                 <APagination
                   :current="pager.page"
                   :pageSize="pager.pageSize"
                   :total="pager.total"
-                  show-size-changer
                   show-quick-jumper
                   @change="onPageChange"
-                  @update:pageSize="(ps:number) => onPageChange(1, ps)"
                 />
               </div>
-            </div>
             </ATabPane>
 
             <ATabPane key="upload" tab="上传" v-if="allowUpload" class="upload-tab-pane">
