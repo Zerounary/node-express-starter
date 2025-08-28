@@ -91,13 +91,33 @@
 
       <div class="mp-body-layout">
         <div v-if="fetchCategories" class="mp-sidebar">
+          <div class="mp-sidebar-header">
+            <span>分类</span>
+            <ATooltip title="新建分类">
+              <AButton type="text" size="small" @click="handleAddCategory">
+                <template #icon><PlusOutlined /></template>
+              </AButton>
+            </ATooltip>
+          </div>
           <AMenu v-model:selectedKeys="selectedCategoryKeys" mode="inline">
             <AMenuItem key="all">
               <span>全部</span>
             </AMenuItem>
-            <AMenuItem v-for="cat in categories" :key="cat.id">
-              <span :title="cat.name">{{ cat.name }}</span>
-              <span v-if="cat.count != null" class="cat-count">({{ cat.count }})</span>
+            <AMenuItem v-for="cat in categories" :key="cat.id" class="category-item">
+              <div class="category-item-content">
+                <span :title="cat.name" class="category-name">{{ cat.name }}</span>
+                <span class="category-extra">
+                  <span class="category-actions">
+                    <ATooltip title="编辑">
+                      <EditOutlined @click.stop="handleEditCategory(cat)" />
+                    </ATooltip>
+                    <ATooltip title="删除">
+                      <DeleteOutlined @click.stop="handleDeleteCategory(cat)" />
+                    </ATooltip>
+                  </span>
+                  <span v-if="cat.count != null" class="cat-count">({{ cat.count }})</span>
+                </span>
+              </div>
             </AMenuItem>
           </AMenu>
         </div>
@@ -153,7 +173,7 @@
                   @change="onPageChange"
                   @update:pageSize="(ps:number) => onPageChange(1, ps)"
                 />
-              </div>             
+              </div>
             </div>
             </ATabPane>
 
@@ -264,7 +284,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineEmits, defineProps, onMounted, reactive, ref, watch, withDefaults } from 'vue'
+import { computed, defineEmits, defineProps, onMounted, reactive, ref, watch, withDefaults, h } from 'vue'
 import {
   message,
   Modal as AModal,
@@ -288,8 +308,18 @@ import {
   Upload as AUpload,
   Tooltip as ATooltip,
 } from 'ant-design-vue'
-import { DownOutlined, ReloadOutlined } from '@ant-design/icons-vue'
-import { batchDeleteMedia, deleteMedia, fetchCategories, fetchMedia, updateMedia, uploadMedia } from '#/api/system/media'
+import { DownOutlined, ReloadOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons-vue'
+import {
+  batchDeleteMedia,
+  createCategory,
+  deleteCategory,
+  deleteMedia,
+  fetchCategories,
+  fetchMedia,
+  updateCategory,
+  updateMedia,
+  uploadMedia
+} from '#/api/system/media'
 
 const FALLBACK_IMAGE_SRC = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNmMGYyZjUiLz48L3N2Zz4=`
 
@@ -328,6 +358,7 @@ export interface Category {
   name: string
   count?: number
   children?: Category[]
+  parentId?: string | number
 }
 
 type SortKey = 'createdAtDesc' | 'createdAtAsc' | 'sizeDesc' | 'sizeAsc' | 'nameAsc' | 'nameDesc'
@@ -363,16 +394,22 @@ const props = withDefaults(defineProps<{
   deleter?: (id: string | number) => Promise<void>
   batchDeleter?: (ids: (string | number)[]) => Promise<void>
   fetchCategories?: () => Promise<Category[]>
+  createCategory?: (data: { name: string, parentId?: string | number }) => Promise<Category>,
+  updateCategory?: (id: string | number, data: { name?: string, parentId?: string | number }) => Promise<Category>,
+  deleteCategory?: (id: string | number) => Promise<void>,
   // --------------------
   pageSize?: number
   disabled?: boolean
 }>(), {
   fetcher: fetchMedia,
   uploader: uploadMedia,
-  fetchCategories: fetchCategories,
   updater: updateMedia,
   deleter: deleteMedia,
   batchDeleter: batchDeleteMedia,
+  fetchCategories: fetchCategories,
+  createCategory: createCategory,
+  updateCategory: updateCategory,
+  deleteCategory: deleteCategory,
   allowUpload: true,
 })
 
@@ -427,6 +464,90 @@ async function loadCategories() {
     console.error(e)
     message.error(e?.message || '加载分类失败')
   }
+}
+
+async function handleAddCategory() {
+  if (!props.createCategory) return;
+  let newName = '';
+  AModal.confirm({
+    title: '新建分类',
+    content: h('div', [
+      h(AInput, {
+        placeholder: '请输入分类名称',
+        onChange: (e) => { newName = e.target.value; }
+      })
+    ]),
+    async onOk() {
+      if (!newName.trim()) {
+        message.warn('分类名称不能为空');
+        return Promise.reject('分类名称不能为空');
+      }
+      try {
+        await props.createCategory!({ name: newName.trim() });
+        message.success('创建成功');
+        await loadCategories();
+      } catch (e: any) {
+        console.error(e);
+        message.error(e?.message || '创建失败');
+        return Promise.reject(e);
+      }
+    }
+  });
+}
+
+async function handleEditCategory(category: Category) {
+  if (!props.updateCategory) return;
+  let newName = category.name;
+  AModal.confirm({
+    title: '编辑分类',
+    content: h('div', [
+      h(AInput, {
+        defaultValue: category.name,
+        onChange: (e) => { newName = e.target.value; }
+      })
+    ]),
+    async onOk() {
+      if (!newName.trim()) {
+        message.warn('分类名称不能为空');
+        return Promise.reject('分类名称不能为空');
+      }
+      if (newName.trim() === category.name) {
+        return; // No changes
+      }
+      try {
+        await props.updateCategory!(category.id, { name: newName.trim() });
+        message.success('更新成功');
+        await loadCategories();
+      } catch (e: any) {
+        console.error(e);
+        message.error(e?.message || '更新失败');
+        return Promise.reject(e);
+      }
+    }
+  });
+}
+
+async function handleDeleteCategory(category: Category) {
+  if (!props.deleteCategory) return;
+  AModal.confirm({
+    title: '确认删除',
+    content: `确定要删除分类 “${category.name}” 吗？分类下的媒体不会被删除。`,
+    okText: '删除',
+    okType: 'danger',
+    async onOk() {
+      try {
+        await props.deleteCategory!(category.id);
+        message.success('删除成功');
+        if (selectedCategoryId.value === category.id) {
+          selectedCategoryId.value = null; // Reset if the active category is deleted
+        }
+        await loadCategories();
+      } catch (e: any) {
+        console.error(e);
+        message.error(e?.message || '删除失败');
+      }
+    }
+  });
 }
 // #endregion
 
@@ -564,7 +685,9 @@ async function handleCustomUpload(options: any) {
     return
   }
   try {
-    const item = await props.uploader(file as File)
+    const item = await props.uploader(file as File, {
+      categoryId: selectedCategoryId.value || undefined
+    })
     selectedMap.set(item.id, item)
     items.value = [item, ...items.value]
     pager.total += 1
@@ -817,5 +940,53 @@ async function batchDelete() {
 }
 .mp-single-preview-trigger .ant-image {
   border-radius: 4px;
+}
+
+.category-item-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mp-sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 16px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.88);
+  font-weight: 600;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 8px;
+}
+.mp-sidebar .ant-menu-item {
+  padding-right: 12px;
+}
+.category-item .category-name {
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.category-item .category-extra {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 8px;
+}
+.category-item .category-actions {
+  display: none;
+  gap: 8px;
+  color: #666;
+}
+.category-item .category-actions > .anticon:hover {
+  color: #1677ff;
+}
+.category-item:hover .category-actions {
+  display: flex;
+}
+.category-item:hover .cat-count {
+  display: none;
 }
 </style>
