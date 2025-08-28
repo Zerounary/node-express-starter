@@ -10,8 +10,18 @@ if (!fs.existsSync(uploadDir)) {
 }
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir);
+  destination: function (req: any, file, cb) {
+    const { tenantId, id: userId } = req.user || {};
+
+    let finalUploadDir = uploadDir;
+    if (tenantId && userId) {
+        finalUploadDir = path.join(uploadDir, `t_${tenantId}`, `u_${userId}`);
+    }
+    
+    // Ensure the directory exists
+    fs.mkdirSync(finalUploadDir, { recursive: true });
+
+    cb(null, finalUploadDir);
   },
   filename: function (req, file, cb) {
     // Generate unique filename

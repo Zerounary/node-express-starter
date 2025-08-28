@@ -31,8 +31,15 @@ export const cosMid = (req: Request, res: Response, next: NextFunction) => {
             return res.status(400).send("No file uploaded.");
         }
 
+        // @ts-ignore
+        const { tenantId, id: userId } = req.user || {};
+
+        const keyPath = (tenantId && userId)
+            ? `uploads/t_${tenantId}/u_${userId}`
+            : 'uploads/public';
+
         // Generate a unique key (path/filename) for the object in the COS bucket
-        const key = `uploads/${Date.now()}-${Math.round(
+        const key = `${keyPath}/${Date.now()}-${Math.round(
             Math.random() * 1e9
         )}${path.extname(req.file.originalname)}`;
 
