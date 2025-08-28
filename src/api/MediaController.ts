@@ -132,18 +132,25 @@ export default class MediaController {
     if (!req.file) {
       return fail("No file uploaded", 400);
     }
-    const { originalname, size, mimetype } = req.file;
+    const { originalname, size } = req.file;
     const { location: url, key: name } = req.file as any;
     const { categoryId, filename } = req.body;
 
-    const type = mimetype.startsWith('image/') ? 'image' : (mimetype.startsWith('video/') ? 'video' : undefined);
-    if (!type) {
-        return fail("Unsupported file type", 400);
+    const effectiveFilename = filename || name || originalname;
+    const extension = effectiveFilename.split('.').pop()?.toLowerCase();
+
+    let type: 'image' | 'video' | 'audio' | 'other' = 'other';
+    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'].includes(extension)) {
+      type = 'image';
+    } else if (['mp4', 'mov', 'avi', 'mkv', 'webm'].includes(extension)) {
+      type = 'video';
+    } else if (['mp3', 'wav', 'ogg', 'm4a', 'aac'].includes(extension)) {
+      type = 'audio';
     }
 
     try {
       const media = await Media.create({
-        name: filename || name || originalname,
+        name: effectiveFilename,
         url,
         size,
         type,

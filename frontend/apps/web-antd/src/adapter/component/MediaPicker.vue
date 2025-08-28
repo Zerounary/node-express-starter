@@ -17,10 +17,22 @@
               :fallback="FALLBACK_IMAGE_SRC"
             />
         </template>
-        <template v-else>
+        <template v-else-if="valuePreview[0].type === 'video'">
           <div class="mp-video-thumb" style="width: 128px; height: 128px; border-radius: 4px;">
             <video :src="valuePreview[0].url" muted preload="metadata" style="width: 100%; height: 100%; object-fit: cover;" />
             <span class="mp-badge">Video</span>
+          </div>
+        </template>
+        <template v-else-if="valuePreview[0].type === 'audio'">
+          <div class="mp-audio-thumb" style="width: 128px; height: 128px; border-radius: 4px; border: 1px solid #f0f0f0; background: #fafafa; display: flex; align-items: center; justify-content: center; font-size: 48px; color: #999;">
+            <CustomerServiceOutlined />
+            <span class="mp-badge">Audio</span>
+          </div>
+        </template>
+        <template v-else>
+          <div class="mp-other-thumb" style="width: 128px; height: 128px; border-radius: 4px; border: 1px solid #f0f0f0; background: #fafafa; display: flex; align-items: center; justify-content: center; font-size: 48px; color: #999;">
+            <FileOutlined />
+            <span class="mp-badge">File</span>
           </div>
         </template>
       </div>
@@ -43,10 +55,22 @@
                 :fallback="FALLBACK_IMAGE_SRC"
               />
             </template>
-            <template v-else>
+            <template v-else-if="it.type === 'video'">
               <div class="mp-video-thumb">
                 <video :src="it.url" muted preload="metadata" />
                 <span class="mp-badge">Video</span>
+              </div>
+            </template>
+            <template v-else-if="it.type === 'audio'">
+              <div class="mp-audio-thumb">
+                <CustomerServiceOutlined />
+                <span class="mp-badge">Audio</span>
+              </div>
+            </template>
+            <template v-else>
+              <div class="mp-other-thumb">
+                <FileOutlined />
+                <span class="mp-badge">File</span>
               </div>
             </template>
           </div>
@@ -76,6 +100,8 @@
           <ASelect v-model:value="selectedTypes" mode="multiple" style="width: 220px" :maxTagCount="1">
             <ASelectOption value="image">图片</ASelectOption>
             <ASelectOption value="video">视频</ASelectOption>
+            <ASelectOption value="audio">音频</ASelectOption>
+            <ASelectOption value="other">其他</ASelectOption>
           </ASelect>
           <ASelect v-model:value="sort" style="width: 180px">
             <ASelectOption value="createdAtDesc">最新上传</ASelectOption>
@@ -175,10 +201,22 @@
                           :fallback="FALLBACK_IMAGE_SRC"
                         />
                       </template>
-                      <template v-else>
+                      <template v-else-if="it.type === 'video'">
                         <div class="mp-video-thumb large">
                           <video :src="it.url" muted preload="metadata" />
                           <span class="mp-badge">Video</span>
+                        </div>
+                      </template>
+                      <template v-else-if="it.type === 'audio'">
+                        <div class="mp-audio-thumb large">
+                          <CustomerServiceOutlined />
+                          <span class="mp-badge">Audio</span>
+                        </div>
+                      </template>
+                      <template v-else>
+                        <div class="mp-other-thumb large">
+                          <FileOutlined />
+                          <span class="mp-badge">File</span>
                         </div>
                       </template>
                       <div class="mp-card-meta">
@@ -213,14 +251,14 @@
                         :file-list="fileList"
                         @change="handleUploadChange"
                         :customRequest="handleCustomUpload"
-                        :accept="selectedTypes.includes('image') && selectedTypes.includes('video') ? 'image/*,video/*' : (selectedTypes.includes('image') ? 'image/*' : 'video/*')"
+                        :accept="uploadAccept"
                         :showUploadList="true"
                         :disabled="!uploader"
                         class="mp-uploader"
                     >
                         <div>
                         <span>点击或拖拽上传</span>
-                        <div style="color:#999; font-size:12px; margin-top:6px">支持图片/视频</div>
+                        <div style="color:#999; font-size:12px; margin-top:6px">支持 {{ acceptText }}</div>
                         </div>
                     </AUpload>
                     <div style="color:#999; font-size:12px; margin-top:8px">
@@ -269,8 +307,18 @@
           <template v-if="previewItem.type === 'image'">
             <AImage :src="previewItem.url" :alt="previewItem.name" :fallback="FALLBACK_IMAGE_SRC" />
           </template>
-          <template v-else>
+          <template v-else-if="previewItem.type === 'video'">
             <video :src="previewItem.url" style="max-width: 100%;" controls />
+          </template>
+          <template v-else-if="previewItem.type === 'audio'">
+            <audio :src="previewItem.url" style="max-width: 100%;" controls />
+          </template>
+          <template v-else>
+            <div class="mp-other-preview">
+              <FileOutlined />
+              <p>{{ previewItem.name }}</p>
+              <AButton :href="previewItem.url" target="_blank" type="primary">下载文件</AButton>
+            </div>
           </template>
         </div>
         <div class="meta-panel">
@@ -347,7 +395,7 @@ import {
   Tree as ATree,
   Checkbox as ACheckbox,
 } from 'ant-design-vue'
-import { DownOutlined, ReloadOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons-vue'
+import { DownOutlined, ReloadOutlined, PlusOutlined, EditOutlined, DeleteOutlined, CustomerServiceOutlined, FileOutlined } from '@ant-design/icons-vue'
 import {
   batchDeleteMedia,
   createCategory,
@@ -362,7 +410,7 @@ import {
 
 const FALLBACK_IMAGE_SRC = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNmMGYyZjUiLz48L3N2Zz4=`
 
-type MediaType = 'image' | 'video'
+type MediaType = 'image' | 'video' | 'audio' | 'other'
 
 /**
  * 媒体对象接口
@@ -479,7 +527,7 @@ function closeModal() {
 
 // #region 过滤、排序、分页
 const query = ref('')
-const selectedTypes = ref<MediaType[]>(props.types ?? ['image', 'video'])
+const selectedTypes = ref<MediaType[]>(props.types ?? ['image', 'video', 'audio', 'other'])
 const sort = ref<SortKey>('createdAtDesc')
 const pager = reactive({ page: 1, pageSize: props.pageSize ?? 24, total: 0 })
 
@@ -491,6 +539,29 @@ function triggerSearch() {
   }
   searchTimer = window.setTimeout(loadList, 300) as unknown as number
 }
+
+const uploadAccept = computed(() => {
+  if (selectedTypes.value.includes('other')) {
+    return '*/*'
+  }
+  const accepts: string[] = [];
+  if (selectedTypes.value.includes('image')) accepts.push('image/*');
+  if (selectedTypes.value.includes('video')) accepts.push('video/*');
+  if (selectedTypes.value.includes('audio')) accepts.push('audio/*');
+  return accepts.join(',');
+});
+
+const acceptText = computed(() => {
+  if (selectedTypes.value.includes('other')) {
+    return '所有类型'
+  }
+  const texts: string[] = [];
+  if (selectedTypes.value.includes('image')) texts.push('图片');
+  if (selectedTypes.value.includes('video')) texts.push('视频');
+  if (selectedTypes.value.includes('audio')) texts.push('音频');
+  return texts.join(' / ');
+});
+
 // #endregion
 
 // #region 分类管理
@@ -744,9 +815,15 @@ const valuePreview = computed<MediaItem[] | null>(() => {
   }
   if (valueKey.value === 'url') {
     const urls = Array.isArray(mv) ? mv : [mv]
+    const guessType = (url: string): MediaType => {
+      if (url.match(/\.(mp4|mov|webm|mkv)(\?|#|$)/i)) return 'video';
+      if (url.match(/\.(mp3|wav|ogg|flac)(\?|#|$)/i)) return 'audio';
+      if (url.match(/\.(jpg|jpeg|png|gif|bmp|svg|webp)(\?|#|$)/i)) return 'image';
+      return 'other';
+    };
     return urls.map((u: string, idx: number) => ({
       id: idx,
-      type: u.match(/\.(mp4|mov|webm|mkv)(\?|#|$)/i) ? 'video' : 'image',
+      type: guessType(u),
       url: u,
       thumbUrl: u,
       name: u.split('/').pop()
@@ -939,6 +1016,23 @@ async function batchDelete() {
 .mp-video-thumb { position: relative; width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center; }
 .mp-video-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .mp-video-thumb.large { width: 100%; height: 160px; }
+.mp-audio-thumb, .mp-other-thumb {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #f0f2f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #999;
+  flex-direction: column;
+  gap: 8px;
+}
+.mp-audio-thumb.large, .mp-other-thumb.large {
+  height: 160px;
+  font-size: 48px;
+}
 .mp-badge { position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.65); color: #fff; font-size: 10px; padding: 2px 4px; border-radius: 3px; }
 
 :deep(.media-picker-modal .ant-modal) {
@@ -1051,6 +1145,24 @@ async function batchDelete() {
 .meta-item strong { margin-right: 8px; color: #666; }
 .meta-edit { flex-grow: 1; overflow-y: auto; padding-bottom: 16px; }
 .actions { flex-shrink: 0; display: flex; gap: 12px; border-top: 1px solid #f0f0f0; padding-top: 16px; margin-top: 16px; }
+
+.mp-other-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  font-size: 64px;
+  color: #999;
+  text-align: center;
+  padding: 24px;
+  width: 100%;
+}
+.mp-other-preview p {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+}
 
 .mp-single-preview-trigger {
   border: 1px solid #f0f0f0;

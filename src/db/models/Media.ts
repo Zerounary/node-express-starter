@@ -3,7 +3,7 @@ import sequelize from '../sequelize';
 import { commontFields } from './common';
 import Tenant from './Tenant';
 
-type MediaType = 'image' | 'video';
+type MediaType = 'image' | 'video' | 'audio' | 'other';
 
 // Interface for Media attributes
 export interface IMedia {
@@ -62,7 +62,7 @@ Media.init(
         }
     },
     type: {
-      type: DataTypes.ENUM('image', 'video'),
+      type: DataTypes.ENUM('image', 'video', 'audio', 'other'),
       allowNull: false,
     },
     url: {
