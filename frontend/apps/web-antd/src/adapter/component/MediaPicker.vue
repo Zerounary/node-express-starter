@@ -152,9 +152,15 @@
                     v-for="it in items"
                     :key="it.id"
                     class="mp-card"
-                    :class="{ 'is-selected': isSelected(it.id) }"
+                    :class="{ 'is-selected': isSelected(it.id), 'is-batch-editing': isBatchEditing }"
                     @click="toggleSelect(it)"
                   >
+                    <ACheckbox
+                      v-if="isBatchEditing"
+                      class="batch-checkbox"
+                      :checked="isSelected(it.id)"
+                      @click.stop
+                    />
                     <slot name="item" :item="it">
                       <template v-if="it.type === 'image'">
                         <AImage
@@ -226,28 +232,30 @@
       </div>
 
       <div class="mp-footer">
-        <div class="left">
-          <span>已选：{{ selectedCount }}</span>
-          <AButton size="small" type="link" :disabled="selectedCount===0" @click="clearSelection">清空</AButton>
-          <ADropdown v-if="batchDeleter && selectedCount > 0">
-            <template #overlay>
-              <AMenu @click="handleBatchAction">
-                <AMenuItem key="delete" class="danger-action">删除选中项</AMenuItem>
-              </AMenu>
+        <template v-if="!isBatchEditing">
+          <div class="left">
+            <span>已选：{{ selectedCount }}</span>
+            <AButton size="small" type="link" :disabled="selectedCount === 0" @click="clearSelection">清空</AButton>
+            <AButton v-if="batchDeleter" size="small" @click="isBatchEditing = true">批量操作</AButton>
+            <template v-if="max && multiple">
+              <span class="tip">最多 {{ max }} 项</span>
             </template>
-            <AButton size="small">
-              批量操作
-              <DownOutlined />
-            </AButton>
-          </ADropdown>
-          <template v-if="max && multiple">
-            <span class="tip">最多 {{ max }} 项</span>
-          </template>
-        </div>
-        <div class="right">
-          <AButton @click="closeModal">取消</AButton>
-          <AButton class="ml-3" type="primary" :disabled="selectedCount===0" @click="confirmSelection">确定</AButton>
-        </div>
+          </div>
+          <div class="right">
+            <AButton @click="closeModal">取消</AButton>
+            <AButton type="primary" :disabled="selectedCount === 0" @click="confirmSelection">确定</AButton>
+          </div>
+        </template>
+        <template v-else>
+          <div class="left">
+            <span>已选进行批量操作：{{ selectedCount }}</span>
+            <AButton size="small" type="link" :disabled="selectedCount === 0" @click="clearSelection">清空</AButton>
+          </div>
+          <div class="right">
+            <AButton @click="isBatchEditing = false">取消</AButton>
+            <AButton type="primary" danger :disabled="selectedCount === 0" @click="batchDelete">删除选中项</AButton>
+          </div>
+        </template>
       </div>
     </AModal>
 
@@ -333,6 +341,7 @@ import {
   type UploadChangeParam,
   Tooltip as ATooltip,
   Tree as ATree,
+  Checkbox as ACheckbox,
 } from 'ant-design-vue'
 import { DownOutlined, ReloadOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 import {
@@ -443,6 +452,14 @@ const emits = defineEmits<{
   (e: 'update:modelValue', v: any): void
   (e: 'change', v: any): void
 }>()
+
+const isBatchEditing = ref(false);
+
+watch(isBatchEditing, (isEditing) => {
+  if (isEditing) {
+    clearSelection();
+  }
+});
 
 // #region 弹窗状态管理
 const visible = ref(false)
@@ -676,21 +693,32 @@ const canSelectMore = computed(() => {
 })
 
 function toggleSelect(item: MediaItem) {
-  const key = item.id
-  if (selectedMap.has(key)) {
-    selectedMap.delete(key)
-    return
+  const key = item.id;
+
+  if (isBatchEditing.value) {
+    // In batch editing mode, always allow multiple selections.
+    if (selectedMap.has(key)) {
+      selectedMap.delete(key);
+    } else {
+      selectedMap.set(key, item);
+    }
+  } else {
+    // Original logic for standard picker selection.
+    if (selectedMap.has(key)) {
+      selectedMap.delete(key);
+      return;
+    }
+    if (!props.multiple) {
+      selectedMap.clear();
+      selectedMap.set(key, item);
+      return;
+    }
+    if (!canSelectMore.value) {
+      message.warning(`最多可选择 ${props.max} 个`);
+      return;
+    }
+    selectedMap.set(key, item);
   }
-  if (!props.multiple) {
-    selectedMap.clear()
-    selectedMap.set(key, item)
-    return
-  }
-  if (!canSelectMore.value) {
-    message.warning(`最多可选择 ${props.max} 个`)
-    return
-  }
-  selectedMap.set(key, item)
 }
 
 function isSelected(id: string | number) {
@@ -884,6 +912,7 @@ async function batchDelete() {
         await props.batchDeleter!(ids)
         message.success(`成功删除 ${ids.length} 项`)
         selectedMap.clear()
+        isBatchEditing.value = false;
         loadList() // 重新加载当前页
       } catch (e: any) {
         console.error(e)
@@ -953,7 +982,7 @@ async function batchDelete() {
 :deep(.mp-main-content .ant-tabs-tabpane) { height: 100%; display: flex; flex-direction: column; }
 
 .mp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; padding-right: 8px; }
-.mp-card { border: 1px solid #f0f0f0; border-radius: 6px; cursor: pointer; transition: all .15s ease; background: #fff; overflow: hidden; display: flex; flex-direction: column; }
+.mp-card { position: relative; border: 1px solid #f0f0f0; border-radius: 6px; cursor: pointer; transition: all .15s ease; background: #fff; overflow: hidden; display: flex; flex-direction: column; }
 .mp-card:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
 .mp-card.is-selected { border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,0.15); }
 .mp-card-img { position: relative; width: 100%; height: 160px; display: block; overflow: hidden; line-height: 0; z-index: 0; }
@@ -1149,5 +1178,25 @@ async function batchDelete() {
   margin-top: 12px;
   width: 100%;
   text-align: right;
+}
+
+.mp-card .batch-checkbox {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 100%;
+}
+.mp-card.is-batch-editing::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.2);
+  z-index: 1;
+  transition: background .2s;
+}
+.mp-card.is-batch-editing.is-selected::after {
+  background: transparent;
 }
 </style>
