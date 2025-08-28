@@ -1,5 +1,270 @@
+<template>
+  <div class="media-picker">
+    <slot name="trigger" :open="openModal" :value="valuePreview">
+      <!-- 单选模式，且有值时，显示图片/视频预览作为触发器 -->
+      <div v-if="!multiple && valuePreview?.length === 1" @click="openModal" class="mp-single-preview-trigger">
+        <template v-if="valuePreview[0].type === 'image'">
+            <AImage
+              :src="valuePreview[0].thumbUrl || valuePreview[0].url"
+              :alt="valuePreview[0].name"
+              :width="128"
+              :height="128"
+              :preview="false"
+              :fallback="FALLBACK_IMAGE_SRC"
+            />
+        </template>
+        <template v-else>
+          <div class="mp-video-thumb" style="width: 128px; height: 128px; border-radius: 4px;">
+            <video :src="valuePreview[0].url" muted preload="metadata" style="width: 100%; height: 100%; object-fit: cover;" />
+            <span class="mp-badge">Video</span>
+          </div>
+        </template>
+      </div>
+      <!-- 默认触发器：多选模式或单选无值 -->
+      <AButton v-else :disabled="disabled" @click="openModal">选择媒体</AButton>
+    </slot>
+
+    <!-- 多选模式预览 -->
+    <div v-if="multiple && valuePreview?.length" class="mp-selected-preview">
+      <div class="mp-selected-title">已选择</div>
+      <AImage.PreviewGroup>
+        <div class="mp-selected-list">
+          <div v-for="it in valuePreview" :key="it.id" class="mp-thumb">
+            <template v-if="it.type === 'image'">
+              <AImage
+                :src="it.thumbUrl || it.url"
+                :alt="it.name"
+                :width="64"
+                :height="64"
+                :fallback="FALLBACK_IMAGE_SRC"
+              />
+            </template>
+            <template v-else>
+              <div class="mp-video-thumb">
+                <video :src="it.url" muted preload="metadata" />
+                <span class="mp-badge">Video</span>
+              </div>
+            </template>
+          </div>
+        </div>
+      </AImage.PreviewGroup>
+    </div>
+
+    <AModal
+      :open="visible"
+      :title="title || '媒体库'"
+      :width="width || 900"
+      :maskClosable="false"
+      @cancel="closeModal"
+      :footer="null"
+      wrapClassName="media-picker-modal"
+    >
+      <div class="mp-toolbar">
+        <AInputSearch
+          v-model:value="query"
+          placeholder="搜索名称、关键字..."
+          @search="triggerSearch"
+          @input="triggerSearch"
+          allowClear
+          style="max-width: 320px"
+        />
+        <div class="mp-toolbar-right">
+          <ASelect v-model:value="selectedTypes" mode="multiple" style="width: 220px" :maxTagCount="1">
+            <ASelectOption value="image">图片</ASelectOption>
+            <ASelectOption value="video">视频</ASelectOption>
+          </ASelect>
+          <ASelect v-model:value="sort" style="width: 180px">
+            <ASelectOption value="createdAtDesc">最新上传</ASelectOption>
+            <ASelectOption value="createdAtAsc">最早上传</ASelectOption>
+            <ASelectOption value="sizeDesc">体积从大到小</ASelectOption>
+            <ASelectOption value="sizeAsc">体积从小到大</ASelectOption>
+            <ASelectOption value="nameAsc">名称 A→Z</ASelectOption>
+            <ASelectOption value="nameDesc">名称 Z→A</ASelectOption>
+          </ASelect>
+          <ATooltip title="刷新">
+            <AButton @click="loadList" :loading="loading">
+              <template #icon><ReloadOutlined /></template>
+            </AButton>
+          </ATooltip>
+        </div>
+      </div>
+
+      <div class="mp-body-layout">
+        <div v-if="fetchCategories" class="mp-sidebar">
+          <AMenu v-model:selectedKeys="selectedCategoryKeys" mode="inline">
+            <AMenuItem key="all">
+              <span>全部</span>
+            </AMenuItem>
+            <AMenuItem v-for="cat in categories" :key="cat.id">
+              <span :title="cat.name">{{ cat.name }}</span>
+              <span v-if="cat.count != null" class="cat-count">({{ cat.count }})</span>
+            </AMenuItem>
+          </AMenu>
+        </div>
+
+        <div class="mp-main-content">
+          <ATabs>
+            <ATabPane key="library" tab="素材库">
+               <div class="pane-content">
+                <div class="media-grid">
+
+              <ASpin :spinning="loading" class="mp-scroll-wrapper">
+                <div v-if="items.length > 0" class="mp-grid">
+                  <div
+                    v-for="it in items"
+                    :key="it.id"
+                    class="mp-card"
+                    :class="{ 'is-selected': isSelected(it.id) }"
+                    @click="toggleSelect(it)"
+                  >
+                    <slot name="item" :item="it">
+                      <template v-if="it.type === 'image'">
+                        <AImage
+                          :src="it.thumbUrl || it.url"
+                          :alt="it.name"
+                          :preview="false"
+                          class="mp-card-img"
+                          :fallback="FALLBACK_IMAGE_SRC"
+                        />
+                      </template>
+                      <template v-else>
+                        <div class="mp-video-thumb large">
+                          <video :src="it.url" muted preload="metadata" />
+                          <span class="mp-badge">Video</span>
+                        </div>
+                      </template>
+                      <div class="mp-card-meta">
+                        <span class="name" :title="it.name">{{ it.name || '未命名' }}</span>
+                        <a class="action" @click.stop="openPreview(it)">详情</a>
+                      </div>
+                    </slot>
+                  </div>
+                </div>
+                <AEmpty v-else description="暂无媒体" />
+              </ASpin>
+                </div>
+              <div class="mp-pagination">
+                <APagination
+                  :current="pager.page"
+                  :pageSize="pager.pageSize"
+                  :total="pager.total"
+                  show-size-changer
+                  show-quick-jumper
+                  @change="onPageChange"
+                  @update:pageSize="(ps:number) => onPageChange(1, ps)"
+                />
+              </div>             
+            </div>
+            </ATabPane>
+
+            <ATabPane key="upload" tab="上传" v-if="allowUpload" class="upload-tab-pane">
+                <div class="pane-content">
+                    <AUpload
+                        :multiple="multiple"
+                        list-type="picture-card"
+                        :customRequest="handleCustomUpload"
+                        :accept="selectedTypes.includes('image') && selectedTypes.includes('video') ? 'image/*,video/*' : (selectedTypes.includes('image') ? 'image/*' : 'video/*')"
+                        :showUploadList="true"
+                        :disabled="!uploader"
+                        class="mp-uploader"
+                    >
+                        <div>
+                        <span>点击或拖拽上传</span>
+                        <div style="color:#999; font-size:12px; margin-top:6px">支持图片/视频</div>
+                        </div>
+                    </AUpload>
+                    <div style="color:#999; font-size:12px; margin-top:8px">
+                        上传成功后将自动加入已选与素材库
+                    </div>
+                </div>
+            </ATabPane>
+          </ATabs>
+        </div>
+      </div>
+
+      <div class="mp-footer">
+        <div class="left">
+          <span>已选：{{ selectedCount }}</span>
+          <AButton size="small" type="link" :disabled="selectedCount===0" @click="clearSelection">清空</AButton>
+          <ADropdown v-if="batchDeleter && selectedCount > 0">
+            <template #overlay>
+              <AMenu @click="handleBatchAction">
+                <AMenuItem key="delete" class="danger-action">删除选中项</AMenuItem>
+              </AMenu>
+            </template>
+            <AButton size="small">
+              批量操作
+              <DownOutlined />
+            </AButton>
+          </ADropdown>
+          <template v-if="max && multiple">
+            <span class="tip">最多 {{ max }} 项</span>
+          </template>
+        </div>
+        <div class="right">
+          <AButton @click="closeModal">取消</AButton>
+          <AButton type="primary" :disabled="selectedCount===0" @click="confirmSelection">确定</AButton>
+        </div>
+      </div>
+    </AModal>
+
+    <AModal :open="previewVisible" :title="isEditing ? '编辑媒体' : '媒体详情'" :footer="null" @cancel="previewVisible = false" width="900px">
+      <div v-if="previewItem" class="mp-preview-body">
+        <div class="media-display">
+          <template v-if="previewItem.type === 'image'">
+            <AImage :src="previewItem.url" :alt="previewItem.name" :fallback="FALLBACK_IMAGE_SRC" />
+          </template>
+          <template v-else>
+            <video :src="previewItem.url" style="max-width: 100%;" controls />
+          </template>
+        </div>
+        <div class="meta-panel">
+          <template v-if="!isEditing">
+            <div class="meta-view">
+              <div class="meta-item"><strong>名称：</strong>{{ previewItem.name || '-' }}</div>
+              <div class="meta-item"><strong>尺寸：</strong>{{ previewItem.width || '-' }} x {{ previewItem.height || '-' }}</div>
+              <div v-if="previewItem.duration" class="meta-item"><strong>时长：</strong>{{ previewItem.duration }}s</div>
+              <div class="meta-item"><strong>大小：</strong>{{ previewItem.size ? (previewItem.size / 1024 / 1024).toFixed(2) + ' MB' : '-' }}</div>
+              <div class="meta-item"><strong>时间：</strong>{{ previewItem.createdAt || '-' }}</div>
+              <div class="meta-item">
+                <strong>标签：</strong>
+                <template v-if="previewItem.tags?.length">
+                  <ATag v-for="tag in previewItem.tags" :key="tag">{{ tag }}</ATag>
+                </template>
+                <span v-else>-</span>
+              </div>
+              <div v-if="previewItem.linkedEntity" class="meta-item">
+                <strong>关联数据：</strong>
+                <a :href="previewItem.linkedEntity.url" target="_blank">{{ previewItem.linkedEntity.name }}</a>
+              </div>
+            </div>
+            <div class="actions">
+              <AButton v-if="updater" @click="startEditing">编辑</AButton>
+              <AButton v-if="deleter" danger @click="deleteItem">删除</AButton>
+            </div>
+          </template>
+          <template v-else-if="editingItem">
+            <AForm :model="editingItem" layout="vertical" class="meta-edit">
+              <AFormItem label="名称">
+                <AInput v-model:value="editingItem.name" />
+              </AFormItem>
+              <AFormItem label="标签">
+                <ASelect v-model:value="editingItem.tags" mode="tags" placeholder="输入并按回车添加标签" />
+              </AFormItem>
+            </AForm>
+            <div class="actions">
+              <AButton @click="cancelEditing">取消</AButton>
+              <AButton type="primary" @click="saveChanges">保存</AButton>
+            </div>
+          </template>
+        </div>
+      </div>
+    </AModal>
+  </div>
+</template>
+
 <script setup lang="ts">
-import { computed, defineEmits, defineProps, onMounted, reactive, ref, watch } from 'vue'
+import { computed, defineEmits, defineProps, onMounted, reactive, ref, watch, withDefaults } from 'vue'
 import {
   message,
   Modal as AModal,
@@ -24,6 +289,7 @@ import {
   Tooltip as ATooltip,
 } from 'ant-design-vue'
 import { DownOutlined, ReloadOutlined } from '@ant-design/icons-vue'
+import { batchDeleteMedia, deleteMedia, fetchCategories, fetchMedia, updateMedia, uploadMedia } from '#/api/system/media'
 
 const FALLBACK_IMAGE_SRC = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNmMGYyZjUiLz48L3N2Zz4=`
 
@@ -81,7 +347,7 @@ interface FetchResult {
   total: number
 }
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   modelValue?: any
   multiple?: boolean
   max?: number
@@ -90,7 +356,7 @@ const props = defineProps<{
   title?: string
   width?: number | string
   allowUpload?: boolean
-  fetcher: (params: FetchParams) => Promise<FetchResult>
+  fetcher?: (params: FetchParams) => Promise<FetchResult>
   uploader?: (file: File, extra?: Record<string, any>) => Promise<MediaItem>
   // --- 新增 CRUD props ---
   updater?: (id: string | number, data: Partial<Omit<MediaItem, 'id'>>) => Promise<MediaItem>
@@ -100,7 +366,15 @@ const props = defineProps<{
   // --------------------
   pageSize?: number
   disabled?: boolean
-}>()
+}>(), {
+  fetcher: fetchMedia,
+  uploader: uploadMedia,
+  fetchCategories: fetchCategories,
+  updater: updateMedia,
+  deleter: deleteMedia,
+  batchDeleter: batchDeleteMedia,
+  allowUpload: true,
+})
 
 const emits = defineEmits<{
   (e: 'update:modelValue', v: any): void
@@ -404,269 +678,6 @@ async function batchDelete() {
 // #endregion
 </script>
 
-<template>
-  <div class="media-picker">
-    <slot name="trigger" :open="openModal">
-      <AButton :disabled="disabled" @click="openModal">选择媒体</AButton>
-    </slot>
-
-    <!-- 单选模式预览 -->
-    <div v-if="!multiple && valuePreview?.length === 1" class="mp-single-preview">
-      <template v-if="valuePreview[0].type === 'image'">
-        <AImage
-          :src="valuePreview[0].thumbUrl || valuePreview[0].url"
-          :alt="valuePreview[0].name"
-          :width="128"
-          :height="128"
-          :fallback="FALLBACK_IMAGE_SRC"
-        />
-      </template>
-      <template v-else>
-        <div class="mp-video-thumb" style="width: 128px; height: 128px; border-radius: 4px;">
-          <video :src="valuePreview[0].url" muted preload="metadata" style="width: 100%; height: 100%; object-fit: cover;" />
-          <span class="mp-badge">Video</span>
-        </div>
-      </template>
-    </div>
-
-    <!-- 多选模式预览 -->
-    <div v-else-if="valuePreview?.length" class="mp-selected-preview">
-      <div class="mp-selected-title">已选择</div>
-      <AImage.PreviewGroup>
-        <div class="mp-selected-list">
-          <div v-for="it in valuePreview" :key="it.id" class="mp-thumb">
-            <template v-if="it.type === 'image'">
-              <AImage
-                :src="it.thumbUrl || it.url"
-                :alt="it.name"
-                :width="64"
-                :height="64"
-                :fallback="FALLBACK_IMAGE_SRC"
-              />
-            </template>
-            <template v-else>
-              <div class="mp-video-thumb">
-                <video :src="it.url" muted preload="metadata" />
-                <span class="mp-badge">Video</span>
-              </div>
-            </template>
-          </div>
-        </div>
-      </AImage.PreviewGroup>
-    </div>
-
-    <AModal
-      :open="visible"
-      :title="title || '媒体库'"
-      :width="width || 900"
-      :maskClosable="false"
-      @cancel="closeModal"
-      :footer="null"
-      wrapClassName="media-picker-modal"
-    >
-      <div class="mp-toolbar">
-        <AInputSearch
-          v-model:value="query"
-          placeholder="搜索名称、关键字..."
-          @search="triggerSearch"
-          @input="triggerSearch"
-          allowClear
-          style="max-width: 320px"
-        />
-        <div class="mp-toolbar-right">
-          <ASelect v-model:value="selectedTypes" mode="multiple" style="width: 220px" :maxTagCount="1">
-            <ASelectOption value="image">图片</ASelectOption>
-            <ASelectOption value="video">视频</ASelectOption>
-          </ASelect>
-          <ASelect v-model:value="sort" style="width: 180px">
-            <ASelectOption value="createdAtDesc">最新上传</ASelectOption>
-            <ASelectOption value="createdAtAsc">最早上传</ASelectOption>
-            <ASelectOption value="sizeDesc">体积从大到小</ASelectOption>
-            <ASelectOption value="sizeAsc">体积从小到大</ASelectOption>
-            <ASelectOption value="nameAsc">名称 A→Z</ASelectOption>
-            <ASelectOption value="nameDesc">名称 Z→A</ASelectOption>
-          </ASelect>
-          <ATooltip title="刷新">
-            <AButton @click="loadList" :loading="loading">
-              <template #icon><ReloadOutlined /></template>
-            </AButton>
-          </ATooltip>
-        </div>
-      </div>
-
-      <div class="mp-body-layout">
-        <div v-if="fetchCategories" class="mp-sidebar">
-          <AMenu v-model:selectedKeys="selectedCategoryKeys" mode="inline">
-            <AMenuItem key="all">
-              <span>全部</span>
-            </AMenuItem>
-            <AMenuItem v-for="cat in categories" :key="cat.id">
-              <span :title="cat.name">{{ cat.name }}</span>
-              <span v-if="cat.count != null" class="cat-count">({{ cat.count }})</span>
-            </AMenuItem>
-          </AMenu>
-        </div>
-
-        <div class="mp-main-content">
-          <ATabs>
-            <ATabPane key="library" tab="素材库">
-               <div class="pane-content">
-                <div class="media-grid">
-
-              <ASpin :spinning="loading" class="mp-scroll-wrapper">
-                <div v-if="items.length > 0" class="mp-grid">
-                  <div
-                    v-for="it in items"
-                    :key="it.id"
-                    class="mp-card"
-                    :class="{ 'is-selected': isSelected(it.id) }"
-                    @click="toggleSelect(it)"
-                  >
-                    <slot name="item" :item="it">
-                      <template v-if="it.type === 'image'">
-                        <AImage
-                          :src="it.thumbUrl || it.url"
-                          :alt="it.name"
-                          :preview="false"
-                          class="mp-card-img"
-                          :fallback="FALLBACK_IMAGE_SRC"
-                        />
-                      </template>
-                      <template v-else>
-                        <div class="mp-video-thumb large">
-                          <video :src="it.url" muted preload="metadata" />
-                          <span class="mp-badge">Video</span>
-                        </div>
-                      </template>
-                      <div class="mp-card-meta">
-                        <span class="name" :title="it.name">{{ it.name || '未命名' }}</span>
-                        <a class="action" @click.stop="openPreview(it)">详情</a>
-                      </div>
-                    </slot>
-                  </div>
-                </div>
-                <AEmpty v-else description="暂无媒体" />
-              </ASpin>
-                </div>
-              <div class="mp-pagination">
-                <APagination
-                  :current="pager.page"
-                  :pageSize="pager.pageSize"
-                  :total="pager.total"
-                  show-size-changer
-                  show-quick-jumper
-                  @change="onPageChange"
-                  @update:pageSize="(ps:number) => onPageChange(1, ps)"
-                />
-              </div>             
-            </div>
-            </ATabPane>
-
-            <ATabPane key="upload" tab="上传" v-if="allowUpload" class="upload-tab-pane">
-                <div class="pane-content">
-                    <AUpload
-                        :multiple="multiple"
-                        list-type="picture-card"
-                        :customRequest="handleCustomUpload"
-                        :accept="selectedTypes.includes('image') && selectedTypes.includes('video') ? 'image/*,video/*' : (selectedTypes.includes('image') ? 'image/*' : 'video/*')"
-                        :showUploadList="true"
-                        :disabled="!uploader"
-                        class="mp-uploader"
-                    >
-                        <div>
-                        <span>点击或拖拽上传</span>
-                        <div style="color:#999; font-size:12px; margin-top:6px">支持图片/视频</div>
-                        </div>
-                    </AUpload>
-                    <div style="color:#999; font-size:12px; margin-top:8px">
-                        上传成功后将自动加入已选与素材库
-                    </div>
-                </div>
-            </ATabPane>
-          </ATabs>
-        </div>
-      </div>
-
-      <div class="mp-footer">
-        <div class="left">
-          <span>已选：{{ selectedCount }}</span>
-          <AButton size="small" type="link" :disabled="selectedCount===0" @click="clearSelection">清空</AButton>
-          <ADropdown v-if="batchDeleter && selectedCount > 0">
-            <template #overlay>
-              <AMenu @click="handleBatchAction">
-                <AMenuItem key="delete" class="danger-action">删除选中项</AMenuItem>
-              </AMenu>
-            </template>
-            <AButton size="small">
-              批量操作
-              <DownOutlined />
-            </AButton>
-          </ADropdown>
-          <template v-if="max && multiple">
-            <span class="tip">最多 {{ max }} 项</span>
-          </template>
-        </div>
-        <div class="right">
-          <AButton @click="closeModal">取消</AButton>
-          <AButton type="primary" :disabled="selectedCount===0" @click="confirmSelection">确定</AButton>
-        </div>
-      </div>
-    </AModal>
-
-    <AModal :open="previewVisible" :title="isEditing ? '编辑媒体' : '媒体详情'" :footer="null" @cancel="previewVisible = false" width="900px">
-      <div v-if="previewItem" class="mp-preview-body">
-        <div class="media-display">
-          <template v-if="previewItem.type === 'image'">
-            <AImage :src="previewItem.url" :alt="previewItem.name" :fallback="FALLBACK_IMAGE_SRC" />
-          </template>
-          <template v-else>
-            <video :src="previewItem.url" style="max-width: 100%;" controls />
-          </template>
-        </div>
-        <div class="meta-panel">
-          <template v-if="!isEditing">
-            <div class="meta-view">
-              <div class="meta-item"><strong>名称：</strong>{{ previewItem.name || '-' }}</div>
-              <div class="meta-item"><strong>尺寸：</strong>{{ previewItem.width || '-' }} x {{ previewItem.height || '-' }}</div>
-              <div v-if="previewItem.duration" class="meta-item"><strong>时长：</strong>{{ previewItem.duration }}s</div>
-              <div class="meta-item"><strong>大小：</strong>{{ previewItem.size ? (previewItem.size / 1024 / 1024).toFixed(2) + ' MB' : '-' }}</div>
-              <div class="meta-item"><strong>时间：</strong>{{ previewItem.createdAt || '-' }}</div>
-              <div class="meta-item">
-                <strong>标签：</strong>
-                <template v-if="previewItem.tags?.length">
-                  <ATag v-for="tag in previewItem.tags" :key="tag">{{ tag }}</ATag>
-                </template>
-                <span v-else>-</span>
-              </div>
-              <div v-if="previewItem.linkedEntity" class="meta-item">
-                <strong>关联数据：</strong>
-                <a :href="previewItem.linkedEntity.url" target="_blank">{{ previewItem.linkedEntity.name }}</a>
-              </div>
-            </div>
-            <div class="actions">
-              <AButton v-if="updater" @click="startEditing">编辑</AButton>
-              <AButton v-if="deleter" danger @click="deleteItem">删除</AButton>
-            </div>
-          </template>
-          <template v-else-if="editingItem">
-            <AForm :model="editingItem" layout="vertical" class="meta-edit">
-              <AFormItem label="名称">
-                <AInput v-model:value="editingItem.name" />
-              </AFormItem>
-              <AFormItem label="标签">
-                <ASelect v-model:value="editingItem.tags" mode="tags" placeholder="输入并按回车添加标签" />
-              </AFormItem>
-            </AForm>
-            <div class="actions">
-              <AButton @click="cancelEditing">取消</AButton>
-              <AButton type="primary" @click="saveChanges">保存</AButton>
-            </div>
-          </template>
-        </div>
-      </div>
-    </AModal>
-  </div>
-</template>
 
 <style scoped>
 .media-picker { display: flex; flex-direction: column; gap: 8px; }
@@ -791,15 +802,20 @@ async function batchDelete() {
 .meta-edit { flex-grow: 1; overflow-y: auto; padding-bottom: 16px; }
 .actions { flex-shrink: 0; display: flex; gap: 8px; border-top: 1px solid #f0f0f0; padding-top: 16px; margin-top: 16px; }
 
-.mp-single-preview {
+.mp-single-preview-trigger {
   border: 1px solid #f0f0f0;
   padding: 8px;
   border-radius: 6px;
   background: #fafafa;
   display: inline-block;
   line-height: 0;
+  cursor: pointer;
+  transition: border-color .2s;
 }
-.mp-single-preview .ant-image {
+.mp-single-preview-trigger:hover {
+  border-color: #1677ff;
+}
+.mp-single-preview-trigger .ant-image {
   border-radius: 4px;
 }
 </style>

@@ -1,5 +1,4 @@
 import { Controller, Get, Post, Put, Delete } from "@/utils/routeDecorators";
-import { Request, Response } from 'express';
 import { fail, ok } from "@/router/api";
 import Media from "@/db/models/Media";
 import MediaCategory from "@/db/models/MediaCategory";
@@ -18,7 +17,7 @@ const validateAndParseInt = (value: any, fieldName: string) => {
 export default class MediaController {
 
   @Get("/categories")
-  async getCategories(req: Request, res: Response) {
+  async getCategories(req, res) {
     try {
       const { tenantId } = req.user;
       const categories = await MediaCategory.findAll({
@@ -32,8 +31,9 @@ export default class MediaController {
   }
 
   @Post("/categories")
-  async createCategory(req: Request, res: Response) {
-    const { name, parentId } = req.body;
+  async createCategory(req, res) {
+    const body = await req.json();
+    const { name, parentId } = body;
     const { tenantId } = req.user;
     if (!name) {
       return fail("Category name is required.", 400);
@@ -47,9 +47,10 @@ export default class MediaController {
   }
 
   @Put("/categories/:id")
-  async updateCategory(req: Request, res: Response) {
+  async updateCategory(req, res) {
     const { id } = req.params;
-    const { name, parentId } = req.body;
+    const body = await req.json();
+    const { name, parentId } = body;
     const { tenantId } = req.user;
     try {
       const categoryId = validateAndParseInt(id, 'category ID');
@@ -65,7 +66,7 @@ export default class MediaController {
   }
 
   @Delete("/categories/:id")
-  async deleteCategory(req: Request, res: Response) {
+  async deleteCategory(req, res) {
     const { id } = req.params;
     const { tenantId } = req.user;
     try {
@@ -81,7 +82,7 @@ export default class MediaController {
   }
 
   @Get("/page")
-  async getMedia(req: Request, res: Response) {
+  async getMedia(req, res) {
     try {
         const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
         const pageSize = req.query.pageSize ? parseInt(req.query.pageSize as string, 10) : 24;
@@ -127,13 +128,14 @@ export default class MediaController {
   }
 
   @Post("/upload",[cosMid])
-  async createMedia(req: Request, res: Response) {
+  async createMedia(req, res) {
     if (!req.file) {
       return fail("No file uploaded", 400);
     }
     const { originalname, size, mimetype } = req.file;
     const { location: url, key: name } = req.file as any;
-    const { categoryId } = req.body;
+    const body = await req.json();
+    const { categoryId } = body;
 
     const type = mimetype.startsWith('image/') ? 'image' : (mimetype.startsWith('video/') ? 'video' : undefined);
     if (!type) {
@@ -156,9 +158,10 @@ export default class MediaController {
   }
 
   @Put("/:id")
-  async updateMedia(req: Request, res: Response) {
+  async updateMedia(req, res) {
     const { id } = req.params;
-    const { name, tags, categoryId } = req.body;
+    const body = await req.json();
+    const { name, tags, categoryId } = body;
     const { tenantId } = req.user;
     try {
       const mediaId = validateAndParseInt(id, 'media ID');
@@ -174,7 +177,7 @@ export default class MediaController {
   }
 
   @Delete("/:id")
-  async deleteMedia(req: Request, res: Response) {
+  async deleteMedia(req, res) {
     const { id } = req.params;
     const { tenantId } = req.user;
     try {
@@ -190,8 +193,9 @@ export default class MediaController {
   }
 
   @Post("/batch-delete")
-  async batchDeleteMedia(req: Request, res: Response) {
-    const { ids } = req.body;
+  async batchDeleteMedia(req, res) {
+    const body = await req.json();
+    const { ids } = body;
     const { tenantId } = req.user;
     if (!Array.isArray(ids) || ids.length === 0) {
       return fail("IDs must be a non-empty array.", 400);

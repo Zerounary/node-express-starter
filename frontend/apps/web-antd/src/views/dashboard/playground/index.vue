@@ -4,7 +4,7 @@
       <ACard title="MediaPicker Playground">
         <AForm :model="formState" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
           <AFormItem label="Single Image (Object)">
-            <MediaPicker v-model="formState.cover" :fetcher="fetchMedia" :uploader="uploadMedia" allow-upload />
+            <MediaPicker v-model="formState.cover" />
           </AFormItem>
 
           <AFormItem label="Multiple Images (URL)">
@@ -13,9 +13,6 @@
               multiple
               :max="9"
               value-key="url"
-              :fetcher="fetchMedia"
-              :uploader="uploadMedia"
-              allow-upload
             />
           </AFormItem>
 
@@ -24,18 +21,15 @@
               v-model="formState.video"
               value-key="id"
               :types="['video']"
-              :fetcher="fetchMedia"
-              :uploader="uploadMedia"
-              allow-upload
             />
           </AFormItem>
 
           <AFormItem label="Disabled Picker">
-            <MediaPicker v-model="formState.disabledAsset" :fetcher="fetchMedia" disabled />
+            <MediaPicker v-model="formState.disabledAsset" />
           </AFormItem>
 
           <AFormItem label="Custom Trigger">
-            <MediaPicker v-model="formState.customTriggerAsset" :fetcher="fetchMedia">
+            <MediaPicker v-model="formState.customTriggerAsset">
               <template #trigger="{ open }">
                 <AButton type="dashed" @click="open">
                   <template #icon><UploadOutlined /></template>
@@ -74,7 +68,6 @@ import { Card as ACard, Form as AForm, FormItem as AFormItem, Button as AButton,
 import MediaPicker, { type MediaItem, type FetchParams } from '#/adapter/component/MediaPicker.vue';
 import QRCode from '#/adapter/component/QRCode.vue';
 import RichText from '#/adapter/component/RichText.vue';
-import { fetchMedia, uploadMedia } from '#/api/system/media'
 
 
 const formState = reactive({
