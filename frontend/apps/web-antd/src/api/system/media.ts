@@ -13,7 +13,7 @@ async function fetchMedia(params: FetchParams) {
   }
 }
 
-async function uploadMedia(file: File, options?: { categoryId?: string | number }) {
+async function uploadMedia(file: File, options?: { categoryId?: string | number, onUploadProgress?: (progressEvent: any) => void }) {
     console.log('Uploading file:', file.name, 'with options:', options);
     const formData = new FormData();
     formData.append('file', file);
@@ -27,6 +27,7 @@ async function uploadMedia(file: File, options?: { categoryId?: string | number 
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
+            onUploadProgress: options?.onUploadProgress,
         });
         return data;
     } catch (error) {

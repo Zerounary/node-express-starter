@@ -407,7 +407,7 @@ const props = withDefaults(defineProps<{
   width?: number | string
   allowUpload?: boolean
   fetcher?: (params: FetchParams) => Promise<FetchResult>
-  uploader?: (file: File, extra?: Record<string, any>) => Promise<MediaItem>
+  uploader?: (file: File, options?: { categoryId?: string | number, onUploadProgress?: (e: any) => void }) => Promise<MediaItem>
   // --- 新增 CRUD props ---
   updater?: (id: string | number, data: Partial<Omit<MediaItem, 'id'>>) => Promise<MediaItem>
   deleter?: (id: string | number) => Promise<void>
@@ -742,21 +742,30 @@ function confirmSelection() {
 
 // #region 上传
 async function handleCustomUpload(options: any) {
-  const { file, onSuccess, onError } = options
+  const { file, onSuccess, onError, onProgress } = options
   if (!props.uploader) {
     onError?.(new Error('未配置 uploader'))
     return
   }
   try {
-    const item = await props.uploader(file as File, {
-      categoryId: selectedCategoryId.value || undefined
-    })
+    const uploaderOptions = {
+      categoryId: selectedCategoryId.value || undefined,
+      onUploadProgress: (event: any) => {
+        if (event.lengthComputable) {
+          const percent = Math.floor((event.loaded / event.total) * 100);
+          onProgress({ percent });
+        }
+      }
+    }
+    const item = await props.uploader(file as File, uploaderOptions)
     selectedMap.set(item.id, item)
     items.value = [item, ...items.value]
     pager.total += 1
     onSuccess?.(item)
-  } catch (e) {
+    message.success('上传成功！')
+  } catch (e: any) {
     console.error(e)
+    message.error(e?.message || '上传失败')
     onError?.(e)
   }
 }
