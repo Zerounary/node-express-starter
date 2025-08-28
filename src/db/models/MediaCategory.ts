@@ -1,6 +1,7 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../sequelize';
 import { commontFields } from './common';
+import Tenant from './Tenant';
 
 interface IMediaCategory extends Model {
   id: number;
@@ -23,6 +24,14 @@ MediaCategory.init(
       type: DataTypes.INTEGER.UNSIGNED,
       autoIncrement: true,
       primaryKey: true,
+    },
+    tenantId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Tenant,
+            key: 'id'
+        }
     },
     name: {
       type: new DataTypes.STRING(128),

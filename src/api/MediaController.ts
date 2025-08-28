@@ -20,7 +20,9 @@ export default class MediaController {
   @Get("/categories")
   async getCategories(req: Request, res: Response) {
     try {
+      const { tenantId } = req.user;
       const categories = await MediaCategory.findAll({
+        where: { tenantId },
         order: [['createdAt', 'ASC']],
       });
       return ok(categories);
@@ -32,11 +34,12 @@ export default class MediaController {
   @Post("/categories")
   async createCategory(req: Request, res: Response) {
     const { name, parentId } = req.body;
+    const { tenantId } = req.user;
     if (!name) {
       return fail("Category name is required.", 400);
     }
     try {
-      const category = await MediaCategory.create({ name, parentId });
+      const category = await MediaCategory.create({ name, parentId, tenantId });
       return ok(category);
     } catch (error: any) {
       return fail(error.message, 500);
@@ -47,9 +50,10 @@ export default class MediaController {
   async updateCategory(req: Request, res: Response) {
     const { id } = req.params;
     const { name, parentId } = req.body;
+    const { tenantId } = req.user;
     try {
       const categoryId = validateAndParseInt(id, 'category ID');
-      const category = await MediaCategory.findByPk(categoryId);
+      const category = await MediaCategory.findOne({ where: { id: categoryId, tenantId } });
       if (!category) {
         return fail("Category not found.", 404);
       }
@@ -63,9 +67,10 @@ export default class MediaController {
   @Delete("/categories/:id")
   async deleteCategory(req: Request, res: Response) {
     const { id } = req.params;
+    const { tenantId } = req.user;
     try {
       const categoryId = validateAndParseInt(id, 'category ID');
-      const result = await MediaCategory.destroy({ where: { id: categoryId } });
+      const result = await MediaCategory.destroy({ where: { id: categoryId, tenantId } });
       if (result === 0) {
         return fail("Category not found.", 404);
       }
@@ -75,7 +80,7 @@ export default class MediaController {
     }
   }
 
-  @Get("/")
+  @Get("/page")
   async getMedia(req: Request, res: Response) {
     try {
         const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
@@ -87,7 +92,7 @@ export default class MediaController {
 
         const offset = (page - 1) * pageSize;
 
-        const where: any = {};
+        const where: any = { tenantId: req.user.tenantId };
         if (query) {
             where.name = { [Op.like]: `%${query}%` };
         }
@@ -121,13 +126,14 @@ export default class MediaController {
     }
   }
 
-  @Post("/",[cosMid])
+  @Post("/upload",[cosMid])
   async createMedia(req: Request, res: Response) {
     if (!req.file) {
       return fail("No file uploaded", 400);
     }
     const { originalname, size, mimetype } = req.file;
     const { location: url, key: name } = req.file as any;
+    const { categoryId } = req.body;
 
     const type = mimetype.startsWith('image/') ? 'image' : (mimetype.startsWith('video/') ? 'video' : undefined);
     if (!type) {
@@ -140,6 +146,8 @@ export default class MediaController {
         url,
         size,
         type,
+        categoryId: categoryId ? parseInt(categoryId, 10) : null,
+        tenantId: req.user.tenantId,
       });
       return ok(media);
     } catch (error: any) {
@@ -151,9 +159,10 @@ export default class MediaController {
   async updateMedia(req: Request, res: Response) {
     const { id } = req.params;
     const { name, tags, categoryId } = req.body;
+    const { tenantId } = req.user;
     try {
       const mediaId = validateAndParseInt(id, 'media ID');
-      const media = await Media.findByPk(mediaId);
+      const media = await Media.findOne({ where: { id: mediaId, tenantId } });
       if (!media) {
         return fail("Media not found.", 404);
       }
@@ -167,9 +176,10 @@ export default class MediaController {
   @Delete("/:id")
   async deleteMedia(req: Request, res: Response) {
     const { id } = req.params;
+    const { tenantId } = req.user;
     try {
       const mediaId = validateAndParseInt(id, 'media ID');
-      const result = await Media.destroy({ where: { id: mediaId } });
+      const result = await Media.destroy({ where: { id: mediaId, tenantId } });
       if (result === 0) {
         return fail("Media not found.", 404);
       }
@@ -182,11 +192,12 @@ export default class MediaController {
   @Post("/batch-delete")
   async batchDeleteMedia(req: Request, res: Response) {
     const { ids } = req.body;
+    const { tenantId } = req.user;
     if (!Array.isArray(ids) || ids.length === 0) {
       return fail("IDs must be a non-empty array.", 400);
     }
     try {
-      const count = await Media.destroy({ where: { id: { [Op.in]: ids } } });
+      const count = await Media.destroy({ where: { id: { [Op.in]: ids }, tenantId } });
       return ok({ message: `Successfully deleted ${count} media items.` });
     } catch (error: any) {
       return fail(error.message, 500);

@@ -65,7 +65,7 @@ export interface Category {
 
 type SortKey = 'createdAtDesc' | 'createdAtAsc' | 'sizeDesc' | 'sizeAsc' | 'nameAsc' | 'nameDesc'
 
-interface FetchParams {
+export interface FetchParams {
   page: number
   pageSize: number
   query?: string

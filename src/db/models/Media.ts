@@ -1,6 +1,7 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../sequelize';
 import { commontFields } from './common';
+import Tenant from './Tenant';
 
 type MediaType = 'image' | 'video';
 
@@ -51,6 +52,14 @@ Media.init(
       type: DataTypes.INTEGER.UNSIGNED,
       autoIncrement: true,
       primaryKey: true,
+    },
+    tenantId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Tenant,
+            key: 'id'
+        }
     },
     type: {
       type: DataTypes.ENUM('image', 'video'),
