@@ -21,8 +21,9 @@ import {
   Empty as AEmpty,
   Pagination as APagination,
   Upload as AUpload,
+  Tooltip as ATooltip,
 } from 'ant-design-vue'
-import { DownOutlined } from '@ant-design/icons-vue'
+import { DownOutlined, ReloadOutlined } from '@ant-design/icons-vue'
 
 const FALLBACK_IMAGE_SRC = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNmMGYyZjUiLz48L3N2Zz4=`
 
@@ -409,21 +410,49 @@ async function batchDelete() {
       <AButton :disabled="disabled" @click="openModal">选择媒体</AButton>
     </slot>
 
-    <div v-if="valuePreview?.length" class="mp-selected-preview">
-      <div class="mp-selected-title">已选择</div>
-      <div class="mp-selected-list">
-        <div v-for="it in valuePreview" :key="it.id" class="mp-thumb">
-          <template v-if="it.type === 'image'">
-            <AImage :src="it.thumbUrl || it.url" :alt="it.name" :width="64" :height="64" :preview="false" :fallback="FALLBACK_IMAGE_SRC" />
-          </template>
-          <template v-else>
-            <div class="mp-video-thumb">
-              <video :src="it.url" muted preload="metadata" />
-              <span class="mp-badge">Video</span>
-            </div>
-          </template>
+    <!-- 单选模式预览 -->
+    <div v-if="!multiple && valuePreview?.length === 1" class="mp-single-preview">
+      <template v-if="valuePreview[0].type === 'image'">
+        <AImage
+          :src="valuePreview[0].thumbUrl || valuePreview[0].url"
+          :alt="valuePreview[0].name"
+          :width="128"
+          :height="128"
+          :fallback="FALLBACK_IMAGE_SRC"
+        />
+      </template>
+      <template v-else>
+        <div class="mp-video-thumb" style="width: 128px; height: 128px; border-radius: 4px;">
+          <video :src="valuePreview[0].url" muted preload="metadata" style="width: 100%; height: 100%; object-fit: cover;" />
+          <span class="mp-badge">Video</span>
         </div>
-      </div>
+      </template>
+    </div>
+
+    <!-- 多选模式预览 -->
+    <div v-else-if="valuePreview?.length" class="mp-selected-preview">
+      <div class="mp-selected-title">已选择</div>
+      <AImage.PreviewGroup>
+        <div class="mp-selected-list">
+          <div v-for="it in valuePreview" :key="it.id" class="mp-thumb">
+            <template v-if="it.type === 'image'">
+              <AImage
+                :src="it.thumbUrl || it.url"
+                :alt="it.name"
+                :width="64"
+                :height="64"
+                :fallback="FALLBACK_IMAGE_SRC"
+              />
+            </template>
+            <template v-else>
+              <div class="mp-video-thumb">
+                <video :src="it.url" muted preload="metadata" />
+                <span class="mp-badge">Video</span>
+              </div>
+            </template>
+          </div>
+        </div>
+      </AImage.PreviewGroup>
     </div>
 
     <AModal
@@ -457,6 +486,11 @@ async function batchDelete() {
             <ASelectOption value="nameAsc">名称 A→Z</ASelectOption>
             <ASelectOption value="nameDesc">名称 Z→A</ASelectOption>
           </ASelect>
+          <ATooltip title="刷新">
+            <AButton @click="loadList" :loading="loading">
+              <template #icon><ReloadOutlined /></template>
+            </AButton>
+          </ATooltip>
         </div>
       </div>
 
@@ -756,4 +790,16 @@ async function batchDelete() {
 .meta-item strong { margin-right: 8px; color: #666; }
 .meta-edit { flex-grow: 1; overflow-y: auto; padding-bottom: 16px; }
 .actions { flex-shrink: 0; display: flex; gap: 8px; border-top: 1px solid #f0f0f0; padding-top: 16px; margin-top: 16px; }
+
+.mp-single-preview {
+  border: 1px solid #f0f0f0;
+  padding: 8px;
+  border-radius: 6px;
+  background: #fafafa;
+  display: inline-block;
+  line-height: 0;
+}
+.mp-single-preview .ant-image {
+  border-radius: 4px;
+}
 </style>
