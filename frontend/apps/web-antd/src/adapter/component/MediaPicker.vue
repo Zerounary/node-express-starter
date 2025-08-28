@@ -93,33 +93,51 @@
         <div v-if="fetchCategories" class="mp-sidebar">
           <div class="mp-sidebar-header">
             <span>分类</span>
-            <ATooltip title="新建分类">
-              <AButton type="text" size="small" @click="handleAddCategory">
+            <ATooltip title="新建根分类">
+              <AButton type="text" size="small" @click="handleAddCategory()">
                 <template #icon><PlusOutlined /></template>
               </AButton>
             </ATooltip>
           </div>
-          <AMenu v-model:selectedKeys="selectedCategoryKeys" mode="inline">
-            <AMenuItem key="all">
-              <span>全部</span>
-            </AMenuItem>
-            <AMenuItem v-for="cat in categories" :key="cat.id" class="category-item">
+          <div class="mp-category-list">
+            <div
+              class="ant-menu-item category-item"
+              :class="{ 'ant-menu-item-selected': selectedCategoryId === null }"
+              @click="selectCategory(null)"
+            >
               <div class="category-item-content">
-                <span :title="cat.name" class="category-name">{{ cat.name }}</span>
-                <span class="category-extra">
-                  <span class="category-actions">
-                    <ATooltip title="编辑">
-                      <EditOutlined @click.stop="handleEditCategory(cat)" />
-                    </ATooltip>
-                    <ATooltip title="删除">
-                      <DeleteOutlined @click.stop="handleDeleteCategory(cat)" />
-                    </ATooltip>
-                  </span>
-                  <span v-if="cat.count != null" class="cat-count">({{ cat.count }})</span>
-                </span>
+                <span class="category-name">全部</span>
               </div>
-            </AMenuItem>
-          </AMenu>
+            </div>
+            <ATree
+              v-if="categoryTree.length"
+              :tree-data="categoryTree"
+              :field-names="{ title: 'name', key: 'id', children: 'children' }"
+              v-model:selectedKeys="selectedCategoryKeys"
+              v-model:expandedKeys="expandedCategoryKeys"
+              block-node
+              class="category-tree"
+            >
+              <template #title="cat">
+                <div class="category-item-content">
+                  <span :title="cat.name" class="category-name">{{ cat.name }}</span>
+                  <span class="category-extra">
+                    <span class="category-actions">
+                      <ATooltip title="新建子分类">
+                        <PlusOutlined @click.stop="handleAddCategory(cat.id)" />
+                      </ATooltip>
+                      <ATooltip title="编辑">
+                        <EditOutlined @click.stop="handleEditCategory(cat)" />
+                      </ATooltip>
+                      <ATooltip title="删除">
+                        <DeleteOutlined @click.stop="handleDeleteCategory(cat)" />
+                      </ATooltip>
+                    </span>
+                  </span>
+                </div>
+              </template>
+            </ATree>
+          </div>
         </div>
 
         <div class="mp-main-content">
@@ -307,6 +325,7 @@ import {
   Pagination as APagination,
   Upload as AUpload,
   Tooltip as ATooltip,
+  Tree as ATree,
 } from 'ant-design-vue'
 import { DownOutlined, ReloadOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 import {
@@ -448,29 +467,62 @@ function triggerSearch() {
 
 // #region 分类管理
 const categories = ref<Category[]>([])
+const expandedCategoryKeys = ref<(string|number)[]>([])
+const categoryTree = computed(() => {
+  const list: Category[] = JSON.parse(JSON.stringify(categories.value))
+  const map: Record<string, number> = {}
+  const roots: Category[] = []
+
+  list.forEach((node, i) => {
+    map[node.id] = i
+    node.children = []
+  })
+
+  list.forEach(node => {
+    if (node.parentId) {
+      const parentIndex = map[node.parentId]
+      if (parentIndex !== undefined && list[parentIndex]) {
+        list[parentIndex].children?.push(node)
+      } else {
+        roots.push(node) // orphan, treat as root
+      }
+    } else {
+      roots.push(node)
+    }
+  })
+  return roots
+})
+
 const selectedCategoryId = ref<string | number | null>(null)
 const selectedCategoryKeys = computed({
-  get: () => [selectedCategoryId.value ?? 'all'],
+  get: () => selectedCategoryId.value !== null ? [selectedCategoryId.value] : [],
   set: (keys) => {
-    const key = keys[0]
-    selectedCategoryId.value = key === 'all' ? null : key
+    selectedCategoryId.value = keys[0] ?? null
   }
 })
+
+function selectCategory(id: string | number | null) {
+  selectedCategoryId.value = id
+}
+
 async function loadCategories() {
   if (!props.fetchCategories) return
   try {
-    categories.value = await props.fetchCategories()
+    const flatCategories = await props.fetchCategories()
+    categories.value = flatCategories
+    // Expand root categories by default
+    expandedCategoryKeys.value = flatCategories.filter(c => !c.parentId).map(c => c.id)
   } catch (e: any) {
     console.error(e)
     message.error(e?.message || '加载分类失败')
   }
 }
 
-async function handleAddCategory() {
+async function handleAddCategory(parentId: string | number | null = null) {
   if (!props.createCategory) return;
   let newName = '';
   AModal.confirm({
-    title: '新建分类',
+    title: parentId ? '新建子分类' : '新建根分类',
     content: h('div', [
       h(AInput, {
         placeholder: '请输入分类名称',
@@ -483,9 +535,15 @@ async function handleAddCategory() {
         return Promise.reject('分类名称不能为空');
       }
       try {
-        await props.createCategory!({ name: newName.trim() });
+        await props.createCategory!({ name: newName.trim(), parentId: parentId || undefined });
         message.success('创建成功');
         await loadCategories();
+        if (parentId) {
+          // expand parent to show the new category
+          if (!expandedCategoryKeys.value.includes(parentId)) {
+            expandedCategoryKeys.value.push(parentId)
+          }
+        }
       } catch (e: any) {
         console.error(e);
         message.error(e?.message || '创建失败');
@@ -529,6 +587,11 @@ async function handleEditCategory(category: Category) {
 
 async function handleDeleteCategory(category: Category) {
   if (!props.deleteCategory) return;
+  const hasChildren = categories.value.some(c => c.parentId === category.id);
+  if (hasChildren) {
+    message.error('请先删除该分类下的所有子分类。');
+    return;
+  }
   AModal.confirm({
     title: '确认删除',
     content: `确定要删除分类 “${category.name}” 吗？分类下的媒体不会被删除。`,
@@ -850,10 +913,8 @@ async function batchDelete() {
   flex-grow: 1;
   min-height: 0;
 }
-.mp-sidebar { width: 180px; flex-shrink: 0; border-right: 1px solid #f0f0f0; overflow-y: auto; }
+.mp-sidebar { width: 200px; flex-shrink: 0; border-right: 1px solid #f0f0f0; overflow-y: auto; }
 .mp-sidebar .ant-menu { border-right: none; }
-.mp-sidebar .ant-menu-item { display: flex; justify-content: space-between; align-items: center; }
-.mp-sidebar .ant-menu-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mp-sidebar .cat-count { color: #999; font-size: 12px; flex-shrink: 0; margin-left: 8px; }
 .mp-main-content { flex-grow: 1; min-width: 0; display: flex; flex-direction: column; }
 .mp-main-content .ant-tabs { flex-grow: 1; display: flex; flex-direction: column; }
@@ -946,6 +1007,7 @@ async function batchDelete() {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
 }
 
 .mp-sidebar-header {
@@ -975,18 +1037,67 @@ async function batchDelete() {
   gap: 8px;
   margin-left: 8px;
 }
-.category-item .category-actions {
+.category-actions {
   display: none;
-  gap: 8px;
+  gap: 12px;
   color: #666;
 }
-.category-item .category-actions > .anticon:hover {
+.category-actions > .anticon:hover {
   color: #1677ff;
-}
-.category-item:hover .category-actions {
-  display: flex;
 }
 .category-item:hover .cat-count {
   display: none;
+}
+
+.mp-category-list {
+  padding-right: 8px;
+}
+.category-tree.ant-tree {
+  background: transparent;
+}
+:deep(.category-tree .ant-tree-treenode) {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+:deep(.category-tree .ant-tree-node-content-wrapper) {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 16px;
+  border-radius: 6px;
+  transition: background-color .2s, color .2s;
+}
+:deep(.category-tree .ant-tree-node-content-wrapper:hover) {
+  background-color: #f0f0f0;
+}
+:deep(.category-tree .ant-tree-treenode-selected .ant-tree-node-content-wrapper) {
+  background-color: #e6f4ff;
+  color: #1677ff;
+}
+:deep(.category-tree .ant-tree-switcher) {
+  width: 24px;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+:deep(.category-tree .ant-tree-treenode .category-item-content) {
+  padding: 0;
+}
+.mp-category-list .category-item {
+  padding: 5px 16px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.mp-category-list .category-item.ant-menu-item-selected {
+  background-color: #e6f4ff;
+  color: #1677ff;
+}
+.mp-category-list .category-item:hover {
+  background-color: #f0f0f0;
+}
+:deep(.category-tree .ant-tree-treenode:hover .category-actions) {
+  display: flex;
 }
 </style>
