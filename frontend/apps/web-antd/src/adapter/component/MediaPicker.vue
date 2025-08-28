@@ -1,15 +1,19 @@
 <template>
   <div class="media-picker">
-    <slot name="trigger" :open="openModal" :value="valuePreview">
+    <slot name="trigger" :open="openModal" :value="valuePreview" :disabled="disabled">
       <!-- 单选模式，且有值时，显示图片/视频预览作为触发器 -->
-      <div v-if="!multiple && valuePreview?.length === 1" @click="openModal" class="mp-single-preview-trigger">
+      <div
+        v-if="!multiple && valuePreview?.length === 1"
+        @click="openModal"
+        class="mp-single-preview-trigger"
+      >
         <template v-if="valuePreview[0].type === 'image'">
             <AImage
               :src="valuePreview[0].thumbUrl || valuePreview[0].url"
               :alt="valuePreview[0].name"
               :width="128"
               :height="128"
-              :preview="false"
+              :preview="disabled"
               :fallback="FALLBACK_IMAGE_SRC"
             />
         </template>
@@ -928,6 +932,7 @@ async function batchDelete() {
 <style scoped>
 .media-picker { display: flex; flex-direction: column; gap: 8px; }
 .mp-selected-preview { background: #fafafa; border: 1px solid #f0f0f0; padding: 8px; border-radius: 6px; }
+.mp-selected-preview.is-disabled { opacity: 0.5; }
 .mp-selected-title { font-size: 12px; color: #999; margin-bottom: 6px; }
 .mp-selected-list { display: flex; gap: 8px; flex-wrap: wrap; }
 .mp-thumb { width: 64px; height: 64px; overflow: hidden; border-radius: 4px; border: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: center; }
@@ -1059,6 +1064,13 @@ async function batchDelete() {
 }
 .mp-single-preview-trigger:hover {
   border-color: #1677ff;
+}
+.mp-single-preview-trigger.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.mp-single-preview-trigger.is-disabled:hover {
+  border-color: #f0f0f0;
 }
 .mp-single-preview-trigger .ant-image {
   border-radius: 4px;

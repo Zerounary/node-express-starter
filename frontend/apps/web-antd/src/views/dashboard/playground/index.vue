@@ -25,7 +25,7 @@
           </AFormItem>
 
           <AFormItem label="Disabled Picker">
-            <MediaPicker v-model="formState.disabledAsset" />
+            <MediaPicker v-model="formState.disabledAsset" disabled />
           </AFormItem>
 
           <AFormItem label="Custom Trigger">
@@ -74,7 +74,28 @@ const formState = reactive({
   cover: null,
   gallery: [],
   video: null,
-  disabledAsset: null,
+  disabledAsset: {
+    "id": 18,
+    "tenantId": 1,
+    "type": "image",
+    "url": "https://jhtcdn-1252100135.cos.ap-chengdu.myqcloud.com/uploads/t_1/u_1/1756364691881-454053845.png",
+    "thumbUrl": null,
+    "name": "ç½åçè.png",
+    "size": 89705,
+    "width": null,
+    "height": null,
+    "duration": null,
+    "tags": null,
+    "meta": null,
+    "categoryId": 1,
+    "linkedEntityName": null,
+    "linkedEntityUrl": null,
+    "createdAt": "2025-08-28T07:04:52.000Z",
+    "updatedAt": "2025-08-28T07:04:52.000Z",
+    "createdBy": null,
+    "updatedBy": null,
+    "isActive": true
+  },
   customTriggerAsset: null,
   qrCodeValue: 'https://www.tencent.com',
   richTextContent: '<h1>Hello, Rich Text!</h1><p>This is a basic example of the RichText component.</p>',
