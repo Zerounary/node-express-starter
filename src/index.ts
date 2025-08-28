@@ -4,7 +4,7 @@ import { initAssets } from "./assets";
 import { RouteLoader } from "./utils/routeLoader";
 import { start } from "./server";
 import DynamicColumn from "./db/models/DynamicColumn";
-import { TableCategory } from "./db/models";
+import { Media, MediaCategory, TableCategory } from "./db/models";
 import DynamicTable from "./db/models/DynamicTable";
 import SchemaService from "./services/SchemaService";
 import { logError } from "./logger";
@@ -64,6 +64,8 @@ async function bootstrap() {
         await DataScope.sync({ alter: true});
         await RolePermissions.sync({ alter: true});
         await UserRoles.sync({ alter: true});
+        await MediaCategory.sync({ alter: true });
+        await Media.sync({ alter: true });
 
         console.log('Core models synchronized');
 
