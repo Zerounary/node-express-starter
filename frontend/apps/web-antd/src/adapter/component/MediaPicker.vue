@@ -198,7 +198,7 @@
             <ATabPane key="upload" tab="上传" v-if="allowUpload" class="upload-tab-pane">
                 <div class="pane-content">
                     <AUpload
-                        :multiple="multiple"
+                        :multiple="true"
                         list-type="picture-card"
                         :customRequest="handleCustomUpload"
                         :accept="selectedTypes.includes('image') && selectedTypes.includes('video') ? 'image/*,video/*' : (selectedTypes.includes('image') ? 'image/*' : 'video/*')"
@@ -742,31 +742,35 @@ function confirmSelection() {
 
 // #region 上传
 async function handleCustomUpload(options: any) {
-  const { file, onSuccess, onError, onProgress } = options
+  const { file, onSuccess, onError, onProgress } = options;
   if (!props.uploader) {
-    onError?.(new Error('未配置 uploader'))
-    return
+    const err = new Error('未配置 uploader');
+    message.error(err.message);
+    onError?.(err);
+    return;
   }
   try {
     const uploaderOptions = {
       categoryId: selectedCategoryId.value || undefined,
       onUploadProgress: (event: any) => {
         if (event.lengthComputable) {
-          const percent = Math.floor((event.loaded / event.total) * 100);
-          onProgress({ percent });
+          onProgress({ percent: Math.floor((event.loaded / event.total) * 100) });
         }
       }
+    };
+    const item = await props.uploader(file as File, uploaderOptions);
+    if (!props.multiple) {
+      selectedMap.clear();
     }
-    const item = await props.uploader(file as File, uploaderOptions)
-    selectedMap.set(item.id, item)
-    items.value = [item, ...items.value]
-    pager.total += 1
-    onSuccess?.(item)
-    message.success('上传成功！')
+    selectedMap.set(item.id, item);
+    items.value.unshift(item);
+    pager.total += 1;
+    onSuccess?.(item);
+    message.success(`文件“${file.name}”上传成功！`);
   } catch (e: any) {
-    console.error(e)
-    message.error(e?.message || '上传失败')
-    onError?.(e)
+    console.error(e);
+    message.error(`文件“${file.name}”上传失败: ${e?.message || '未知错误'}`);
+    onError?.(e);
   }
 }
 // #endregion
