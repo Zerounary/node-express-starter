@@ -200,6 +200,8 @@
                     <AUpload
                         :multiple="true"
                         list-type="picture-card"
+                        :file-list="fileList"
+                        @change="handleUploadChange"
                         :customRequest="handleCustomUpload"
                         :accept="selectedTypes.includes('image') && selectedTypes.includes('video') ? 'image/*,video/*' : (selectedTypes.includes('image') ? 'image/*' : 'video/*')"
                         :showUploadList="true"
@@ -213,6 +215,9 @@
                     </AUpload>
                     <div style="color:#999; font-size:12px; margin-top:8px">
                         上传成功后将自动加入已选与素材库
+                    </div>
+                    <div class="upload-actions" v-if="fileList.length > 0">
+                      <AButton size="small" @click="clearUploadQueue">清空列表</AButton>
                     </div>
                 </div>
             </ATabPane>
@@ -324,6 +329,8 @@ import {
   Empty as AEmpty,
   Pagination as APagination,
   Upload as AUpload,
+  type UploadFile,
+  type UploadChangeParam,
   Tooltip as ATooltip,
   Tree as ATree,
 } from 'ant-design-vue'
@@ -741,6 +748,17 @@ function confirmSelection() {
 // #endregion
 
 // #region 上传
+const fileList = ref<UploadFile[]>([]);
+
+function handleUploadChange({ fileList: newFileList }: UploadChangeParam) {
+  // Keep only files that are not 'done' to automatically remove them from the list on success.
+  fileList.value = newFileList.filter(f => f.status !== 'done');
+}
+
+function clearUploadQueue() {
+  fileList.value = [];
+}
+
 async function handleCustomUpload(options: any) {
   const { file, onSuccess, onError, onProgress } = options;
   if (!props.uploader) {
@@ -1112,5 +1130,24 @@ async function batchDelete() {
 }
 :deep(.category-tree .ant-tree-treenode:hover .category-actions) {
   display: flex;
+}
+
+:deep(.mp-uploader.ant-upload-wrapper .ant-upload-list-picture-card) {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  grid-template-columns: unset;
+  gap: unset;
+  padding-bottom: 8px; /* Space for scrollbar */
+}
+
+:deep(.mp-uploader .ant-upload-list-picture-card .ant-upload-list-item-container) {
+  margin: 0 8px 0 0; /* Remove bottom margin */
+}
+
+.upload-actions {
+  margin-top: 12px;
+  width: 100%;
+  text-align: right;
 }
 </style>
