@@ -964,7 +964,7 @@ async function batchDelete() {
   border-bottom: 1px solid #f0f0f0;
   flex-shrink: 0;
 }
-.mp-toolbar-right { display: flex; gap: 8px; }
+.mp-toolbar-right { display: flex; gap: 12px; }
 
 .mp-body-layout {
   display: flex;
@@ -1031,7 +1031,8 @@ async function batchDelete() {
   border-top: 1px solid #f0f0f0;
   flex-shrink: 0;
 }
-.mp-footer .left { display: flex; align-items: center; gap: 8px; }
+.mp-footer .left { display: flex; align-items: center; gap: 12px; }
+.mp-footer .right { display: flex; gap: 12px; }
 .mp-footer .left .tip { color: #999; font-size: 12px; }
 .danger-action { color: #ff4d4f; }
 
@@ -1044,7 +1045,7 @@ async function batchDelete() {
 .meta-item { margin-bottom: 12px; }
 .meta-item strong { margin-right: 8px; color: #666; }
 .meta-edit { flex-grow: 1; overflow-y: auto; padding-bottom: 16px; }
-.actions { flex-shrink: 0; display: flex; gap: 8px; border-top: 1px solid #f0f0f0; padding-top: 16px; margin-top: 16px; }
+.actions { flex-shrink: 0; display: flex; gap: 12px; border-top: 1px solid #f0f0f0; padding-top: 16px; margin-top: 16px; }
 
 .mp-single-preview-trigger {
   border: 1px solid #f0f0f0;
