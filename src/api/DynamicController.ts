@@ -387,17 +387,21 @@ export default class DynamicController {
       }
 
       const Model = await DynamicDataService.getModelForTable(tableName, req.user.tenantId);
-      const instance = await Model.create(body);
+      
+      await sequelize.transaction(async (t) => {
+        const instance = await Model.create(body);
 
-      // afterCreate hook
-      await HookService.executeHook(tableName, 'afterCreate', instance);
+        // afterCreate hook
+        await HookService.executeHook(tableName, 'afterCreate', instance);
 
+        return ok(instance);
+      });
 
-      return ok(instance);
     } catch (error) {
       logError(error);
       return fail(error.message);
     }
+    return fail("Transaction failed");
   }
 
   @Put("/:id", [checkPermission('data::tableName:update')])
@@ -414,19 +418,22 @@ export default class DynamicController {
       }
 
       const Model = await DynamicDataService.getModelForTable(tableName, req.user.tenantId);
-      const [affectedCount] = await Model.update(body, { where: { id, tenantId } });
-      if (affectedCount === 0) {
-        return fail("Instance not found or no changes made", 404);
-      }
+      await sequelize.transaction(async (t) => {
+        const [affectedCount] = await Model.update(body, { where: { id, tenantId } });
+        if (affectedCount === 0) {
+          return fail("Instance not found or no changes made", 404);
+        }
 
-      // afterUpdate hook
-      await HookService.executeHook(tableName, 'afterUpdate', id, body);
+        // afterUpdate hook
+        await HookService.executeHook(tableName, 'afterUpdate', id, body);
 
-      return ok({ affectedCount });
+        return ok({ affectedCount });
+      });
     } catch (error) {
       logError(error);
       return fail(error.message);
     }
+    return fail("Transaction failed");
   }
 
   @Delete("/:id", [checkPermission('data::tableName:delete')])
