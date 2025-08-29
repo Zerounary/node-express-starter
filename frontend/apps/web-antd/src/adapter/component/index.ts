@@ -29,6 +29,7 @@ import MetaInput from './MetaInput.vue'
 import RichText from './RichText.vue';
 import QRCode from './QRCode.vue';
 import ColumnTypeInput from './ColumnTypeInput.vue';
+import Items from './Items.vue';
 
 const AutoComplete = defineAsyncComponent(
   () => import('ant-design-vue/es/auto-complete'),
@@ -118,6 +119,7 @@ export type ComponentType =
   | 'RichText'
   | 'Text'
   | 'QRCode'
+  | 'Items'
   | 'ColumnTypeInput'
   | 'AutoComplete'
   | 'Checkbox'
@@ -182,6 +184,7 @@ async function initComponentAdapter() {
     Text,
     MetaInput,
     QRCode,
+    Items,
     ColumnTypeInput,
     UIInput,
     PermissionPicker,

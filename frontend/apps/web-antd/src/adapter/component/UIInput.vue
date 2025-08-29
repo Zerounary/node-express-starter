@@ -127,7 +127,8 @@ interface ColumnUI {
     | 'PermissionPicker'
     | 'IconPicker'
     | 'MediaPicker'
-    | 'MetaInput';
+    | 'MetaInput'
+    | 'Items';
   disabled?: boolean;
   filterOp?: 'like' | 'eq' | 'neq' | 'gt' | 'lt' | 'gte' | 'lte' | 'in';
   componentProps?: {
