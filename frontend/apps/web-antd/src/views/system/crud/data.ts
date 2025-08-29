@@ -3,6 +3,7 @@ import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SystemTableApi } from '#/api';
 
 import { $t } from '#/locales';
+import { applyDependencies } from '#/utils';
 import { useAccess } from '@vben/access';
 const { hasAccessByTable } = useAccess();
 
@@ -13,19 +14,22 @@ export const isUpdateEditable = (col) => col.mask?.charAt(3) == '1';
 export const isListVisable = (col) => col.mask?.charAt(4) == '1';
 export const isFilterVisable = (col) => col.mask?.charAt(5) == '1';
 
-export function useFormCreateSchema(table, { formApi, data}): VbenFormSchema[] {
+
+export function useFormCreateSchema(table, { formApi, data }): VbenFormSchema[] {
   const dynColumns = (table.columns || [])
     .filter(isCreateVisable)
     .map(mapToCreateSchemaColumn)
+    .map(col => applyDependencies(col)) // Apply dependencies
     .map(enhanceComponentProps(formApi, data));
   console.log('🚀 ~ useFormCreateSchema ~ dynColumns:', dynColumns);
   return [...dynColumns];
 }
 
-export function useFormUpdateSchema(table, { formApi, data}): VbenFormSchema[] {
+export function useFormUpdateSchema(table, { formApi, data }): VbenFormSchema[] {
   const dynColumns = (table.columns || [])
     .filter(isUpdateVisable)
     .map(mapToUpdateSchemaColumn)
+    .map(col => applyDependencies(col)) // Apply dependencies
     .map(enhanceComponentProps(formApi, data));
   console.log('🚀 ~ useFormUpdateSchema ~ dynColumns:', dynColumns);
   return [...dynColumns];

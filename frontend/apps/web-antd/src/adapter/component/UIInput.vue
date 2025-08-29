@@ -46,6 +46,44 @@
         </div>
       </a-collapse-panel>
 
+      <!-- Dependencies Settings -->
+      <a-collapse-panel key="dependencies" header="联动设置">
+        <div class="grid grid-cols-1 gap-4">
+          <a-form-item label="触发字段">
+            <a-select
+              v-model:value="triggerFields"
+              mode="tags"
+              style="width: 100%"
+              :token-separators="[' ', ',', '，', ';', '；']"
+              allow-clear
+              placeholder="输入字段名后按回车或用逗号分隔"
+            />
+            <div class="text-xs text-gray-500 mt-1">支持 tags 多选，自动去重、去空格</div>
+          </a-form-item>
+          <a-form-item label="销毁">
+            <a-textarea :value="ensureDeps().if" @update:value="val => (ensureDeps().if = val)" :rows="2" />
+          </a-form-item>
+          <a-form-item label="隐藏">
+            <a-textarea :value="ensureDeps().show" @update:value="val => (ensureDeps().show = val)" :rows="2" />
+          </a-form-item>
+          <a-form-item label="禁用">
+            <a-textarea :value="ensureDeps().disabled" @update:value="val => (ensureDeps().disabled = val)" :rows="2" />
+          </a-form-item>
+          <a-form-item label="触发">
+            <a-textarea :value="ensureDeps().trigger" @update:value="val => (ensureDeps().trigger = val)" :rows="2" />
+          </a-form-item>
+          <a-form-item label="规则">
+            <a-textarea :value="ensureDeps().rules" @update:value="val => (ensureDeps().rules = val)" :rows="2" />
+          </a-form-item>
+          <a-form-item label="必填">
+            <a-textarea :value="ensureDeps().required" @update:value="val => (ensureDeps().required = val)" :rows="2" />
+          </a-form-item>
+          <a-form-item label="组件Props">
+            <a-textarea :value="ensureDeps().componentProps" @update:value="val => (ensureDeps().componentProps = val)" :rows="2" />
+          </a-form-item>
+        </div>
+      </a-collapse-panel>
+
       <!-- Advanced Settings -->
       <a-collapse-panel key="advanced" header="高级设置">
         <div class="grid grid-cols-1">
@@ -60,7 +98,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, defineModel, onMounted } from 'vue';
 import {
   Collapse as ACollapse,
   CollapsePanel as ACollapsePanel,
@@ -95,12 +133,26 @@ interface ColumnUI {
     optionType?: 'default' | 'button';
     [key: string]: any;
   };
+  dependencies?: {
+    triggerFields?: string[];
+    if?: string;
+    show?: string;
+    disabled?: string;
+    trigger?: string;
+    rules?: string;
+    required?: string;
+    componentProps?: string;
+  };
 }
 
 // Use defineModel to create a two-way binding
 const model = defineModel<ColumnUI>({
-  default: () => ({ component: 'Input' })
+  default: () => ({ component: 'Input', dependencies: {} })
 });
+// 确保渲染前存在 dependencies，兼容历史数据（可能缺少该字段）
+if (!model.value.dependencies || typeof model.value.dependencies !== 'object') {
+  model.value.dependencies = {};
+}
 
 const componentTypes = [
   { value: 'Input', label: '输入框' },
@@ -123,6 +175,69 @@ const filterOps = [
   { value: 'lte', label: '小于等于' },
   { value: 'in', label: '在...中' }
 ];
+
+// 归一化依赖配置（兼容字符串/逗号分隔/JSON字符串）
+function ensureDependencies() {
+  const dep: any = model.value.dependencies ?? {};
+  const tf = dep.triggerFields;
+  if (typeof tf === 'string') {
+    let parsed: any = tf;
+    try {
+      if (tf.trim().startsWith('[')) {
+        parsed = JSON.parse(tf);
+      } else {
+        parsed = tf.split(/[,，;；\s]+/);
+      }
+    } catch {
+      parsed = tf.split(/[,，;；\s]+/);
+    }
+    dep.triggerFields = Array.from(
+      new Set(
+        (Array.isArray(parsed) ? parsed : [parsed])
+          .map((s) => (s ?? '').toString().trim())
+          .filter((s) => s.length > 0)
+      )
+    );
+  } else if (Array.isArray(tf)) {
+    dep.triggerFields = Array.from(
+      new Set(
+        tf.map((s) => (s ?? '').toString().trim()).filter((s) => s.length > 0)
+      )
+    );
+  }
+  // 若没有 triggerFields，保持不创建该字段；仅确保 dependencies 为对象
+  model.value.dependencies = dep || {};
+}
+
+function ensureDeps() {
+  if (!model.value.dependencies || typeof model.value.dependencies !== 'object') {
+    model.value.dependencies = {};
+  }
+  return model.value.dependencies as NonNullable<ColumnUI['dependencies']>;
+}
+
+onMounted(() => {
+  ensureDependencies();
+});
+
+// 触发字段的响应式访问器：保证为 string[]，并在设置时清洗/去重
+const triggerFields = computed<string[]>({
+  get() {
+    const arr = model.value.dependencies?.triggerFields ?? [];
+    return Array.isArray(arr) ? arr : [];
+  },
+  set(val: string[]) {
+    if (!model.value.dependencies) model.value.dependencies = {};
+    const normalized = Array.from(
+      new Set(
+        (val || [])
+          .map((s) => (s ?? '').toString().trim())
+          .filter((s) => s.length > 0)
+      )
+    );
+    model.value.dependencies.triggerFields = normalized;
+  }
+});
 
 // Computed property to handle JSON conversion for componentProps
 const componentPropsString = computed({

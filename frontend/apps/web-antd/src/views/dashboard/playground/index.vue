@@ -55,6 +55,10 @@
       </div>
     </div>
 
+    <ACard title="Dependencies Playground" :style="{ marginTop: '24px' }">
+      <DependencyForm />
+    </ACard>
+
     <ACard title="Form State" :style="{ marginTop: '24px' }">
       <pre>{{ JSON.stringify(formState, null, 2) }}</pre>
     </ACard>
@@ -62,12 +66,14 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive, onMounted } from 'vue';
 import { UploadOutlined } from '@ant-design/icons-vue';
 import { Card as ACard, Form as AForm, FormItem as AFormItem, Button as AButton, Input as AInput } from 'ant-design-vue';
 import MediaPicker, { type MediaItem, type FetchParams } from '#/adapter/component/MediaPicker.vue';
 import QRCode from '#/adapter/component/QRCode.vue';
 import RichText from '#/adapter/component/RichText.vue';
+import { useVbenForm } from '#/adapter/form';
+import { applyDependencies } from '#/utils';
 
 
 const formState = reactive({
@@ -101,6 +107,33 @@ const formState = reactive({
   richTextContent: '<h1>Hello, Rich Text!</h1><p>This is a basic example of the RichText component.</p>',
 });
 
+
+const rawDependencySchemas = [
+  {
+    fieldName: 'name',
+    label: 'Name',
+    component: 'Input',
+    required: true,
+  },
+  {
+    fieldName: 'description',
+    label: 'Description',
+    component: 'Input',
+    dependencies: {
+      triggerFields: ['name'],
+      show: 'values.name && values.name.length > 0',
+      disabled: 'values.name !== "enable"',
+    },
+  },
+].map(col => (applyDependencies(col)));
+
+console.log('rawDependencySchemas:', rawDependencySchemas)
+
+const [DependencyForm, formApi] = useVbenForm({ 
+  schema: [
+    ...rawDependencySchemas
+  ],
+});
 
 </script>
 
