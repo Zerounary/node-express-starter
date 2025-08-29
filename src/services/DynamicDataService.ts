@@ -2,17 +2,16 @@ import { Model, ModelCtor, DataTypes } from 'sequelize';
 import sequelize from '../db/sequelize';
 import { DynamicTable, DynamicColumn } from '../db/models';
 import { logError } from '../logger';
-import { systemTables } from '@/db/init';
 import { ColumnDataTypes } from '@/utils';
 import CacheService from './CacheService';
+import { getPhysicalTableName } from './utils/dynamic';
 
 class DynamicDataService {
   private modelCache: Map<string, ModelCtor<Model<any, any>>> = new Map();
   private relationsCache: Map<string, boolean> = new Map();
 
-  private getPhysicalTableName(tableName: string, tenantId: number): string {
-    let t = systemTables.find(t => t.alias_name === tableName);
-    return t ? t.name : tableName;
+  private async getPhysicalTableName(tableName: string, tenantId: number): Promise<string> {
+    return await getPhysicalTableName(tableName, tenantId);
   }
 
   private getSequelizeAttributes(columns: DynamicColumn[]) {
@@ -60,7 +59,7 @@ class DynamicDataService {
   }
 
   public async defineRelationships(model: ModelCtor<Model>, tableDefinition: DynamicTable, tenantId: number) {
-    const physicalTableName = this.getPhysicalTableName(tableDefinition.name, tenantId);
+    const physicalTableName = await this.getPhysicalTableName(tableDefinition.name, tenantId);
     if (this.relationsCache.has(physicalTableName)) return;
 
     for (const column of tableDefinition.columns!) {
@@ -80,7 +79,7 @@ class DynamicDataService {
   }
 
   public async getModelForTable(tableName: string, tenantId: number): Promise<ModelCtor<Model<any, any>>> {
-    const physicalTableName = this.getPhysicalTableName(tableName, tenantId);
+    const physicalTableName = await this.getPhysicalTableName(tableName, tenantId);
     const cacheKey = physicalTableName;
     if (this.modelCache.has(cacheKey)) {
         const model = this.modelCache.get(cacheKey)!;

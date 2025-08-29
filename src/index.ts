@@ -1,12 +1,10 @@
 import webserver from "./app";
-import sequelize from './db/sequelize';
 import { initAssets } from "./assets";
 import { RouteLoader } from "./utils/routeLoader";
 import { start } from "./server";
 import DynamicColumn from "./db/models/DynamicColumn";
 import { Media, MediaCategory, TableCategory } from "./db/models";
 import DynamicTable from "./db/models/DynamicTable";
-import SchemaService from "./services/SchemaService";
 import { logError } from "./logger";
 import Report from './db/models/Report';
 import User from './db/models/User';
@@ -19,6 +17,7 @@ import { Workflow, WorkflowStage, WorkflowStageApprover, WorkflowInstance, Workf
 import { initAdminUser, initSystemData, initTableCategories } from "./db/init";
 import CacheService from "./services/CacheService";
 import { DataScope } from "./db/models/DataScope";
+import { initDynamicTables } from "./services/utils/dynamic";
 
 
 async function bootstrap() {
@@ -91,33 +90,5 @@ async function bootstrap() {
         console.error('Failed to start server:', error);
     }
 }
-
-async function initDynamicTables() {
-    try {
-        console.log('Initializing dynamic tables...');
-        let tables = await DynamicTable.findAll({
-            raw: true,
-        });
-        if(tables.length === 0) {
-            return
-        }
-
-        const queryInterface = sequelize.getQueryInterface();
-        const allTables = await queryInterface.showAllTables();
-
-        for (const table of tables) {
-            if (!allTables.includes(table.name)) {
-                console.log(`Table "${table.name}" not found, creating...`);
-                await SchemaService.createTableFromDefinition(table.id);
-                console.log(`Table "${table.name}" created.`);
-            }
-        }
-        console.log('Dynamic tables initialized.');
-    } catch (error) {
-        logError(error);
-        console.error('Failed to initialize dynamic tables:', error);
-    }
-}
-
 
 bootstrap();

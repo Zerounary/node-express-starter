@@ -1,5 +1,5 @@
-import { defaultColumns, systemTables } from "@/db/init";
-import { DynamicColumn, DynamicTable } from "@/db/models";
+import { tableInitColumns } from "@/db/init";
+import { DynamicColumn } from "@/db/models";
 import CacheService from "@/services/CacheService";
 
 export async function beforeCreate(data) {
@@ -11,7 +11,7 @@ export async function afterCreate(data) {
   console.log("afterCreate", data);
   const tableId = data.id;
   const tenantId = data.tenantId || 1; // 默认租户ID为1
-  let columns = defaultColumns([]);
+  let columns = tableInitColumns();
   for (const column of columns) {
     await DynamicColumn.create({
       tenantId,

@@ -1,6 +1,7 @@
 import { DataTypes, QueryInterface } from 'sequelize';
 import sequelize from '../db/sequelize';
 import { DynamicTable, DynamicColumn } from '../db/models';
+import { getPhysicalTableName } from './utils/dynamic';
 
 class SchemaService {
   private queryInterface: QueryInterface;
@@ -9,8 +10,8 @@ class SchemaService {
     this.queryInterface = sequelize.getQueryInterface();
   }
 
-  private getPhysicalTableName(tableName: string, tenantId: number): string {
-    return `t_${tenantId}_${tableName}`;
+  private async getPhysicalTableName(tableName: string, tenantId: number): Promise<string> {
+    return await getPhysicalTableName(tableName, tenantId);
   }
 
   public async createTableFromDefinition(tableId: number) {
@@ -22,7 +23,7 @@ class SchemaService {
       throw new Error('Table definition not found');
     }
 
-    const physicalTableName = this.getPhysicalTableName(tableDefinition.name, tableDefinition.tenantId);
+    const physicalTableName = await this.getPhysicalTableName(tableDefinition.name, tableDefinition.tenantId);
     const attributes = this.getSequelizeAttributes(tableDefinition.columns!);
 
     await this.queryInterface.createTable(physicalTableName, attributes);
@@ -38,7 +39,7 @@ class SchemaService {
     }
 
     const table = columnDefinition.table;
-    const physicalTableName = this.getPhysicalTableName(table.name, table.tenantId);
+    const physicalTableName = await this.getPhysicalTableName(table.name, table.tenantId);
     const attribute = this.getSequelizeAttributes([columnDefinition]);
     
     await this.queryInterface.addColumn(
@@ -49,12 +50,12 @@ class SchemaService {
   }
 
   public async dropColumn(tableName: string, columnName: string, tenantId: number) {
-    const physicalTableName = this.getPhysicalTableName(tableName, tenantId);
+    const physicalTableName = await this.getPhysicalTableName(tableName, tenantId);
     await this.queryInterface.removeColumn(physicalTableName, columnName);
   }
 
   public async changeColumn(tableName: string, columnName: string, columnDefinition: DynamicColumn, tenantId: number) {
-    const physicalTableName = this.getPhysicalTableName(tableName, tenantId);
+    const physicalTableName = await this.getPhysicalTableName(tableName, tenantId);
     const attribute = this.getSequelizeAttributes([columnDefinition]);
     await this.queryInterface.changeColumn(
       physicalTableName,
@@ -90,6 +91,8 @@ class SchemaService {
 
   private mapDataType(dataType: string) {
     switch (dataType.toUpperCase()) {
+      case 'ID':
+        return DataTypes.BIGINT;
       case 'STRING':
         return DataTypes.STRING;
       case 'TEXT':

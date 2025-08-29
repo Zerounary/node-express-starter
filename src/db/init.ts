@@ -835,3 +835,11 @@ function tableIdOf (name = '') {
 function categoryIdOf (name = '') {
   return idOf(tableCategories, name, 'name');
 }
+
+
+export const tableInitColumns = () => {
+  return defaultColumns().map((col) => ({
+    ...col,
+    relatedToTableId: tableIdOf(col.relatedToTableId) || null,
+  }));
+}
