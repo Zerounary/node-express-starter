@@ -342,7 +342,9 @@ export const systemTables = [
         description: "字段类型",
         relatedToTableId: undefined,
         enumValues: undefined,
-        ui: undefined,
+        ui: {
+          component: "ColumnTypeInput"
+        },
       },
       {
         name: "tableId",
@@ -372,6 +374,10 @@ export const systemTables = [
           componentProps: {
             table: "table",
           },
+          dependencies: {
+            show: 'values.dataType === "ID"',
+            triggerFields: ['dataType']
+          }
         },
       },
       {

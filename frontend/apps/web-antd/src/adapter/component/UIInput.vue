@@ -117,12 +117,16 @@ interface ColumnUI {
   width?: number;
   component:
     | 'Input'
+    | 'InputNumber'
     | 'InputPassword'
     | 'DatePicker'
     | 'FkPicker'
     | 'RadioGroup'
     | 'UIInput'
+    | 'ColumnTypeInput'
     | 'PermissionPicker'
+    | 'IconPicker'
+    | 'MediaPicker'
     | 'MetaInput';
   disabled?: boolean;
   filterOp?: 'like' | 'eq' | 'neq' | 'gt' | 'lt' | 'gte' | 'lte' | 'in';
@@ -156,11 +160,15 @@ if (!model.value.dependencies || typeof model.value.dependencies !== 'object') {
 
 const componentTypes = [
   { value: 'Input', label: '输入框' },
+  { value: 'InputNumber', label: '数字输入框' },
   { value: 'InputPassword', label: '密码框' },
   { value: 'DatePicker', label: '日期选择器' },
   { value: 'FkPicker', label: '外键选择器' },
   { value: 'RadioGroup', label: '单选按钮组' },
   { value: 'UIInput', label: 'UI配置输入' },
+  { value: 'MediaPicker', label: '媒体选择器' },
+  { value: 'IconPicker', label: '图标选择器' },
+  { value: 'ColumnTypeInput', label: '字段类型选择器' },
   { value: 'PermissionPicker', label: '权限选择器' },
   { value: 'MetaInput', label: '元数据输入' }
 ];
