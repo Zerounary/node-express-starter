@@ -4,7 +4,7 @@ import type { Recordable } from '@vben/types';
 import type { OnActionClickParams, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SystemTableApi } from '#/api';
 
-import { computed, defineComponent, onMounted, reactive, ref, watchEffect, defineProps } from 'vue';
+import { computed, defineComponent, h, onMounted, reactive, ref, watchEffect, defineProps } from 'vue';
 import { AccessControl, useAccess } from '@vben/access';
 import { Button, Tabs, message, Modal } from 'ant-design-vue';
 import { Plus } from '@vben/icons';
@@ -116,7 +116,7 @@ const ItemsTabGrid = defineComponent({
       },
       gridOptions: {
         columns: columns.value,
-        height: 'auto',
+        height: 500,
         keepSource: true,
         proxyConfig: {
           ajax: {
@@ -211,23 +211,41 @@ const ItemsTabGrid = defineComponent({
       gridApi.query();
     });
 
-    return () => (
-      <>
-        <FormDrawer class="w-full" table={p.tableConfig} />
-        <Grid table-title={$t('system.table.list')}>
-          {{
-            'toolbar-tools': () => (
-              <AccessControl codes={getTableAccessCodes(p.tableConfig.table, 'create')} type="code">
-                <Button type="primary" onClick={onCreate}>
-                  <Plus class="size-5" />
-                  {$t('ui.actionTitle.create', [])}
-                </Button>
-              </AccessControl>
+    return () => [
+      h(FormDrawer, {
+        class: 'w-full',
+        table: p.tableConfig,
+      }),
+      h(
+        Grid,
+        {
+          'table-title': $t('system.table.list'),
+        },
+        {
+          'toolbar-tools': () =>
+            h(
+              AccessControl,
+              {
+                codes: getTableAccessCodes(p.tableConfig.table, 'create'),
+                type: 'code',
+              },
+              {
+                default: () =>
+                  h(
+                    Button,
+                    {
+                      type: 'primary',
+                      onClick: onCreate,
+                    },
+                    {
+                      default: () => [h(Plus, { class: 'size-5' }), $t('ui.actionTitle.create', [])],
+                    },
+                  ),
+              },
             ),
-          }}
-        </Grid>
-      </>
-    );
+        },
+      ),
+    ];
   },
 });
 </script>
@@ -235,22 +253,20 @@ const ItemsTabGrid = defineComponent({
 <template>
   <div class="items-wrapper">
     <Tabs v-model:activeKey="activeKey">
-      <template v-for="tab in tabs" :key="tab.key">
-        <Tabs.TabPane :key="tab.key" :tab="tabState[tab.key]?.config?.name || tab.title || tab.table">
-          <div v-if="tabState[tab.key]?.loading" class="p-4 text-gray-400">Loading...</div>
-          <div v-else-if="tabState[tab.key]?.error" class="p-4 text-red-500">加载失败</div>
-          <div v-else-if="tabState[tab.key]?.config">
-            <ItemsTabGrid
-              :key="tab.key"
-              :tab="tab"
-              :table-config="tabState[tab.key].config!"
-              :row="row"
-              :link="link"
-              :query-extra="queryExtra"
-            />
-          </div>
-        </Tabs.TabPane>
-      </template>
+      <Tabs.TabPane v-for="tab in tabs" :key="tab.key" :tab="tabState[tab.key]?.config?.name || tab.title || tab.table">
+        <div v-if="tabState[tab.key]?.loading" class="p-4 text-gray-400">Loading...</div>
+        <div v-else-if="tabState[tab.key]?.error" class="p-4 text-red-500">加载失败</div>
+        <div v-else-if="tabState[tab.key]?.config">
+          <ItemsTabGrid
+            :key="tab.key"
+            :tab="tab"
+            :table-config="tabState[tab.key].config!"
+            :row="row"
+            :link="link"
+            :query-extra="queryExtra"
+          />
+        </div>
+      </Tabs.TabPane>
     </Tabs>
   </div>
 </template>

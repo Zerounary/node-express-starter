@@ -189,6 +189,8 @@ export default class DynamicController {
         } else if (field) {
           where[field] = { [Op.eq]: value };
         }
+      } else {
+        where[key] = { [Op.eq]: filters[key] };
       }
     }
 

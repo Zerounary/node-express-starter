@@ -59,6 +59,10 @@
       <DependencyForm />
     </ACard>
 
+    <ACard title="Items Playground" :style="{ marginTop: '24px' }">
+      <Items :tabs="itemsTabs" :query-extra="{ tableId: 1 }" />
+    </ACard>
+
     <ACard title="Form State" :style="{ marginTop: '24px' }">
       <pre>{{ JSON.stringify(formState, null, 2) }}</pre>
     </ACard>
@@ -74,7 +78,13 @@ import QRCode from '#/adapter/component/QRCode.vue';
 import RichText from '#/adapter/component/RichText.vue';
 import { useVbenForm } from '#/adapter/form';
 import { applyDependencies } from '#/utils';
+import Items from '#/adapter/component/Items.vue';
 
+
+const itemsTabs = [
+  { key: 'column', table: 'column', title: 'Column' },
+  { key: 'roles', table: 'roles', title: 'Roles' },
+];
 
 const formState = reactive({
   cover: null,

@@ -5,7 +5,6 @@ import type { SystemTableApi } from '#/api';
 import { $t } from '#/locales';
 import { applyDependencies } from '#/utils';
 import { useAccess } from '@vben/access';
-const { hasAccessByTable } = useAccess();
 
 export const isCreateVisable = (col) => col.mask?.charAt(0) == '1';
 export const isCreateEditable = (col) => col.mask?.charAt(1) == '1';
@@ -110,6 +109,7 @@ export function useColumns<T = SystemTableApi.SystemTable>(
     .map(mapToGridColumn);
   console.log('🚀 ~ dynColumns:', dynColumns);
 
+  const { hasAccessByTable } = useAccess();
   let options = ['update', 'delete'].filter(perm => {
     return hasAccessByTable(table.table, perm)
   });
