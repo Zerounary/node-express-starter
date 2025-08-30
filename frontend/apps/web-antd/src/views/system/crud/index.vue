@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Recordable } from '@vben/types';
-import { AccessControl, useAccess } from '@vben/access';
+import { AccessControl, getTableAccessCodes } from '@vben/access';
 import type {
   OnActionClickParams,
   VxeTableGridOptions,
@@ -23,7 +23,6 @@ import { useSystem } from '#/store/system';
 import { useColumns, useGridFormSchema } from './data';
 import Form from './modules/form.vue';
 import { onMounted } from 'vue';
-const { getTableAccessCodes } = useAccess();
 
 const route = useRoute();
 const system = useSystem();

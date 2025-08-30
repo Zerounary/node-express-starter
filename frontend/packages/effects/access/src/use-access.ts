@@ -3,6 +3,11 @@ import { computed } from 'vue';
 import { preferences, updatePreferences } from '@vben/preferences';
 import { useAccessStore, useUserStore } from '@vben/stores';
 
+function getTableAccessCodes(tableName: string, perm: string) {
+  return ['data:*:*', `data:${tableName}:*`, `data:${tableName}:${perm}`]
+}
+
+
 function useAccess() {
   const accessStore = useAccessStore();
   const userStore = useUserStore();
@@ -37,10 +42,6 @@ function useAccess() {
     return hasAccessByCodes(getTableAccessCodes(tableName, perm))
   }
 
-  function getTableAccessCodes(tableName: string, perm: string) {
-    return ['data:*:*', `data:${tableName}:*`, `data:${tableName}:${perm}`]
-  }
-
   async function toggleAccessMode() {
     updatePreferences({
       app: {
@@ -52,7 +53,6 @@ function useAccess() {
 
   return {
     accessMode,
-    getTableAccessCodes,
     hasAccessByTable,
     hasAccessByCodes,
     hasAccessByRoles,
@@ -60,4 +60,4 @@ function useAccess() {
   };
 }
 
-export { useAccess };
+export { getTableAccessCodes, useAccess };
