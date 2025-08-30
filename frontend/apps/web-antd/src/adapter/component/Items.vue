@@ -4,7 +4,7 @@ import type { Recordable } from '@vben/types';
 import type { OnActionClickParams, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SystemTableApi } from '#/api';
 
-import { computed, defineComponent, h, onMounted, reactive, ref, watchEffect, defineProps } from 'vue';
+import { computed, defineComponent, h, onMounted, reactive, ref, watchEffect, defineProps, watch } from 'vue';
 import { AccessControl, useAccess } from '@vben/access';
 import { Button, Tabs, message, Modal } from 'ant-design-vue';
 import { Plus } from '@vben/icons';
@@ -77,9 +77,20 @@ async function loadConfig(tab: TabProp) {
 
 onMounted(async () => {
   if (props.tabs.length) {
-    activeKey.value = props.tabs[0].key;
-    // 预加载全部标签配置，若担心性能可改为懒加载
-    await Promise.all(props.tabs.map(loadConfig));
+    const firstTab = props.tabs[0];
+    activeKey.value = firstTab.key;
+    // Load config for the first tab on mount
+    await loadConfig(firstTab);
+  }
+});
+
+// Lazy load config for other tabs when they become active
+watch(activeKey, (key) => {
+  if (key) {
+    const tab = props.tabs.find((t) => t.key === key);
+    if (tab) {
+      loadConfig(tab);
+    }
   }
 });
 
@@ -108,6 +119,7 @@ const ItemsTabGrid = defineComponent({
     );
 
     const [Grid, gridApi] = useVbenVxeGrid({
+      showSearchForm: false,
       formOptions: {
         collapsed: true,
         fieldMappingTime: [['createTime', ['startTime', 'endTime']]],
@@ -206,7 +218,7 @@ const ItemsTabGrid = defineComponent({
       }
     }
 
-    watchEffect(() => {
+    onMounted(() => {
       // 首次加载
       gridApi.query();
     });
@@ -219,7 +231,6 @@ const ItemsTabGrid = defineComponent({
       h(
         Grid,
         {
-          'table-title': $t('system.table.list'),
         },
         {
           'toolbar-tools': () =>
@@ -256,7 +267,7 @@ const ItemsTabGrid = defineComponent({
       <Tabs.TabPane v-for="tab in tabs" :key="tab.key" :tab="tabState[tab.key]?.config?.name || tab.title || tab.table">
         <div v-if="tabState[tab.key]?.loading" class="p-4 text-gray-400">Loading...</div>
         <div v-else-if="tabState[tab.key]?.error" class="p-4 text-red-500">加载失败</div>
-        <div v-else-if="tabState[tab.key]?.config">
+        <div v-else-if="tabState[tab.key]?.config?.columns">
           <ItemsTabGrid
             :key="tab.key"
             :tab="tab"
