@@ -6,7 +6,7 @@ import type { SystemTableApi } from '#/api';
 import type { TableConfig } from './types';
 
 import { computed, onMounted, defineProps, toRaw } from 'vue';
-import { AccessControl, getTableAccessCodes } from '@vben/access';
+import { AccessControl } from '@vben/access';
 import { Button, message, Modal } from 'ant-design-vue';
 import { Plus } from '@vben/icons';
 
@@ -25,6 +25,7 @@ const props = defineProps({
   queryExtra: { type: Object as PropType<Recordable>, default: () => ({}) },
   tab: { type: Object as PropType<{ key: string; table: string; extraQuery?: Record<string, any> }>, required: true },
 });
+
 
 const [FormDrawer, formDrawerApi] = useVbenDrawer({
   connectedComponent: Form,
@@ -54,7 +55,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     keepSource: true,
     proxyConfig: {
       ajax: {
-        query: async ({ page }, formValues) => {
+        query: async ({ page }: { page: { currentPage: number; pageSize: number } }, formValues: Recordable<any>) => {
           const sourceField = props.link.sourceField || 'id';
           const linkPart = props.row && props.link.field ? { [props.link.field]: props.row?.[sourceField] } : {};
           return await getPage(props.tableConfig.table, {
@@ -79,7 +80,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     },
   } as VxeTableGridOptions<SystemTableApi.SystemTable>,
   gridEvents: {
-    sortChange: ({ field, order }) => {
+    sortChange: ({ field, order }: { field: string; order: 'asc' | 'desc' | null }) => {
       gridApi.query({ sorts: `${field}-${order}` });
     },
   },
@@ -88,11 +89,17 @@ const [Grid, gridApi] = useVbenVxeGrid({
 function onCreate() {
   const sourceField = props.link.sourceField || 'id';
   const defaultLink = props.row && props.link.field ? { [props.link.field]: props.row?.[sourceField] } : {};
-  formDrawerApi.setData({ ...defaultLink }).open({ table: props.tableConfig });
+  formDrawerApi.setData({ ...defaultLink });
+  // HACK: The type for `open` is incorrect, expecting 0 arguments.
+  // Using `as any` to pass props to the connected component.
+  (formDrawerApi.open as any)({ table: props.tableConfig });
 }
 
 function onEdit(row: SystemTableApi.SystemTable) {
-  formDrawerApi.setData(row).open({ table: props.tableConfig });
+  formDrawerApi.setData(row);
+  // HACK: The type for `open` is incorrect, expecting 0 arguments.
+  // Using `as any` to pass props to the connected component.
+  (formDrawerApi.open as any)({ table: props.tableConfig });
 }
 
 async function onDelete(row: SystemTableApi.SystemTable) {
@@ -144,7 +151,7 @@ onMounted(() => {
     <Grid :table-title="$t('system.table.list')">
       <template #toolbar-tools>
         <AccessControl
-          :codes="getTableAccessCodes(tableConfig.table, 'create')"
+          :codes="[`table:${tableConfig.table}:create`]"
           type="code"
         >
           <Button
