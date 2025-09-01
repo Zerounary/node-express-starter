@@ -34,10 +34,8 @@ const Textof = (val, dataType) => {
 
 const text = computed(() => {
   const dataType = props.schema?.dataType;
-  console.log('🚀 ~ dataType:', dataType);
   return Textof(modelValue.value, dataType);
 });
-console.log('🚀 ~ props:', props);
 </script>
 
 <style scoped></style>

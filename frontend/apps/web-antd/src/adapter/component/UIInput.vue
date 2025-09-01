@@ -3,45 +3,65 @@
     <a-collapse>
       <!-- General Settings -->
       <a-collapse-panel key="general" header="通用设置">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <a-form-item label="UI组件">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <a-form-item class="md:col-span-1" label="UI组件">
             <a-select v-model:value="model.component" style="width: 100%">
-              <a-select-option v-for="comp in componentTypes" :key="comp.value" :value="comp.value">
+              <a-select-option
+                v-for="comp in componentTypes"
+                :key="comp.value"
+                :value="comp.value"
+              >
                 {{ comp.label }}
               </a-select-option>
             </a-select>
           </a-form-item>
+          <a-form-item class="md:col-span-2" label="组件属性 (JSON)">
+            <a-textarea
+              v-model:value="componentPropsString"
+              :rows="5"
+              @blur="handlePropsChange"
+            />
+            <div class="mt-1 text-xs text-gray-500">请输入合法的JSON格式</div>
+          </a-form-item>
+          <a-form-item
+            label="可见性掩码"
+            :rules="[
+              {
+                pattern: /^[01]{10}$/,
+                message: '请输入10位由0或1组成的字符串',
+              },
+            ]"
+          >
+            <a-input
+              v-model:value="model.mask"
+              maxlength="10"
+              placeholder="10位0或1的组合"
+            />
+          </a-form-item>
           <a-form-item label="宽度">
-            <a-input-number v-model:value="model.width" :min="0" style="width: 100%" />
+            <a-input-number
+              v-model:value="model.width"
+              :min="0"
+              style="width: 100%"
+            />
           </a-form-item>
-          <a-form-item label="禁用">
-            <a-switch v-model:checked="model.disabled" />
-          </a-form-item>
-        </div>
-      </a-collapse-panel>
-
-      <!-- Data Settings -->
-      <a-collapse-panel key="data" header="数据设置">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <a-form-item label="过滤操作">
-            <a-select v-model:value="model.filterOp" style="width: 100%" allow-clear>
-              <a-select-option v-for="op in filterOps" :key="op.value" :value="op.value">
+            <a-select
+              v-model:value="model.filterOp"
+              style="width: 100%"
+              allow-clear
+            >
+              <a-select-option
+                v-for="op in filterOps"
+                :key="op.value"
+                :value="op.value"
+              >
                 {{ op.label }}
               </a-select-option>
             </a-select>
           </a-form-item>
-        </div>
-      </a-collapse-panel>
-
-      <!-- Layout Settings -->
-      <a-collapse-panel key="layout" header="布局设置">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <a-form-item
-            label="可见性掩码"
-            class="md:col-span-2"
-            :rules="[{ pattern: /^[01]{10}$/, message: '请输入10位由0或1组成的字符串' }]"
-          >
-            <a-input v-model:value="model.mask" maxlength="10" placeholder="10位0或1的组合" />
+          <a-form-item class="md:col-span-2" label="禁用">
+            <a-switch v-model:checked="model.disabled" />
           </a-form-item>
         </div>
       </a-collapse-panel>
@@ -58,38 +78,58 @@
               allow-clear
               placeholder="输入字段名后按回车或用逗号分隔"
             />
-            <div class="text-xs text-gray-500 mt-1">支持 tags 多选，自动去重、去空格</div>
+            <div class="mt-1 text-xs text-gray-500">
+              支持 tags 多选，自动去重、去空格
+            </div>
           </a-form-item>
           <a-form-item label="销毁">
-            <a-textarea :value="ensureDeps().if" @update:value="val => (ensureDeps().if = val)" :rows="2" />
+            <a-textarea
+              :value="ensureDeps().if"
+              @update:value="(val) => (ensureDeps().if = val)"
+              :rows="2"
+            />
           </a-form-item>
           <a-form-item label="隐藏">
-            <a-textarea :value="ensureDeps().show" @update:value="val => (ensureDeps().show = val)" :rows="2" />
+            <a-textarea
+              :value="ensureDeps().show"
+              @update:value="(val) => (ensureDeps().show = val)"
+              :rows="2"
+            />
           </a-form-item>
           <a-form-item label="禁用">
-            <a-textarea :value="ensureDeps().disabled" @update:value="val => (ensureDeps().disabled = val)" :rows="2" />
+            <a-textarea
+              :value="ensureDeps().disabled"
+              @update:value="(val) => (ensureDeps().disabled = val)"
+              :rows="2"
+            />
           </a-form-item>
           <a-form-item label="触发">
-            <a-textarea :value="ensureDeps().trigger" @update:value="val => (ensureDeps().trigger = val)" :rows="2" />
+            <a-textarea
+              :value="ensureDeps().trigger"
+              @update:value="(val) => (ensureDeps().trigger = val)"
+              :rows="2"
+            />
           </a-form-item>
           <a-form-item label="规则">
-            <a-textarea :value="ensureDeps().rules" @update:value="val => (ensureDeps().rules = val)" :rows="2" />
+            <a-textarea
+              :value="ensureDeps().rules"
+              @update:value="(val) => (ensureDeps().rules = val)"
+              :rows="2"
+            />
           </a-form-item>
           <a-form-item label="必填">
-            <a-textarea :value="ensureDeps().required" @update:value="val => (ensureDeps().required = val)" :rows="2" />
+            <a-textarea
+              :value="ensureDeps().required"
+              @update:value="(val) => (ensureDeps().required = val)"
+              :rows="2"
+            />
           </a-form-item>
           <a-form-item label="组件Props">
-            <a-textarea :value="ensureDeps().componentProps" @update:value="val => (ensureDeps().componentProps = val)" :rows="2" />
-          </a-form-item>
-        </div>
-      </a-collapse-panel>
-
-      <!-- Advanced Settings -->
-      <a-collapse-panel key="advanced" header="高级设置">
-        <div class="grid grid-cols-1">
-          <a-form-item label="组件属性 (JSON)">
-            <a-textarea v-model:value="componentPropsString" :rows="5" @blur="handlePropsChange" />
-            <div class="text-xs text-gray-500 mt-1">请输入合法的JSON格式</div>
+            <a-textarea
+              :value="ensureDeps().componentProps"
+              @update:value="(val) => (ensureDeps().componentProps = val)"
+              :rows="2"
+            />
           </a-form-item>
         </div>
       </a-collapse-panel>
@@ -108,7 +148,7 @@ import {
   Select as ASelect,
   SelectOption as ASelectOption,
   Switch as ASwitch,
-  Textarea as ATextarea
+  Textarea as ATextarea,
 } from 'ant-design-vue';
 
 // Define the interface based on the provided structure
@@ -152,7 +192,7 @@ interface ColumnUI {
 
 // Use defineModel to create a two-way binding
 const model = defineModel<ColumnUI>({
-  default: () => ({ component: 'Input', dependencies: {} })
+  default: () => ({ component: 'Input', dependencies: {} }),
 });
 // 确保渲染前存在 dependencies，兼容历史数据（可能缺少该字段）
 if (!model.value.dependencies || typeof model.value.dependencies !== 'object') {
@@ -171,7 +211,8 @@ const componentTypes = [
   { value: 'IconPicker', label: '图标选择器' },
   { value: 'ColumnTypeInput', label: '字段类型选择器' },
   { value: 'PermissionPicker', label: '权限选择器' },
-  { value: 'MetaInput', label: '元数据输入' }
+  { value: 'MetaInput', label: '元数据输入' },
+  { value: 'Items', label: '子项列表' },
 ];
 
 const filterOps = [
@@ -182,7 +223,7 @@ const filterOps = [
   { value: 'lt', label: '小于' },
   { value: 'gte', label: '大于等于' },
   { value: 'lte', label: '小于等于' },
-  { value: 'in', label: '在...中' }
+  { value: 'in', label: '在...中' },
 ];
 
 // 归一化依赖配置（兼容字符串/逗号分隔/JSON字符串）
@@ -204,14 +245,14 @@ function ensureDependencies() {
       new Set(
         (Array.isArray(parsed) ? parsed : [parsed])
           .map((s) => (s ?? '').toString().trim())
-          .filter((s) => s.length > 0)
-      )
+          .filter((s) => s.length > 0),
+      ),
     );
   } else if (Array.isArray(tf)) {
     dep.triggerFields = Array.from(
       new Set(
-        tf.map((s) => (s ?? '').toString().trim()).filter((s) => s.length > 0)
-      )
+        tf.map((s) => (s ?? '').toString().trim()).filter((s) => s.length > 0),
+      ),
     );
   }
   // 若没有 triggerFields，保持不创建该字段；仅确保 dependencies 为对象
@@ -219,7 +260,10 @@ function ensureDependencies() {
 }
 
 function ensureDeps() {
-  if (!model.value.dependencies || typeof model.value.dependencies !== 'object') {
+  if (
+    !model.value.dependencies ||
+    typeof model.value.dependencies !== 'object'
+  ) {
     model.value.dependencies = {};
   }
   return model.value.dependencies as NonNullable<ColumnUI['dependencies']>;
@@ -241,18 +285,20 @@ const triggerFields = computed<string[]>({
       new Set(
         (val || [])
           .map((s) => (s ?? '').toString().trim())
-          .filter((s) => s.length > 0)
-      )
+          .filter((s) => s.length > 0),
+      ),
     );
     model.value.dependencies.triggerFields = normalized;
-  }
+  },
 });
 
 // Computed property to handle JSON conversion for componentProps
 const componentPropsString = computed({
   get() {
     try {
-      return model.value.componentProps ? JSON.stringify(model.value.componentProps, null, 2) : '';
+      return model.value.componentProps
+        ? JSON.stringify(model.value.componentProps, null, 2)
+        : '';
     } catch (e) {
       return '';
     }
@@ -268,7 +314,7 @@ const componentPropsString = computed({
       console.error('Invalid JSON format for componentProps', e);
       // Optionally, handle the error in the UI
     }
-  }
+  },
 });
 
 // Update the model on blur event from the textarea

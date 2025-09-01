@@ -69,8 +69,6 @@
     <ACard title="Items Playground" :style="{ marginTop: '24px' }">
       <Items
         :tabs="itemsTabs"
-        parent-key="tableId"
-        :parent-id="1"
       />
     </ACard>
 
@@ -101,8 +99,7 @@ import { applyDependencies } from '#/utils';
 import Items from '#/adapter/component/Items.vue';
 
 const itemsTabs = [
-  { key: 'column', table: 'column', title: 'Column' },
-  { key: 'roles', table: 'roles', title: 'Roles' },
+  { key: 'column', table: 'column', title: 'Column', parentKey: 'tableId' },
 ];
 
 const formState = reactive({

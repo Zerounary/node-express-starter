@@ -11,19 +11,12 @@ import ItemsTabGrid from './ItemsTabGrid.vue';
 interface TabProp {
   key: string;
   table: string;
+  parentKey: string;
   title?: string;
   queryExtra?: Record<string, any>;
 }
 
 const props = defineProps({
-  parentKey: {
-    type: String,
-    required: true,
-  },
-  parentId: {
-    type: [String, Number],
-    required: true,
-  },
   tabs: {
     type: Array as PropType<TabProp[]>,
     required: true,
@@ -85,8 +78,8 @@ watch(activeKey, (key) => {
           <ItemsTabGrid
             :key="tab.key"
             :tab="tab"
-            :parent-id="parentId"
-            :parent-key="parentKey"
+            :parent-id="row.id"
+            :parent-key="tab.parentKey"
             :table-config="tabState[tab.key].config!"
             :row="row"
             :link="link"

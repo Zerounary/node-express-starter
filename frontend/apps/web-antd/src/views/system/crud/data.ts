@@ -20,7 +20,6 @@ export function useFormCreateSchema(table, { formApi, data }): VbenFormSchema[] 
     .map(mapToCreateSchemaColumn)
     .map(col => applyDependencies(col)) // Apply dependencies
     .map(enhanceComponentProps(formApi, data));
-  console.log('🚀 ~ useFormCreateSchema ~ dynColumns:', dynColumns);
   return [...dynColumns];
 }
 
@@ -30,7 +29,6 @@ export function useFormUpdateSchema(table, { formApi, data }): VbenFormSchema[] 
     .map(mapToUpdateSchemaColumn)
     .map(col => applyDependencies(col)) // Apply dependencies
     .map(enhanceComponentProps(formApi, data));
-  console.log('🚀 ~ useFormUpdateSchema ~ dynColumns:', dynColumns);
   return [...dynColumns];
 }
 
@@ -49,7 +47,6 @@ const enhanceComponentProps = (formApi, data) => {
   };
 
 const mapToUpdateSchemaColumn = (col) => {
-  console.log("🚀 ~ mapToUpdateSchemaColumn ~ col:", col)
   let component = isUpdateEditable(col) ? col.component : 'Text';
   return {
     ...col,
@@ -72,7 +69,6 @@ const mapToListSchemaColumn = (col) => {
 };
 
 const mapToGridColumn = (col) => {
-    console.log('🚀 ~ mapToGridColumn ~ col:', col)
     return ({
         cellRender: {
             name: 'CellText', props: {
@@ -95,7 +91,6 @@ export function useGridFormSchema(table): VbenFormSchema[] {
     .filter(isFilterVisable)
     .map(mapToListSchemaColumn)
     .map(mapToOpFilterColumn);
-  console.log('🚀 ~ useGridFormSchema ~ dynColumns:', dynColumns);
   return [...dynColumns];
 }
 
@@ -107,7 +102,6 @@ export function useColumns<T = SystemTableApi.SystemTable>(
   const dynColumns = (table.columns || [])
     .filter(isListVisable)
     .map(mapToGridColumn);
-  console.log('🚀 ~ dynColumns:', dynColumns);
 
   const { hasAccessByTable } = useAccess();
   let options = ['update', 'delete'].filter(perm => {
