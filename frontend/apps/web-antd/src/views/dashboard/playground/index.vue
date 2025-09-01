@@ -2,7 +2,11 @@
   <PageContainer>
     <div class="playground-grid">
       <ACard title="MediaPicker Playground">
-        <AForm :model="formState" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+        <AForm
+          :model="formState"
+          :label-col="{ span: 6 }"
+          :wrapper-col="{ span: 18 }"
+        >
           <AFormItem label="Single Image (Object)">
             <MediaPicker v-model="formState.cover" />
           </AFormItem>
@@ -44,7 +48,10 @@
       <div class="right-column">
         <ACard title="QRCode Playground" class="component-card">
           <AFormItem label="QR Code Content">
-            <AInput v-model:value="formState.qrCodeValue" placeholder="Enter text for QR code" />
+            <AInput
+              v-model:value="formState.qrCodeValue"
+              placeholder="Enter text for QR code"
+            />
           </AFormItem>
           <QRCode :model-value="formState.qrCodeValue" :size="150" />
         </ACard>
@@ -60,7 +67,11 @@
     </ACard>
 
     <ACard title="Items Playground" :style="{ marginTop: '24px' }">
-      <Items :tabs="itemsTabs" :query-extra="{ tableId: 1 }" />
+      <Items
+        :tabs="itemsTabs"
+        parent-key="tableId"
+        :parent-id="1"
+      />
     </ACard>
 
     <ACard title="Form State" :style="{ marginTop: '24px' }">
@@ -72,14 +83,22 @@
 <script setup lang="ts">
 import { reactive, onMounted } from 'vue';
 import { UploadOutlined } from '@ant-design/icons-vue';
-import { Card as ACard, Form as AForm, FormItem as AFormItem, Button as AButton, Input as AInput } from 'ant-design-vue';
-import MediaPicker, { type MediaItem, type FetchParams } from '#/adapter/component/MediaPicker.vue';
+import {
+  Card as ACard,
+  Form as AForm,
+  FormItem as AFormItem,
+  Button as AButton,
+  Input as AInput,
+} from 'ant-design-vue';
+import MediaPicker, {
+  type MediaItem,
+  type FetchParams,
+} from '#/adapter/component/MediaPicker.vue';
 import QRCode from '#/adapter/component/QRCode.vue';
 import RichText from '#/adapter/component/RichText.vue';
 import { useVbenForm } from '#/adapter/form';
 import { applyDependencies } from '#/utils';
 import Items from '#/adapter/component/Items.vue';
-
 
 const itemsTabs = [
   { key: 'column', table: 'column', title: 'Column' },
@@ -91,32 +110,32 @@ const formState = reactive({
   gallery: [],
   video: null,
   disabledAsset: {
-    "id": 18,
-    "tenantId": 1,
-    "type": "image",
-    "url": "https://jhtcdn-1252100135.cos.ap-chengdu.myqcloud.com/uploads/t_1/u_1/1756364691881-454053845.png",
-    "thumbUrl": null,
-    "name": "ç½åçè.png",
-    "size": 89705,
-    "width": null,
-    "height": null,
-    "duration": null,
-    "tags": null,
-    "meta": null,
-    "categoryId": 1,
-    "linkedEntityName": null,
-    "linkedEntityUrl": null,
-    "createdAt": "2025-08-28T07:04:52.000Z",
-    "updatedAt": "2025-08-28T07:04:52.000Z",
-    "createdBy": null,
-    "updatedBy": null,
-    "isActive": true
+    id: 18,
+    tenantId: 1,
+    type: 'image',
+    url: 'https://jhtcdn-1252100135.cos.ap-chengdu.myqcloud.com/uploads/t_1/u_1/1756364691881-454053845.png',
+    thumbUrl: null,
+    name: 'ç½åçè.png',
+    size: 89705,
+    width: null,
+    height: null,
+    duration: null,
+    tags: null,
+    meta: null,
+    categoryId: 1,
+    linkedEntityName: null,
+    linkedEntityUrl: null,
+    createdAt: '2025-08-28T07:04:52.000Z',
+    updatedAt: '2025-08-28T07:04:52.000Z',
+    createdBy: null,
+    updatedBy: null,
+    isActive: true,
   },
   customTriggerAsset: null,
   qrCodeValue: 'https://www.tencent.com',
-  richTextContent: '<h1>Hello, Rich Text!</h1><p>This is a basic example of the RichText component.</p>',
+  richTextContent:
+    '<h1>Hello, Rich Text!</h1><p>This is a basic example of the RichText component.</p>',
 });
-
 
 const rawDependencySchemas = [
   {
@@ -135,16 +154,13 @@ const rawDependencySchemas = [
       disabled: 'values.name !== "enable"',
     },
   },
-].map(col => (applyDependencies(col)));
+].map((col) => applyDependencies(col));
 
-console.log('rawDependencySchemas:', rawDependencySchemas)
+console.log('rawDependencySchemas:', rawDependencySchemas);
 
-const [DependencyForm, formApi] = useVbenForm({ 
-  schema: [
-    ...rawDependencySchemas
-  ],
+const [DependencyForm, formApi] = useVbenForm({
+  schema: [...rawDependencySchemas],
 });
-
 </script>
 
 <style scoped>

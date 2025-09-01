@@ -6,7 +6,7 @@ import type { SystemTableApi } from '#/api';
 import type { TableConfig } from './types';
 
 import { computed, onMounted, defineProps, toRaw } from 'vue';
-import { AccessControl } from '@vben/access';
+import { AccessControl, getTableAccessCodes } from '@vben/access';
 import { Button, message, Modal } from 'ant-design-vue';
 import { Plus } from '@vben/icons';
 
@@ -20,12 +20,27 @@ import Form from '#/views/system/crud/modules/form.vue';
 
 const props = defineProps({
   tableConfig: { type: Object as PropType<TableConfig>, required: true },
+  parentKey: { type: String, required: true },
+  parentId: { type: [String, Number], required: true },
   row: { type: Object as PropType<Recordable>, default: () => ({}) },
   link: { type: Object as PropType<{ field: string; sourceField?: string }>, required: true },
   queryExtra: { type: Object as PropType<Recordable>, default: () => ({}) },
   tab: { type: Object as PropType<{ key: string; table: string; extraQuery?: Record<string, any> }>, required: true },
 });
 
+const filteredTableConfig = computed(() => {
+  const queryExtraKeys = Object.keys(props.queryExtra);
+  const newConfig = JSON.parse(JSON.stringify(toRaw(props.tableConfig)));
+
+  if (newConfig.columns) {
+    newConfig.columns = newConfig.columns.filter(
+      (field: { fieldName: string }) => {
+        return !queryExtraKeys.includes(field.fieldName) && field.fieldName != props.parentKey
+      },
+    );
+  }
+  return newConfig;
+});
 
 const [FormDrawer, formDrawerApi] = useVbenDrawer({
   connectedComponent: Form,
@@ -35,9 +50,9 @@ const [FormDrawer, formDrawerApi] = useVbenDrawer({
   },
 });
 
-const gridFormSchema = computed(() => useGridFormSchema(toRaw(props.tableConfig)));
+const gridFormSchema = computed(() => useGridFormSchema(toRaw(filteredTableConfig.value)));
 const columns = computed(() =>
-  useColumns<SystemTableApi.SystemTable>(props.tableConfig, onActionClick),
+  useColumns<SystemTableApi.SystemTable>(filteredTableConfig.value, onActionClick),
 );
 
 const [Grid, gridApi] = useVbenVxeGrid({
@@ -59,11 +74,15 @@ const [Grid, gridApi] = useVbenVxeGrid({
         query: async ({ page }: { page: { currentPage: number; pageSize: number } }, formValues: Recordable<any>) => {
           const sourceField = props.link.sourceField || 'id';
           const linkPart = props.row && props.link.field ? { [props.link.field]: props.row?.[sourceField] } : {};
+          const queryExtra = {
+            ...props.queryExtra,
+            [props.parentKey]: props.parentId,
+          }
           return await getPage(props.tableConfig.table, {
             page: page.currentPage,
             pageSize: page.pageSize,
             ...formValues,
-            ...props.queryExtra,
+            ...queryExtra,
             ...(props.tab.extraQuery || {}),
             ...linkPart,
           });
@@ -90,17 +109,17 @@ const [Grid, gridApi] = useVbenVxeGrid({
 function onCreate() {
   const sourceField = props.link.sourceField || 'id';
   const defaultLink = props.row && props.link.field ? { [props.link.field]: props.row?.[sourceField] } : {};
-  formDrawerApi.setData({ ...defaultLink });
+  formDrawerApi.setData({ ...defaultLink, _parentKey: props.parentKey, _parentId: props.parentId, ...props.queryExtra });
   // HACK: The type for `open` is incorrect, expecting 0 arguments.
   // Using `as any` to pass props to the connected component.
-  (formDrawerApi.open as any)({ table: props.tableConfig });
+  (formDrawerApi.open as any)({ table: filteredTableConfig.value });
 }
 
 function onEdit(row: SystemTableApi.SystemTable) {
-  formDrawerApi.setData(row);
+  formDrawerApi.setData({ ...row, _parentKey: props.parentKey, _parentId: props.parentId,  ...props.queryExtra });
   // HACK: The type for `open` is incorrect, expecting 0 arguments.
   // Using `as any` to pass props to the connected component.
-  (formDrawerApi.open as any)({ table: props.tableConfig });
+  (formDrawerApi.open as any)({ table: filteredTableConfig.value });
 }
 
 async function onDelete(row: SystemTableApi.SystemTable) {
@@ -147,12 +166,12 @@ onMounted(() => {
   <div>
     <FormDrawer
       class="w-full"
-      :table="tableConfig"
+      :table="filteredTableConfig"
     />
     <Grid :table-title="$t('system.table.list')">
       <template #toolbar-tools>
         <AccessControl
-          :codes="[`table:${tableConfig.table}:create`]"
+          :codes="getTableAccessCodes(filteredTableConfig.table, 'create')"
           type="code"
         >
           <Button

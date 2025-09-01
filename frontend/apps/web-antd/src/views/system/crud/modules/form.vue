@@ -53,6 +53,9 @@ const [Drawer, drawerApi] = useVbenDrawer({
       const data = drawerApi.getData<SystemTableApi.SystemTable>();
       console.log('🚀 ~ onOpenChange ~ data:', data)
       formApi.resetForm();
+      if(data._parentKey) {
+        formApi.setFieldValue(data._parentKey, data._parentId);
+      }
       if (data?.id) {
         formData.value = data;
         id.value = data.id;

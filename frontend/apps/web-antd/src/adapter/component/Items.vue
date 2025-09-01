@@ -12,10 +12,18 @@ interface TabProp {
   key: string;
   table: string;
   title?: string;
-  extraQuery?: Record<string, any>;
+  queryExtra?: Record<string, any>;
 }
 
 const props = defineProps({
+  parentKey: {
+    type: String,
+    required: true,
+  },
+  parentId: {
+    type: [String, Number],
+    required: true,
+  },
   tabs: {
     type: Array as PropType<TabProp[]>,
     required: true,
@@ -27,10 +35,6 @@ const props = defineProps({
   link: {
     type: Object as PropType<{ field: string; sourceField?: string }>,
     default: () => ({ field: 'parentId', sourceField: 'id' }),
-  },
-  queryExtra: {
-    type: Object as PropType<Recordable>,
-    default: () => ({}),
   },
 });
 
@@ -81,10 +85,12 @@ watch(activeKey, (key) => {
           <ItemsTabGrid
             :key="tab.key"
             :tab="tab"
+            :parent-id="parentId"
+            :parent-key="parentKey"
             :table-config="tabState[tab.key].config!"
             :row="row"
             :link="link"
-            :query-extra="queryExtra"
+            :query-extra="tab.queryExtra"
           />
         </div>
       </Tabs.TabPane>
