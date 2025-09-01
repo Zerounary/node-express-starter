@@ -23,7 +23,6 @@ const props = defineProps({
   parentKey: { type: String, required: true },
   parentId: { type: [String, Number], required: true },
   row: { type: Object as PropType<Recordable>, default: () => ({}) },
-  link: { type: Object as PropType<{ field: string; sourceField?: string }>, required: true },
   queryExtra: { type: Object as PropType<Recordable>, default: () => ({}) },
   tab: { type: Object as PropType<{ key: string; table: string; extraQuery?: Record<string, any> }>, required: true },
 });
@@ -72,8 +71,6 @@ const [Grid, gridApi] = useVbenVxeGrid({
     proxyConfig: {
       ajax: {
         query: async ({ page }: { page: { currentPage: number; pageSize: number } }, formValues: Recordable<any>) => {
-          const sourceField = props.link.sourceField || 'id';
-          const linkPart = props.row && props.link.field ? { [props.link.field]: props.row?.[sourceField] } : {};
           const queryExtra = {
             ...props.queryExtra,
             [props.parentKey]: props.parentId,
@@ -84,7 +81,6 @@ const [Grid, gridApi] = useVbenVxeGrid({
             ...formValues,
             ...queryExtra,
             ...(props.tab.extraQuery || {}),
-            ...linkPart,
           });
         },
       },
@@ -107,9 +103,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
 });
 
 function onCreate() {
-  const sourceField = props.link.sourceField || 'id';
-  const defaultLink = props.row && props.link.field ? { [props.link.field]: props.row?.[sourceField] } : {};
-  formDrawerApi.setData({ ...defaultLink, _parentKey: props.parentKey, _parentId: props.parentId, ...props.queryExtra });
+  formDrawerApi.setData({ _parentKey: props.parentKey, _parentId: props.parentId, ...props.queryExtra });
   // HACK: The type for `open` is incorrect, expecting 0 arguments.
   // Using `as any` to pass props to the connected component.
   (formDrawerApi.open as any)({ table: filteredTableConfig.value });

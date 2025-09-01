@@ -25,10 +25,6 @@ const props = defineProps({
     type: Object as PropType<Recordable>,
     default: () => ({}),
   },
-  link: {
-    type: Object as PropType<{ field: string; sourceField?: string }>,
-    default: () => ({ field: 'parentId', sourceField: 'id' }),
-  },
 });
 
 const activeKey = ref<string>('');
@@ -82,7 +78,6 @@ watch(activeKey, (key) => {
             :parent-key="tab.parentKey"
             :table-config="tabState[tab.key].config!"
             :row="row"
-            :link="link"
             :query-extra="tab.queryExtra"
           />
         </div>
