@@ -41,6 +41,7 @@ const columns = computed(() =>
 );
 
 const [Grid, gridApi] = useVbenVxeGrid({
+  showSearchForm: false,
   formOptions: {
     fieldMappingTime: [['createTime', ['startTime', 'endTime']]],
     schema: gridFormSchema.value,

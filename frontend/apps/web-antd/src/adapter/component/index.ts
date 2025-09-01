@@ -29,8 +29,12 @@ import MetaInput from './MetaInput.vue'
 import RichText from './RichText.vue';
 import QRCode from './QRCode.vue';
 import ColumnTypeInput from './ColumnTypeInput.vue';
-import Items from './Items.vue';
 
+// 所有使用 vben 组件的需异步使用。
+
+const Items = defineAsyncComponent(
+  () => import('./Items.vue'),
+);
 const AutoComplete = defineAsyncComponent(
   () => import('ant-design-vue/es/auto-complete'),
 );
