@@ -1,13 +1,13 @@
 <template>
   <div class="w-full">
     <div v-if="!disabled" class="w-full flex">
+      {{ selectValue }}
       <Select
         class="flex-grow"
-        v-model:value="modelValue"
+        v-model="selectValue"
         :default-active-first-option="false"
         show-search
         label-in-value
-        :field-names="{ label: 'name', value: 'id' }"
         :filter-option="false"
         allow-clear
         :mode="mode"
@@ -54,11 +54,10 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineModel, ref, watch, computed, onMounted } from 'vue';
+import { defineProps, defineModel, ref, watch, computed, onMounted, type PropType } from 'vue';
 import { getPage } from '#/api/system/crud';
 import { Select, Modal, Table, Button, Input } from 'ant-design-vue';
 import { getPageConfig, keywordSearch } from '#/api';
-import type { TableColumnType } from 'ant-design-vue';
 import { FilterOutlined } from '@ant-design/icons-vue'
 const props = defineProps({
   disabled: {
@@ -69,6 +68,11 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  valueKey: {
+    type: String,
+    default: 'id',
+  },
+  queryExtra: { type: Object, default: () => ({}) },
   mode: {
     type: String,
     default: 'single',
@@ -76,6 +80,7 @@ const props = defineProps({
 });
 
 const refTable = ref<any>({});
+const selectValue = ref<any>();
 const selections = ref<any[]>([]);
 const isModalVisible = ref(false);
 const modalSearchKeyword = ref('');
@@ -118,6 +123,7 @@ const fetchData = async (params = {}) => {
     const result: any = await getPage(props.table as string, {
       page: pagination.value.current,
       pageSize: pagination.value.pageSize,
+      ...props.queryExtra,
       ...currentFilters.value,
       ...params,
     });
@@ -162,7 +168,14 @@ watch(modelValue, (newVal) => {
     let copyValue = JSON.parse(JSON.stringify(newVal));
     selections.value =  [ copyValue ];
     console.log('🚀 ~ selections.value:', selections.value)
-    modelValue.value = copyValue.id;
+    modelValue.value = copyValue[props.valueKey];
+  }
+})
+
+watch(() => selectValue, (newVal) => {
+  console.log('🚀 ~ newVal:', newVal)
+  if(newVal?.id) {
+    modelValue.value = copyValue[props.valueKey];
   }
 })
 
@@ -206,7 +219,7 @@ const handleOk = () => {
         id: selectedItem.id,
         name: selectedItem.name || selectedItem[Object.keys(selectedItem).find(key => key !== 'id') || 'id'] || selectedItem.id
       }];
-      modelValue.value = selectedItem.id;
+      modelValue.value = selectedItem[props.valueKey];
     } else {
       selections.value = [];
       modelValue.value = undefined;
@@ -273,6 +286,7 @@ const handleTableChange = (pag: any, filters: any, sorter: any) => {
 };
 
 const handleSelectChange = (val) => {
+  console.log('🚀 ~ handleSelectChange ~ val:', val)
   modelValue.value = val?.value;
 }
 </script>

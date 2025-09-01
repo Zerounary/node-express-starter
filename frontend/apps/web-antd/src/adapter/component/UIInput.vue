@@ -4,25 +4,6 @@
       <!-- General Settings -->
       <a-collapse-panel key="general" header="通用设置">
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <a-form-item class="md:col-span-1" label="UI组件">
-            <a-select v-model:value="model.component" style="width: 100%">
-              <a-select-option
-                v-for="comp in componentTypes"
-                :key="comp.value"
-                :value="comp.value"
-              >
-                {{ comp.label }}
-              </a-select-option>
-            </a-select>
-          </a-form-item>
-          <a-form-item class="md:col-span-2" label="组件属性 (JSON)">
-            <a-textarea
-              v-model:value="componentPropsString"
-              :rows="5"
-              @blur="handlePropsChange"
-            />
-            <div class="mt-1 text-xs text-gray-500">请输入合法的JSON格式</div>
-          </a-form-item>
           <a-form-item
             label="可见性掩码"
             :rules="[
@@ -45,6 +26,13 @@
               style="width: 100%"
             />
           </a-form-item>
+          <a-form-item label="表单项样式">
+            <a-input
+              v-model:value="model.wrapperClass"
+              placeholder="wrapperClass样式"
+            />
+          </a-form-item>
+
           <a-form-item label="过滤操作">
             <a-select
               v-model:value="model.filterOp"
@@ -60,6 +48,80 @@
               </a-select-option>
             </a-select>
           </a-form-item>
+          <a-form-item class="md:col-span-1" label="UI组件">
+            <a-select v-model:value="model.component" style="width: 100%">
+              <a-select-option
+                v-for="comp in componentTypes"
+                :key="comp.value"
+                :value="comp.value"
+              >
+                {{ comp.label }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+
+          <!-- Generic componentProps for other components -->
+          <a-form-item
+            v-if="model.component !== 'Items'"
+            class="md:col-span-2"
+            label="组件属性 (JSON)"
+          >
+            <a-textarea
+              v-model:value="componentPropsString"
+              :rows="5"
+              @blur="handlePropsChange"
+            />
+            <div class="mt-1 text-xs text-gray-500">请输入合法的JSON格式</div>
+          </a-form-item>
+
+          <!-- Specific UI for 'Items' component tabs -->
+          <div v-if="model.component === 'Items'" class="md:col-span-2">
+            <h3 class="mb-2 font-semibold text-gray-800">子项列表配置</h3>
+            <div
+              v-for="(tab, index) in tabs"
+              :key="index"
+              class="mb-3 rounded-md border bg-gray-50 p-3"
+            >
+              <div class="mb-2 flex items-center justify-between">
+                <h4 class="font-medium">Tab {{ index + 1 }}</h4>
+                <a-button type="link" danger @click="removeTab(index)"
+                  >移除</a-button
+                >
+              </div>
+              <div class="grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2">
+                <a-form-item label="Key" required>
+                  <a-input v-model:value="tab.key" />
+                </a-form-item>
+                <a-form-item label="表" required>
+                  <FkPicker table="table" value-key="alias_name" v-model="tab.table" />
+                </a-form-item>
+                <a-form-item label="父表字段名" required>
+                  <FkPicker table="column" value-key="name" :query-extra="{
+
+                  }" v-model="tab.parentKey" />
+                </a-form-item>
+                <a-form-item label="标题">
+                  <a-input v-model:value="tab.title" />
+                </a-form-item>
+                <a-form-item class="md:col-span-2" label="过滤条件 (JSON)">
+                  <a-textarea
+                    :value="getQueryExtraString(tab)"
+                    @blur="updateQueryExtra($event, index)"
+                    :rows="3"
+                    placeholder='{ "field": "value" }'
+                  />
+                </a-form-item>
+              </div>
+            </div>
+            <a-button type="dashed" class="w-full" @click="addTab">
+              <PlusOutlined /> 添加 子表
+            </a-button>
+          </div>
+
+          <a-form-item class="md:col-span-2" label="隐藏Label">
+            <a-switch v-model:checked="model.hideLabel" />
+          </a-form-item>
+
           <a-form-item class="md:col-span-2" label="禁用">
             <a-switch v-model:checked="model.disabled" />
           </a-form-item>
@@ -85,50 +147,50 @@
           <a-form-item label="销毁">
             <a-textarea
               :value="ensureDeps().if"
-              @update:value="(val) => (ensureDeps().if = val)"
               :rows="2"
+              @update:value="(val) => (ensureDeps().if = val)"
             />
           </a-form-item>
           <a-form-item label="隐藏">
             <a-textarea
               :value="ensureDeps().show"
-              @update:value="(val) => (ensureDeps().show = val)"
               :rows="2"
+              @update:value="(val) => (ensureDeps().show = val)"
             />
           </a-form-item>
           <a-form-item label="禁用">
             <a-textarea
               :value="ensureDeps().disabled"
-              @update:value="(val) => (ensureDeps().disabled = val)"
               :rows="2"
+              @update:value="(val) => (ensureDeps().disabled = val)"
             />
           </a-form-item>
           <a-form-item label="触发">
             <a-textarea
               :value="ensureDeps().trigger"
-              @update:value="(val) => (ensureDeps().trigger = val)"
               :rows="2"
+              @update:value="(val) => (ensureDeps().trigger = val)"
             />
           </a-form-item>
           <a-form-item label="规则">
             <a-textarea
               :value="ensureDeps().rules"
-              @update:value="(val) => (ensureDeps().rules = val)"
               :rows="2"
+              @update:value="(val) => (ensureDeps().rules = val)"
             />
           </a-form-item>
           <a-form-item label="必填">
             <a-textarea
               :value="ensureDeps().required"
-              @update:value="(val) => (ensureDeps().required = val)"
               :rows="2"
+              @update:value="(val) => (ensureDeps().required = val)"
             />
           </a-form-item>
           <a-form-item label="组件Props">
             <a-textarea
               :value="ensureDeps().componentProps"
-              @update:value="(val) => (ensureDeps().componentProps = val)"
               :rows="2"
+              @update:value="(val) => (ensureDeps().componentProps = val)"
             />
           </a-form-item>
         </div>
@@ -140,6 +202,7 @@
 <script setup lang="ts">
 import { computed, defineModel, onMounted } from 'vue';
 import {
+  Button as AButton,
   Collapse as ACollapse,
   CollapsePanel as ACollapsePanel,
   FormItem as AFormItem,
@@ -150,6 +213,8 @@ import {
   Switch as ASwitch,
   Textarea as ATextarea,
 } from 'ant-design-vue';
+import FkPicker from './FkPicker.vue';
+import { PlusOutlined } from '@ant-design/icons-vue';
 
 // Define the interface based on the provided structure
 interface ColumnUI {
@@ -176,6 +241,7 @@ interface ColumnUI {
     buttonStyle?: 'outline' | 'solid';
     options?: { label: string; value: any }[];
     optionType?: 'default' | 'button';
+    tabs?: TabProp[];
     [key: string]: any;
   };
   dependencies?: {
@@ -188,6 +254,14 @@ interface ColumnUI {
     required?: string;
     componentProps?: string;
   };
+}
+
+interface TabProp {
+  key: string;
+  table: string;
+  parentKey: string;
+  title?: string;
+  queryExtra?: Record<string, any>;
 }
 
 // Use defineModel to create a two-way binding
@@ -225,6 +299,78 @@ const filterOps = [
   { value: 'lte', label: '小于等于' },
   { value: 'in', label: '在...中' },
 ];
+
+// Computed property to manage tabs for the 'Items' component
+const tabs = computed<TabProp[]>({
+  get() {
+    if (model.value.component === 'Items') {
+      if (!model.value.componentProps) {
+        model.value.componentProps = {};
+      }
+      if (!Array.isArray(model.value.componentProps.tabs)) {
+        model.value.componentProps.tabs = [];
+      }
+      return model.value.componentProps.tabs as TabProp[];
+    }
+    return [];
+  },
+  set(newTabs) {
+    if (model.value.component === 'Items') {
+      if (!model.value.componentProps) {
+        model.value.componentProps = {};
+      }
+      model.value.componentProps.tabs = newTabs;
+    }
+  },
+});
+
+function addTab() {
+  const newTabs = [...tabs.value];
+  newTabs.push({
+    key: `tab${newTabs.length + 1}`,
+    table: '',
+    parentKey: '',
+    title: '',
+    queryExtra: {},
+  });
+  tabs.value = newTabs;
+}
+
+function removeTab(index: number) {
+  const newTabs = [...tabs.value];
+  newTabs.splice(index, 1);
+  tabs.value = newTabs;
+}
+
+// Helper to get string representation for textarea
+function getQueryExtraString(tab: TabProp): string {
+  try {
+    return tab.queryExtra && Object.keys(tab.queryExtra).length > 0
+      ? JSON.stringify(tab.queryExtra, null, 2)
+      : '';
+  } catch {
+    return '{}'; // Return empty object string on error
+  }
+}
+
+// Helper to update queryExtra from textarea
+function updateQueryExtra(event: Event, index: number) {
+  const target = event.target as HTMLTextAreaElement;
+  const newTabs = [...tabs.value];
+  if (index >= newTabs.length) return; // safety check
+
+  try {
+    if (target.value.trim()) {
+      newTabs[index].queryExtra = JSON.parse(target.value);
+    } else {
+      newTabs[index].queryExtra = {};
+    }
+    tabs.value = newTabs;
+  } catch (e) {
+    console.error('Invalid JSON for queryExtra', e);
+    // To avoid data loss, we don't update if JSON is invalid.
+  }
+}
 
 // 归一化依赖配置（兼容字符串/逗号分隔/JSON字符串）
 function ensureDependencies() {

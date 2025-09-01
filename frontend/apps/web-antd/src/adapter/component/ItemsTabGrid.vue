@@ -22,8 +22,8 @@ const props = defineProps({
   tableConfig: { type: Object as PropType<TableConfig>, required: true },
   parentKey: { type: String, required: true },
   parentId: { type: [String, Number], required: true },
-  row: { type: Object as PropType<Recordable>, default: () => ({}) },
-  queryExtra: { type: Object as PropType<Recordable>, default: () => ({}) },
+  row: { type: Object, default: () => ({}) },
+  queryExtra: { type: Object, default: () => ({}) },
   tab: { type: Object as PropType<{ key: string; table: string; extraQuery?: Record<string, any> }>, required: true },
 });
 
@@ -162,7 +162,7 @@ onMounted(() => {
       class="w-full"
       :table="filteredTableConfig"
     />
-    <Grid :table-title="$t('system.table.list')">
+    <Grid>
       <template #toolbar-tools>
         <AccessControl
           :codes="getTableAccessCodes(filteredTableConfig.table, 'create')"

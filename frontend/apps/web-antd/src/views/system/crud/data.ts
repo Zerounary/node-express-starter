@@ -32,6 +32,13 @@ export function useFormUpdateSchema(table, { formApi, data }): VbenFormSchema[] 
   return [...dynColumns];
 }
 
+const wrappItemClass = (col, component) => {
+  if(['Items', 'MetaInput', 'UIInput'].includes(component)) {
+    col.formItemClass = col.formItemClass || 'col-span-1 md:col-span-2 lg:col-span-4'
+    col.hideLabel = true;
+  }
+}
+
 const enhanceComponentProps = (formApi, data) => {
   const fn = (col) => {
     return {
@@ -48,6 +55,8 @@ const enhanceComponentProps = (formApi, data) => {
 
 const mapToUpdateSchemaColumn = (col) => {
   let component = isUpdateEditable(col) ? col.component : 'Text';
+  wrappItemClass(col, component);
+  console.log('🚀 ~ mapToUpdateSchemaColumn ~ col:', col)
   return {
     ...col,
     component,
@@ -56,6 +65,7 @@ const mapToUpdateSchemaColumn = (col) => {
 
 const mapToCreateSchemaColumn = (col) => {
   let component = isCreateEditable(col) ? col.component : 'Text';
+  wrappItemClass(col, component);
   return {
     ...col,
     component,

@@ -23,6 +23,7 @@ const formData = ref<SystemTableApi.SystemTable>();
 const [Form, formApi] = useVbenForm({
   schema: [],
   showDefaultActions: false,
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
 });
 
 const id = ref();
