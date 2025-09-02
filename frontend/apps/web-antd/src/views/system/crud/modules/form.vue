@@ -29,7 +29,7 @@ const [Form, formApi] = useVbenForm({
     labelClass: 'justify-start',
     labelWidth: 80,
   },
-  wrapperClass: 'grid-cols-1 md:grid-cols-2 md:gap-x-2 lg:grid-cols-4 lg:gap-x-4 lg:px-5 ',
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 md:gap-x-2 lg:grid-cols-4 lg:gap-x-5 lg:p-5 ',
 });
 
 const id = ref();
