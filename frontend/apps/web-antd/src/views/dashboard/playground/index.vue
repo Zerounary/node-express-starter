@@ -62,6 +62,118 @@
       </div>
     </div>
 
+    <ACard title="地址选择器 (LocatePicker) Playground" :style="{ marginTop: '24px' }">
+      <ASpace direction="vertical" size="large" style="width: 100%">
+        
+        <!-- 基础用法 -->
+        <div>
+          <h3>基础用法（三级联动）</h3>
+          <LocatePicker
+            v-model="formState.basicValue"
+            placeholder="请选择省市区"
+            @change="handleBasicChange"
+          />
+          <p>选中值: {{ formState.basicValue }}</p>
+          <p>完整地址: {{ formState.basicFullAddress }}</p>
+        </div>
+
+        <!-- 只选择到市级 -->
+        <div>
+          <h3>只选择到市级</h3>
+          <LocatePicker
+            v-model="formState.cityValue"
+            :level="2"
+            placeholder="请选择省市"
+            @change="handleCityChange"
+          />
+          <p>选中值: {{ formState.cityValue }}</p>
+        </div>
+
+        <!-- 只选择省份 -->
+        <div>
+          <h3>只选择省份</h3>
+          <LocatePicker
+            v-model="formState.provinceValue"
+            :level="1"
+            placeholder="请选择省份"
+            @change="handleProvinceChange"
+          />
+          <p>选中值: {{ formState.provinceValue }}</p>
+        </div>
+
+        <!-- 禁用状态 -->
+        <div>
+          <h3>禁用状态</h3>
+          <LocatePicker
+            v-model="formState.disabledValue"
+            disabled
+            placeholder="禁用状态"
+          />
+        </div>
+
+        <!-- 不同尺寸 -->
+        <div>
+          <h3>不同尺寸</h3>
+          <ASpace direction="vertical" size="middle">
+            <LocatePicker
+              v-model="formState.sizeValue"
+              size="large"
+              placeholder="大尺寸"
+            />
+            <LocatePicker
+              v-model="formState.sizeValue"
+              size="middle"
+              placeholder="中等尺寸"
+            />
+            <LocatePicker
+              v-model="formState.sizeValue"
+              size="small"
+              placeholder="小尺寸"
+            />
+          </ASpace>
+        </div>
+
+        <!-- 表单中使用 -->
+        <div>
+          <h3>在表单中使用</h3>
+          <AForm
+            :model="formState.addressForm"
+            :rules="addressFormRules"
+            layout="vertical"
+            @finish="handleAddressSubmit"
+          >
+            <AFormItem
+              label="收货地址"
+              name="address"
+              required
+            >
+              <LocatePicker
+                v-model="formState.addressForm.address"
+                placeholder="请选择收货地址"
+              />
+            </AFormItem>
+            
+            <AFormItem
+              label="详细地址"
+              name="detailAddress"
+            >
+              <AInput
+                v-model:value="formState.addressForm.detailAddress"
+                placeholder="请输入详细地址"
+              />
+            </AFormItem>
+            
+            <AFormItem>
+              <AButton type="primary" html-type="submit">
+                提交
+              </AButton>
+            </AFormItem>
+          </AForm>
+        </div>
+
+      </ASpace>
+    </ACard>
+
     <ACard title="Dependencies Playground" :style="{ marginTop: '24px' }">
       <DependencyForm />
     </ACard>
@@ -87,6 +199,8 @@ import {
   FormItem as AFormItem,
   Button as AButton,
   Input as AInput,
+  Space as ASpace,
+  message,
 } from 'ant-design-vue';
 import MediaPicker, {
   type MediaItem,
@@ -94,6 +208,7 @@ import MediaPicker, {
 } from '#/adapter/component/MediaPicker.vue';
 import QRCode from '#/adapter/component/QRCode.vue';
 import RichText from '#/adapter/component/RichText.vue';
+import LocatePicker from '#/adapter/component/LocatePicker.vue';
 import { useVbenForm } from '#/adapter/form';
 import { applyDependencies } from '#/utils';
 import Items from '#/adapter/component/Items.vue';
@@ -132,6 +247,17 @@ const formState = reactive({
   qrCodeValue: 'https://www.tencent.com',
   richTextContent:
     '<h1>Hello, Rich Text!</h1><p>This is a basic example of the RichText component.</p>',
+  // LocatePicker 相关状态
+  basicValue: [] as string[],
+  basicFullAddress: '',
+  cityValue: [] as string[],
+  provinceValue: [] as string[],
+  disabledValue: ['440000', '440300', '440304'] as string[],
+  sizeValue: [] as string[],
+  addressForm: {
+    address: [] as string[],
+    detailAddress: '',
+  },
 });
 
 const rawDependencySchemas = [
@@ -158,6 +284,31 @@ console.log('rawDependencySchemas:', rawDependencySchemas);
 const [DependencyForm, formApi] = useVbenForm({
   schema: [...rawDependencySchemas],
 });
+
+// LocatePicker 处理函数
+const handleBasicChange = (value: string[], selectedOptions: any[]) => {
+  console.log('Basic change:', value, selectedOptions);
+  formState.basicFullAddress = selectedOptions.map(opt => opt.label).join('');
+};
+
+const handleCityChange = (value: string[], selectedOptions: any[]) => {
+  console.log('City change:', value, selectedOptions);
+};
+
+const handleProvinceChange = (value: string[], selectedOptions: any[]) => {
+  console.log('Province change:', value, selectedOptions);
+};
+
+const addressFormRules = {
+  address: [
+    { required: true, message: '请选择收货地址', trigger: 'change' }
+  ],
+};
+
+const handleAddressSubmit = (values: any) => {
+  console.log('Form submit:', values);
+  message.success('提交成功！');
+};
 </script>
 
 <style scoped>
