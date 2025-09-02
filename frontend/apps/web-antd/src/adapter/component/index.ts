@@ -24,14 +24,18 @@ import FkPicker from './FkPicker.vue';
 import PermissionPicker from './PermissionPicker.vue'
 import Text from './Text.vue'
 import DatePicker from './DatePicker.vue'
-import UIInput from './UIInput.vue'
-import MetaInput from './MetaInput.vue'
 import RichText from './RichText.vue';
 import QRCode from './QRCode.vue';
 import ColumnTypeInput from './ColumnTypeInput.vue';
 
 // 所有使用 vben 组件的需异步使用。
 
+const UIInput = defineAsyncComponent(
+  () => import('./UIInput.vue'),
+);
+const MetaInput = defineAsyncComponent(
+  () => import('./MetaInput.vue'),
+);
 const Items = defineAsyncComponent(
   () => import('./Items.vue'),
 );
