@@ -77,12 +77,14 @@ class RegionScraper {
               this.regions.push(currentCity);
             }
           } else if (level === 3) { // 区县级
-            if (currentCity) {
+            // 修正逻辑：区县的上级可能是市，也可能是省（省直辖县）
+            const parent = currentCity || currentProvince;
+            if (parent) {
               this.regions.push({
                 code,
                 name,
                 level,
-                parentCode: currentCity.code,
+                parentCode: parent.code,
                 parentId: null
               });
             }
@@ -122,12 +124,14 @@ class RegionScraper {
             this.regions.push(currentCity);
           }
         } else if (level === 3) {
-          if (currentCity) {
+          // 修正逻辑：区县的上级可能是市，也可能是省（省直辖县）
+          const parent = currentCity || currentProvince;
+          if (parent) {
             this.regions.push({
               code,
               name,
               level,
-              parentCode: currentCity.code,
+              parentCode: parent.code,
               parentId: null
             });
           }

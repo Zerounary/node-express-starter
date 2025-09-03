@@ -43,7 +43,8 @@ async function scrapeRegions() {
           const text = $(element).text().trim();
           
           // 匹配行政区划代码格式：6位数字 + 空格 + 名称
-          const matches = text.match(/(\d{6})\s+(.+?)(?=\d{6}|$)/g);
+          // 使用更健壮的正则，匹配 "6位数字 + 空白 + 非数字字符"
+          const matches = text.match(/\d{6}\s+[^\d]+/g);
           
           if (matches && matches.length > 0) {
             dataFound = true;
@@ -71,7 +72,7 @@ async function scrapeRegions() {
           }
         });
         
-        if (dataFound) break;
+        // if (dataFound) break; // 注释掉break，以确保遍历所有可能的选择器，从而抓取更完整的数据
       }
     }
     
