@@ -1,7 +1,7 @@
 <template>
   <div class="locate-picker">
-    <a-cascader
-      v-model:value="selectedValues"
+    <cascader
+      v-model="selectedValues"
       :options="options"
       :placeholder="placeholder"
       :loading="loading"
@@ -19,9 +19,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
-import { message } from 'ant-design-vue';
-import { regionApi } from '#/api/system/region';
+import { ref, computed, watch, onMounted, withDefaults, defineProps, defineEmits, defineExpose } from 'vue';
+import {Cascader, message } from 'ant-design-vue';
+import { regionApi, type Region } from '#/api/system/region';
 
 interface RegionOption {
   value: string;
@@ -84,18 +84,14 @@ const loadProvinces = async () => {
   try {
     loading.value = true;
     const response = await regionApi.getProvinces();
-    
-    if (response.success) {
-      options.value = response.data.map((province: any) => ({
-        value: province.code,
-        label: province.name,
-        level: province.level,
-        isLeaf: props.level === 1,
-        children: props.level > 1 ? [] : undefined,
-      }));
-    } else {
-      message.error('加载省份数据失败');
-    }
+
+    options.value = response.map((province: any) => ({
+      value: province.code,
+      label: province.name,
+      level: province.level,
+      isLeaf: props.level === 1,
+      children: props.level > 1 ? [] : undefined,
+    }));
   } catch (error) {
     console.error('Load provinces error:', error);
     message.error('加载省份数据失败');
@@ -106,17 +102,19 @@ const loadProvinces = async () => {
 
 // 动态加载数据
 const loadData = async (selectedOptions: RegionOption[]) => {
+  console.log('🚀 ~ loadData ~ selectedOptions:', selectedOptions)
+  console.log('🚀 ~ loadData ~ selectedOptions:', selectedOptions.length)
   const targetOption = selectedOptions[selectedOptions.length - 1];
-  
-  if (!targetOption || targetOption.children) {
+
+  if(!targetOption?.value) {
     return;
   }
 
   targetOption.loading = true;
 
   try {
-    let response;
-    
+    let response: Region[] = [];
+
     if (targetOption.level === 1 && props.level >= 2) {
       // 加载城市数据
       response = await regionApi.getCities(targetOption.value);
@@ -125,17 +123,13 @@ const loadData = async (selectedOptions: RegionOption[]) => {
       response = await regionApi.getDistricts(targetOption.value);
     }
 
-    if (response?.success) {
-      targetOption.children = response.data.map((item: any) => ({
+      targetOption.children = response.map((item: any) => ({
         value: item.code,
         label: item.name,
         level: item.level,
         isLeaf: item.level >= props.level,
         children: item.level < props.level ? [] : undefined,
       }));
-    } else {
-      message.error('加载数据失败');
-    }
   } catch (error) {
     console.error('Load data error:', error);
     message.error('加载数据失败');
@@ -160,14 +154,14 @@ const handleSearch = (value: string) => {
 // 获取选中的区域信息
 const getSelectedRegions = computed(() => {
   if (!selectedValues.value.length) return [];
-  
+
   const result: any[] = [];
   let currentOptions = options.value;
-  
+
   for (let i = 0; i < selectedValues.value.length; i++) {
     const code = selectedValues.value[i];
     const option = currentOptions.find(opt => opt.value === code);
-    
+
     if (option) {
       result.push({
         code: option.value,
@@ -177,7 +171,7 @@ const getSelectedRegions = computed(() => {
       currentOptions = option.children || [];
     }
   }
-  
+
   return result;
 });
 

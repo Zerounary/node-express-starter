@@ -19,31 +19,31 @@ export interface RegionTreeNode extends Region {
 
 export const regionApi = {
   // 获取省份列表
-  getProvinces(): Promise<ApiResponse<Region[]>> {
-    return requestClient.get('/api/regions/provinces');
+  getProvinces(): Promise<Region[]> {
+    return requestClient.get('/regions/provinces');
   },
 
   // 获取城市列表
-  getCities(provinceCode: string): Promise<ApiResponse<Region[]>> {
-    return requestClient.get(`/api/regions/cities/${provinceCode}`);
+  getCities(provinceCode: string): Promise<Region[]> {
+    return requestClient.get(`/regions/cities/${provinceCode}`);
   },
 
   // 获取区县列表
-  getDistricts(cityCode: string): Promise<ApiResponse<Region[]>> {
-    return requestClient.get(`/api/regions/districts/${cityCode}`);
+  getDistricts(cityCode: string): Promise<Region[]> {
+    return requestClient.get(`/regions/districts/${cityCode}`);
   },
 
   // 获取完整的区域树
-  getRegionTree(): Promise<ApiResponse<RegionTreeNode[]>> {
-    return requestClient.get('/api/regions/tree');
+  getRegionTree(): Promise<RegionTreeNode[]> {
+    return requestClient.get('/regions/tree');
   },
 
   // 搜索区域
   searchRegions(params: {
     keyword?: string;
     level?: number;
-  }): Promise<ApiResponse<Region[]>> {
-    return requestClient.get('/api/regions/search', { params });
+  }): Promise<Region[]> {
+    return requestClient.get('/regions/search', { params });
   },
 
   // 创建区域
@@ -52,21 +52,21 @@ export const regionApi = {
     name: string;
     level: number;
     parentCode?: string;
-  }): Promise<ApiResponse<Region>> {
-    return requestClient.post('/api/regions', data);
+  }): Promise<Region> {
+    return requestClient.post('/regions', data);
   },
 
   // 更新区域
   updateRegion(id: number, data: {
     name?: string;
     parentCode?: string;
-  }): Promise<ApiResponse<Region>> {
-    return requestClient.put(`/api/regions/${id}`, data);
+  }): Promise<Region> {
+    return requestClient.put(`/regions/${id}`, data);
   },
 
   // 删除区域
-  deleteRegion(id: number): Promise<ApiResponse<{ message: string }>> {
-    return requestClient.delete(`/api/regions/${id}`);
+  deleteRegion(id: number): Promise<{ message: string }> {
+    return requestClient.delete(`/regions/${id}`);
   },
 
   // 批量导入区域数据
@@ -75,17 +75,7 @@ export const regionApi = {
     name: string;
     level: number;
     parentCode?: string;
-  }>): Promise<ApiResponse<{ message: string; count: number }>> {
-    return requestClient.post('/api/regions/batch-import', { regions });
+  }>): Promise<{ message: string; count: number }> {
+    return requestClient.post('/regions/batch-import', { regions });
   },
 };
-
-// 全局类型定义
-declare global {
-  interface ApiResponse<T = any> {
-    success: boolean;
-    data: T;
-    message?: string;
-    code?: number;
-  }
-}

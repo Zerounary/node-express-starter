@@ -18,6 +18,7 @@ import { initAdminUser, initSystemData, initTableCategories } from "./db/init";
 import CacheService from "./services/CacheService";
 import { DataScope } from "./db/models/DataScope";
 import { initDynamicTables } from "./services/utils/dynamic";
+import Region from "./db/models/Region";
 
 
 async function bootstrap() {
@@ -65,6 +66,7 @@ async function bootstrap() {
         await UserRoles.sync({ alter: true});
         await MediaCategory.sync({ alter: true });
         await Media.sync({ alter: true });
+        await Region.sync({ alter: true });
 
         console.log('Core models synchronized');
 

@@ -9,7 +9,9 @@
     "db": "node tests/db.js",
     "wsc": "node tests/wsc.js",
     "crypto": "node tests/crypto.js",
-    "test": "mocha -w"
+    "test": "mocha -w",
+    "scrape-regions": "node scripts/run-scraper.js",
+    "generate-regions": "node scripts/generate-regions-data.js"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +22,7 @@
     "art-template": "^4.13.4",
     "axios": "^1.7.9",
     "bcryptjs": "^3.0.2",
+    "cheerio": "^1.0.0-rc.12",
     "cls-hooked": "^4.2.2",
     "cos-nodejs-sdk-v5": "^2.15.4",
     "crypto-js": "^4.2.0",

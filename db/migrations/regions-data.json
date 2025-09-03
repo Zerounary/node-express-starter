@@ -1,0 +1,1634 @@
+[
+  {
+    "tenantId": 1,
+    "code": "110000",
+    "name": "北京市",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "110100",
+    "name": "市辖区",
+    "level": 2,
+    "parentCode": "110000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "110101",
+    "name": "东城区",
+    "level": 3,
+    "parentCode": "110100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "110102",
+    "name": "西城区",
+    "level": 3,
+    "parentCode": "110100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "110105",
+    "name": "朝阳区",
+    "level": 3,
+    "parentCode": "110100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "110106",
+    "name": "丰台区",
+    "level": 3,
+    "parentCode": "110100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "110107",
+    "name": "石景山区",
+    "level": 3,
+    "parentCode": "110100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "110108",
+    "name": "海淀区",
+    "level": 3,
+    "parentCode": "110100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "110109",
+    "name": "门头沟区",
+    "level": 3,
+    "parentCode": "110100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "110111",
+    "name": "房山区",
+    "level": 3,
+    "parentCode": "110100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "110112",
+    "name": "通州区",
+    "level": 3,
+    "parentCode": "110100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "110113",
+    "name": "顺义区",
+    "level": 3,
+    "parentCode": "110100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "110114",
+    "name": "昌平区",
+    "level": 3,
+    "parentCode": "110100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "110115",
+    "name": "大兴区",
+    "level": 3,
+    "parentCode": "110100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "110116",
+    "name": "怀柔区",
+    "level": 3,
+    "parentCode": "110100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "110117",
+    "name": "平谷区",
+    "level": 3,
+    "parentCode": "110100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "120000",
+    "name": "天津市",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "120100",
+    "name": "市辖区",
+    "level": 2,
+    "parentCode": "120000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "120101",
+    "name": "和平区",
+    "level": 3,
+    "parentCode": "120100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "120102",
+    "name": "河东区",
+    "level": 3,
+    "parentCode": "120100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "120103",
+    "name": "河西区",
+    "level": 3,
+    "parentCode": "120100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "120104",
+    "name": "南开区",
+    "level": 3,
+    "parentCode": "120100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "120105",
+    "name": "河北区",
+    "level": 3,
+    "parentCode": "120100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "120106",
+    "name": "红桥区",
+    "level": 3,
+    "parentCode": "120100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "310000",
+    "name": "上海市",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "310100",
+    "name": "市辖区",
+    "level": 2,
+    "parentCode": "310000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "310101",
+    "name": "黄浦区",
+    "level": 3,
+    "parentCode": "310100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "310104",
+    "name": "徐汇区",
+    "level": 3,
+    "parentCode": "310100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "310105",
+    "name": "长宁区",
+    "level": 3,
+    "parentCode": "310100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "310106",
+    "name": "静安区",
+    "level": 3,
+    "parentCode": "310100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "310107",
+    "name": "普陀区",
+    "level": 3,
+    "parentCode": "310100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "310109",
+    "name": "虹口区",
+    "level": 3,
+    "parentCode": "310100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "310110",
+    "name": "杨浦区",
+    "level": 3,
+    "parentCode": "310100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "310112",
+    "name": "闵行区",
+    "level": 3,
+    "parentCode": "310100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "310113",
+    "name": "宝山区",
+    "level": 3,
+    "parentCode": "310100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "310114",
+    "name": "嘉定区",
+    "level": 3,
+    "parentCode": "310100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "310115",
+    "name": "浦东新区",
+    "level": 3,
+    "parentCode": "310100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "500000",
+    "name": "重庆市",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "500100",
+    "name": "市辖区",
+    "level": 2,
+    "parentCode": "500000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "500101",
+    "name": "万州区",
+    "level": 3,
+    "parentCode": "500100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "500102",
+    "name": "涪陵区",
+    "level": 3,
+    "parentCode": "500100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "500103",
+    "name": "渝中区",
+    "level": 3,
+    "parentCode": "500100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "500104",
+    "name": "大渡口区",
+    "level": 3,
+    "parentCode": "500100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "500105",
+    "name": "江北区",
+    "level": 3,
+    "parentCode": "500100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "500106",
+    "name": "沙坪坝区",
+    "level": 3,
+    "parentCode": "500100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "130000",
+    "name": "河北省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "130100",
+    "name": "石家庄市",
+    "level": 2,
+    "parentCode": "130000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "130102",
+    "name": "长安区",
+    "level": 3,
+    "parentCode": "130100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "130104",
+    "name": "桥西区",
+    "level": 3,
+    "parentCode": "130100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "130105",
+    "name": "新华区",
+    "level": 3,
+    "parentCode": "130100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "130107",
+    "name": "井陉矿区",
+    "level": 3,
+    "parentCode": "130100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "130108",
+    "name": "裕华区",
+    "level": 3,
+    "parentCode": "130100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "140000",
+    "name": "山西省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "140100",
+    "name": "太原市",
+    "level": 2,
+    "parentCode": "140000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "140105",
+    "name": "小店区",
+    "level": 3,
+    "parentCode": "140100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "140106",
+    "name": "迎泽区",
+    "level": 3,
+    "parentCode": "140100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "140107",
+    "name": "杏花岭区",
+    "level": 3,
+    "parentCode": "140100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "210000",
+    "name": "辽宁省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "210100",
+    "name": "沈阳市",
+    "level": 2,
+    "parentCode": "210000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "210102",
+    "name": "和平区",
+    "level": 3,
+    "parentCode": "210100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "210103",
+    "name": "沈河区",
+    "level": 3,
+    "parentCode": "210100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "210104",
+    "name": "大东区",
+    "level": 3,
+    "parentCode": "210100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "210105",
+    "name": "皇姑区",
+    "level": 3,
+    "parentCode": "210100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "320000",
+    "name": "江苏省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "320100",
+    "name": "南京市",
+    "level": 2,
+    "parentCode": "320000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "320102",
+    "name": "玄武区",
+    "level": 3,
+    "parentCode": "320100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "320104",
+    "name": "秦淮区",
+    "level": 3,
+    "parentCode": "320100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "320105",
+    "name": "建邺区",
+    "level": 3,
+    "parentCode": "320100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "320106",
+    "name": "鼓楼区",
+    "level": 3,
+    "parentCode": "320100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "320111",
+    "name": "浦口区",
+    "level": 3,
+    "parentCode": "320100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "320113",
+    "name": "栖霞区",
+    "level": 3,
+    "parentCode": "320100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "320200",
+    "name": "无锡市",
+    "level": 2,
+    "parentCode": "320000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "320205",
+    "name": "锡山区",
+    "level": 3,
+    "parentCode": "320200",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "320206",
+    "name": "惠山区",
+    "level": 3,
+    "parentCode": "320200",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "320211",
+    "name": "滨湖区",
+    "level": 3,
+    "parentCode": "320200",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "330000",
+    "name": "浙江省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "330100",
+    "name": "杭州市",
+    "level": 2,
+    "parentCode": "330000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "330102",
+    "name": "上城区",
+    "level": 3,
+    "parentCode": "330100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "330105",
+    "name": "拱墅区",
+    "level": 3,
+    "parentCode": "330100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "330106",
+    "name": "西湖区",
+    "level": 3,
+    "parentCode": "330100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "330108",
+    "name": "滨江区",
+    "level": 3,
+    "parentCode": "330100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "330109",
+    "name": "萧山区",
+    "level": 3,
+    "parentCode": "330100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "330110",
+    "name": "余杭区",
+    "level": 3,
+    "parentCode": "330100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "330200",
+    "name": "宁波市",
+    "level": 2,
+    "parentCode": "330000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "330203",
+    "name": "海曙区",
+    "level": 3,
+    "parentCode": "330200",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "330204",
+    "name": "江东区",
+    "level": 3,
+    "parentCode": "330200",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "330205",
+    "name": "江北区",
+    "level": 3,
+    "parentCode": "330200",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "340000",
+    "name": "安徽省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "340100",
+    "name": "合肥市",
+    "level": 2,
+    "parentCode": "340000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "340102",
+    "name": "瑶海区",
+    "level": 3,
+    "parentCode": "340100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "340103",
+    "name": "庐阳区",
+    "level": 3,
+    "parentCode": "340100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "340104",
+    "name": "蜀山区",
+    "level": 3,
+    "parentCode": "340100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "340111",
+    "name": "包河区",
+    "level": 3,
+    "parentCode": "340100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "350000",
+    "name": "福建省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "350100",
+    "name": "福州市",
+    "level": 2,
+    "parentCode": "350000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "350102",
+    "name": "鼓楼区",
+    "level": 3,
+    "parentCode": "350100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "350103",
+    "name": "台江区",
+    "level": 3,
+    "parentCode": "350100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "350104",
+    "name": "仓山区",
+    "level": 3,
+    "parentCode": "350100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "350105",
+    "name": "马尾区",
+    "level": 3,
+    "parentCode": "350100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "360000",
+    "name": "江西省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "360100",
+    "name": "南昌市",
+    "level": 2,
+    "parentCode": "360000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "360102",
+    "name": "东湖区",
+    "level": 3,
+    "parentCode": "360100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "360103",
+    "name": "西湖区",
+    "level": 3,
+    "parentCode": "360100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "360104",
+    "name": "青云谱区",
+    "level": 3,
+    "parentCode": "360100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "370000",
+    "name": "山东省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "370100",
+    "name": "济南市",
+    "level": 2,
+    "parentCode": "370000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "370102",
+    "name": "历下区",
+    "level": 3,
+    "parentCode": "370100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "370103",
+    "name": "市中区",
+    "level": 3,
+    "parentCode": "370100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "370104",
+    "name": "槐荫区",
+    "level": 3,
+    "parentCode": "370100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "370105",
+    "name": "天桥区",
+    "level": 3,
+    "parentCode": "370100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "370200",
+    "name": "青岛市",
+    "level": 2,
+    "parentCode": "370000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "370202",
+    "name": "市南区",
+    "level": 3,
+    "parentCode": "370200",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "370203",
+    "name": "市北区",
+    "level": 3,
+    "parentCode": "370200",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "370211",
+    "name": "黄岛区",
+    "level": 3,
+    "parentCode": "370200",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "410000",
+    "name": "河南省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "410100",
+    "name": "郑州市",
+    "level": 2,
+    "parentCode": "410000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "410102",
+    "name": "中原区",
+    "level": 3,
+    "parentCode": "410100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "410103",
+    "name": "二七区",
+    "level": 3,
+    "parentCode": "410100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "410104",
+    "name": "管城回族区",
+    "level": 3,
+    "parentCode": "410100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "410105",
+    "name": "金水区",
+    "level": 3,
+    "parentCode": "410100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "420000",
+    "name": "湖北省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "420100",
+    "name": "武汉市",
+    "level": 2,
+    "parentCode": "420000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "420102",
+    "name": "江岸区",
+    "level": 3,
+    "parentCode": "420100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "420103",
+    "name": "江汉区",
+    "level": 3,
+    "parentCode": "420100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "420104",
+    "name": "硚口区",
+    "level": 3,
+    "parentCode": "420100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "420105",
+    "name": "汉阳区",
+    "level": 3,
+    "parentCode": "420100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "430000",
+    "name": "湖南省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "430100",
+    "name": "长沙市",
+    "level": 2,
+    "parentCode": "430000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "430102",
+    "name": "芙蓉区",
+    "level": 3,
+    "parentCode": "430100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "430103",
+    "name": "天心区",
+    "level": 3,
+    "parentCode": "430100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "430104",
+    "name": "岳麓区",
+    "level": 3,
+    "parentCode": "430100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "430105",
+    "name": "开福区",
+    "level": 3,
+    "parentCode": "430100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "440000",
+    "name": "广东省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "440100",
+    "name": "广州市",
+    "level": 2,
+    "parentCode": "440000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "440103",
+    "name": "荔湾区",
+    "level": 3,
+    "parentCode": "440100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "440104",
+    "name": "越秀区",
+    "level": 3,
+    "parentCode": "440100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "440105",
+    "name": "海珠区",
+    "level": 3,
+    "parentCode": "440100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "440106",
+    "name": "天河区",
+    "level": 3,
+    "parentCode": "440100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "440111",
+    "name": "白云区",
+    "level": 3,
+    "parentCode": "440100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "440112",
+    "name": "黄埔区",
+    "level": 3,
+    "parentCode": "440100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "440300",
+    "name": "深圳市",
+    "level": 2,
+    "parentCode": "440000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "440303",
+    "name": "罗湖区",
+    "level": 3,
+    "parentCode": "440300",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "440304",
+    "name": "福田区",
+    "level": 3,
+    "parentCode": "440300",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "440305",
+    "name": "南山区",
+    "level": 3,
+    "parentCode": "440300",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "440306",
+    "name": "宝安区",
+    "level": 3,
+    "parentCode": "440300",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "440307",
+    "name": "龙岗区",
+    "level": 3,
+    "parentCode": "440300",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "440308",
+    "name": "盐田区",
+    "level": 3,
+    "parentCode": "440300",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "450000",
+    "name": "广西壮族自治区",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "450100",
+    "name": "南宁市",
+    "level": 2,
+    "parentCode": "450000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "450102",
+    "name": "兴宁区",
+    "level": 3,
+    "parentCode": "450100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "450103",
+    "name": "青秀区",
+    "level": 3,
+    "parentCode": "450100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "450105",
+    "name": "江南区",
+    "level": 3,
+    "parentCode": "450100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "460000",
+    "name": "海南省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "460100",
+    "name": "海口市",
+    "level": 2,
+    "parentCode": "460000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "460105",
+    "name": "秀英区",
+    "level": 3,
+    "parentCode": "460100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "460106",
+    "name": "龙华区",
+    "level": 3,
+    "parentCode": "460100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "460107",
+    "name": "琼山区",
+    "level": 3,
+    "parentCode": "460100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "460108",
+    "name": "美兰区",
+    "level": 3,
+    "parentCode": "460100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "510000",
+    "name": "四川省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "510100",
+    "name": "成都市",
+    "level": 2,
+    "parentCode": "510000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "510104",
+    "name": "锦江区",
+    "level": 3,
+    "parentCode": "510100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "510105",
+    "name": "青羊区",
+    "level": 3,
+    "parentCode": "510100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "510106",
+    "name": "金牛区",
+    "level": 3,
+    "parentCode": "510100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "510107",
+    "name": "武侯区",
+    "level": 3,
+    "parentCode": "510100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "520000",
+    "name": "贵州省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "520100",
+    "name": "贵阳市",
+    "level": 2,
+    "parentCode": "520000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "520102",
+    "name": "南明区",
+    "level": 3,
+    "parentCode": "520100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "520103",
+    "name": "云岩区",
+    "level": 3,
+    "parentCode": "520100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "520111",
+    "name": "花溪区",
+    "level": 3,
+    "parentCode": "520100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "530000",
+    "name": "云南省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "530100",
+    "name": "昆明市",
+    "level": 2,
+    "parentCode": "530000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "530102",
+    "name": "五华区",
+    "level": 3,
+    "parentCode": "530100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "530103",
+    "name": "盘龙区",
+    "level": 3,
+    "parentCode": "530100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "530111",
+    "name": "官渡区",
+    "level": 3,
+    "parentCode": "530100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "540000",
+    "name": "西藏自治区",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "540100",
+    "name": "拉萨市",
+    "level": 2,
+    "parentCode": "540000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "540102",
+    "name": "城关区",
+    "level": 3,
+    "parentCode": "540100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "540121",
+    "name": "林周县",
+    "level": 3,
+    "parentCode": "540100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "610000",
+    "name": "陕西省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "610100",
+    "name": "西安市",
+    "level": 2,
+    "parentCode": "610000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "610102",
+    "name": "新城区",
+    "level": 3,
+    "parentCode": "610100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "610103",
+    "name": "碑林区",
+    "level": 3,
+    "parentCode": "610100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "610104",
+    "name": "莲湖区",
+    "level": 3,
+    "parentCode": "610100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "610111",
+    "name": "灞桥区",
+    "level": 3,
+    "parentCode": "610100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "620000",
+    "name": "甘肃省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "620100",
+    "name": "兰州市",
+    "level": 2,
+    "parentCode": "620000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "620102",
+    "name": "城关区",
+    "level": 3,
+    "parentCode": "620100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "620103",
+    "name": "七里河区",
+    "level": 3,
+    "parentCode": "620100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "620104",
+    "name": "西固区",
+    "level": 3,
+    "parentCode": "620100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "630000",
+    "name": "青海省",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "630100",
+    "name": "西宁市",
+    "level": 2,
+    "parentCode": "630000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "630102",
+    "name": "城东区",
+    "level": 3,
+    "parentCode": "630100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "630103",
+    "name": "城中区",
+    "level": 3,
+    "parentCode": "630100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "630104",
+    "name": "城西区",
+    "level": 3,
+    "parentCode": "630100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "640000",
+    "name": "宁夏回族自治区",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "640100",
+    "name": "银川市",
+    "level": 2,
+    "parentCode": "640000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "640104",
+    "name": "兴庆区",
+    "level": 3,
+    "parentCode": "640100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "640105",
+    "name": "西夏区",
+    "level": 3,
+    "parentCode": "640100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "640106",
+    "name": "金凤区",
+    "level": 3,
+    "parentCode": "640100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "650000",
+    "name": "新疆维吾尔自治区",
+    "level": 1,
+    "parentCode": null,
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "650100",
+    "name": "乌鲁木齐市",
+    "level": 2,
+    "parentCode": "650000",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "650102",
+    "name": "天山区",
+    "level": 3,
+    "parentCode": "650100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "650103",
+    "name": "沙依巴克区",
+    "level": 3,
+    "parentCode": "650100",
+    "parentId": null
+  },
+  {
+    "tenantId": 1,
+    "code": "650104",
+    "name": "新市区",
+    "level": 3,
+    "parentCode": "650100",
+    "parentId": null
+  }
+]
