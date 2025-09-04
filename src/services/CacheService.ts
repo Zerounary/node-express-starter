@@ -1,7 +1,7 @@
-import { DynamicTable, DynamicColumn } from '../db/models';
+import { DynamicTable, DynamicColumn, TableAction } from '../db/models';
 import { logError, logInfo } from '../logger';
 
-type TableWithColumns = DynamicTable & { columns: DynamicColumn[] };
+type TableWithColumns = DynamicTable & { columns: DynamicColumn[]; actions: TableAction[] };
 
 function deepFreeze<T>(obj: T, seen = new WeakSet<object>()): T {
   if (obj && typeof obj === 'object') {
@@ -72,7 +72,10 @@ class CacheService {
     if (!this.enabled) return;
     try {
       const tables = await DynamicTable.findAll({
-        include: [{ model: DynamicColumn, as: 'columns' }],
+        include: [
+          { model: DynamicColumn, as: 'columns' },
+          { model: TableAction, as: 'actions' },
+        ],
       });
 
       const byName = new Map<string, TableWithColumns>();
@@ -121,7 +124,10 @@ class CacheService {
       try {
         const table = await DynamicTable.findOne({
           where: { name: tableName },
-          include: [{ model: DynamicColumn, as: 'columns' }],
+          include: [
+            { model: DynamicColumn, as: 'columns' },
+            { model: TableAction, as: 'actions' },
+          ],
         });
 
         const current = this.tables;
@@ -170,7 +176,10 @@ class CacheService {
     logInfo(`Cache disabled, fetching table by name '${name}' from DB.`);
     const table = await DynamicTable.findOne({
       where: { name },
-      include: [{ model: DynamicColumn, as: 'columns' }],
+      include: [
+        { model: DynamicColumn, as: 'columns' },
+        { model: TableAction, as: 'actions' },
+      ],
     });
     return table ? (table.get({ plain: true }) as TableWithColumns) : undefined;
   }
@@ -182,7 +191,10 @@ class CacheService {
     logInfo(`Cache disabled, fetching table by alias name '${aliasName}' from DB.`);
     const table = await DynamicTable.findOne({
       where: { alias_name: aliasName },
-      include: [{ model: DynamicColumn, as: 'columns' }],
+      include: [
+        { model: DynamicColumn, as: 'columns' },
+        { model: TableAction, as: 'actions' },
+      ],
     });
     return table ? (table.get({ plain: true }) as TableWithColumns) : undefined;
   }
@@ -194,7 +206,10 @@ class CacheService {
     logInfo(`Cache disabled, fetching table by id ${id} from DB.`);
     const table = await DynamicTable.findOne({
       where: { id },
-      include: [{ model: DynamicColumn, as: 'columns' }],
+      include: [
+        { model: DynamicColumn, as: 'columns' },
+        { model: TableAction, as: 'actions' },
+      ],
     });
     return table ? (table.get({ plain: true }) as TableWithColumns) : undefined;
   }

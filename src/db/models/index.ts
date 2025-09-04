@@ -5,6 +5,7 @@ import DynamicColumn from './DynamicColumn';
 import Media from './Media';
 import MediaCategory from './MediaCategory';
 import setupAssociations from './associations';
+import { TableAction } from './TableAction';
 
 // 设置模型之间的关联关系
 setupAssociations();
@@ -15,5 +16,6 @@ export {
   TableCategory,
   Tenant,
   Media,
-  MediaCategory
+  MediaCategory,
+  TableAction,
 };

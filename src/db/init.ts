@@ -868,6 +868,15 @@ export const systemTables = [
           component: "Input",
         },
       },
+      {
+        name: "orderno",
+        dataType: ColumnDataTypes.INTEGER,
+        required: true,
+        description: "序号",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: undefined,
+      },
     ]),
   },
 ];

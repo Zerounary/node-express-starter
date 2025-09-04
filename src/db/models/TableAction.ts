@@ -10,6 +10,7 @@ class TableAction extends Model {
   public type!: string;
   public name!: string;
   public resource!: string;
+  public orderno?: number | null;
 }
 
 TableAction.init({
@@ -46,6 +47,10 @@ TableAction.init({
     type: DataTypes.STRING,
     allowNull: false,
   },
+  orderno: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   ...commontFields,
 }, {
   sequelize,
@@ -59,6 +64,7 @@ TableAction.init({
   ],
 });
 
-DynamicTable.hasMany(TableAction, { foreignKey: 'tableId' });
+DynamicTable.hasMany(TableAction, { foreignKey: 'tableId', as: 'actions' });
+TableAction.belongsTo(DynamicTable, { foreignKey: 'tableId' });
 
 export { TableAction };

@@ -1,6 +1,7 @@
 import { Model, DataTypes, HasManyGetAssociationsMixin, BelongsToGetAssociationMixin } from 'sequelize';
 import sequelize from '../sequelize';
 import type DynamicColumn from './DynamicColumn';
+import type { TableAction } from './TableAction';
 import Tenant from './Tenant';
 import TableCategory from './TableCategory';
 import { commontFields } from './common';
@@ -18,6 +19,8 @@ class DynamicTable extends Model {
 
   public getColumns!: HasManyGetAssociationsMixin<DynamicColumn>;
   public columns?: DynamicColumn[];
+  public getActions!: HasManyGetAssociationsMixin<TableAction>;
+  public actions?: TableAction[];
   public getCategory!: BelongsToGetAssociationMixin<TableCategory>;
   public category?: TableCategory;
 }

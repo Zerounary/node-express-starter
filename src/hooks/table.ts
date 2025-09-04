@@ -80,11 +80,16 @@ export async function getTableConfigById(tableId: number) {
     }
   }
 
+  const actions = [...table.actions].sort(
+    (a, b) => a.orderno - b.orderno
+  )
+
   return {
     id: table.id,
     table: table.alias_name || table.name,
     name: table.description,
     hideMenu: table.hideMenu,
+    actions,
     columns: columns.map((col) => ({
       id: col.id,
       fieldName: col.name,
