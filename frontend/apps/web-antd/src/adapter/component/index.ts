@@ -29,6 +29,7 @@ import QRCode from './QRCode.vue';
 import ColumnTypeInput from './ColumnTypeInput.vue';
 import LocatePicker from './LocatePicker.vue';
 import Divider from './Divider.vue';
+import ActionButtonGroup from './ActionButtonGroup.vue';
 
 // 所有使用 vben 组件的需异步使用。
 
@@ -137,6 +138,7 @@ export type ComponentType =
   | 'DefaultButton'
   | 'Divider'
   | 'IconPicker'
+  | 'ActionButtonGroup'
   | 'Input'
   | 'InputNumber'
   | 'InputPassword'
@@ -195,6 +197,7 @@ async function initComponentAdapter() {
     QRCode,
     Items,
     ColumnTypeInput,
+    ActionButtonGroup,
     LocatePicker,
     UIInput,
     PermissionPicker,

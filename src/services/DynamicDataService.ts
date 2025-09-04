@@ -118,6 +118,10 @@ class DynamicDataService {
 
     return Model;
   }
+
+  resetModelCache(key: string) {
+    this.modelCache.delete(key);
+  }
 }
 
 export default new DynamicDataService(); 

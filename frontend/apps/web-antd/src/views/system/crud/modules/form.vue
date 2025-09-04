@@ -11,7 +11,13 @@ import { useVbenForm } from '#/adapter/form';
 import { create, update } from '#/api/system/crud';
 import { $t } from '#/locales';
 
-import { isCreateEditable, isUpdateEditable, useFormCreateSchema, useFormUpdateSchema } from '../data';
+import {
+  isCreateEditable,
+  isUpdateEditable,
+  useFormCreateSchema,
+  useFormUpdateSchema,
+} from '../data';
+import ActionButtonGroup from '#/adapter/component/ActionButtonGroup.vue';
 
 const props = defineProps<{
   table: Object;
@@ -30,24 +36,29 @@ const [Form, formApi] = useVbenForm({
     controlClass: 'w-full',
     labelWidth: 80,
   },
-  wrapperClass: 'md:border md:rounded-md grid-cols-1 md:grid-cols-2 md:gap-x-2 lg:grid-cols-4 lg:gap-x-5 lg:p-5 ',
+  wrapperClass:
+    'md:border md:rounded-md grid-cols-1 md:grid-cols-2 md:gap-x-2 lg:grid-cols-4 lg:gap-x-5 lg:p-5 ',
 });
 
 const id = ref();
 const [Drawer, drawerApi] = useVbenDrawer({
+  contentClass: 'p-0',
   async onConfirm() {
     const { valid } = await formApi.validate();
     if (!valid) return;
     const values = await formApi.getValues();
     let data = { ...values };
     // 移除表单中不可以编辑的字段
-    props.table.columns.forEach(col => {
-      if (!((id.value ? isUpdateEditable : isCreateEditable)(col))) {
+    props.table.columns.forEach((col) => {
+      if (!(id.value ? isUpdateEditable : isCreateEditable)(col)) {
         delete data[col.fieldName];
       }
-    })
+    });
     drawerApi.lock();
-    (id.value ? update(tableName.value, id.value, data) : create(tableName.value, data))
+    (id.value
+      ? update(tableName.value, id.value, data)
+      : create(tableName.value, data)
+    )
       .then(() => {
         emits('success');
         drawerApi.close();
@@ -59,23 +70,23 @@ const [Drawer, drawerApi] = useVbenDrawer({
   onOpenChange(isOpen) {
     if (isOpen) {
       const data = drawerApi.getData<SystemTableApi.SystemTable>();
-      console.log('🚀 ~ onOpenChange ~ data:', data)
+      console.log('🚀 ~ onOpenChange ~ data:', data);
       formApi.resetForm();
-      if(data._parentKey) {
+      if (data._parentKey) {
         formApi.setFieldValue(data._parentKey, data._parentId);
       }
       if (data?.id) {
         formData.value = data;
         id.value = data.id;
         formApi.setState({
-          schema: useFormUpdateSchema(props.table, {formApi, data}),
-        })
+          schema: useFormUpdateSchema(props.table, { formApi, data }),
+        });
         formApi.setValues(data);
       } else {
         id.value = undefined;
         formApi.setState({
-          schema: useFormCreateSchema(props.table, {formApi, data}),
-        })
+          schema: useFormCreateSchema(props.table, { formApi, data }),
+        });
       }
     }
   },
@@ -101,9 +112,19 @@ function getNodeClass(node: Recordable<any>) {
 </script>
 <template>
   <Drawer :title="getDrawerTitle">
-    <!-- 按钮组 -->
-
-    <Form />
+    <div class="rounded-md bg-gray-50 md:p-4">
+      <!-- 按钮组 -->
+      <ActionButtonGroup
+        v-if="formData?.id"
+        type="form"
+        :table="table.table"
+        :actions="table.actions"
+        :params="{
+          id: formData?.id,
+        }"
+      />
+      <Form class="bg-white" />
+    </div>
   </Drawer>
 </template>
 <style lang="css" scoped>

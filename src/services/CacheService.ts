@@ -1,5 +1,6 @@
 import { DynamicTable, DynamicColumn, TableAction } from '../db/models';
 import { logError, logInfo } from '../logger';
+import DynamicDataService from './DynamicDataService';
 
 type TableWithColumns = DynamicTable & { columns: DynamicColumn[]; actions: TableAction[] };
 
@@ -161,6 +162,7 @@ class CacheService {
         byId.set(frozen.id, frozen);
 
         this.tables = { byName, byAlias, byId };
+        DynamicDataService.resetModelCache(tableName);
         logInfo(`Cache reloaded for table: ${tableName}`);
       } catch (error) {
         logError(error);

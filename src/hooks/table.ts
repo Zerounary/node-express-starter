@@ -44,8 +44,9 @@ export async function syncTable({id: tableId, user}) {
     user.tenantId
   );
   await Model.sync({ alter: true });
+  await CacheService.reloadTable(table.alias_name);
   return {
-    message: "Table synchronized successfully",
+    message: "数据表同步成功",
   }
 }
 

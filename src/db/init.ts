@@ -336,7 +336,7 @@ export const systemTables = [
         relatedToTableId: "table_categories",
         enumValues: undefined,
         ui: {
-          mask: "1111111111",
+          mask: "0011000000",
           width: 0,
           component: "Items",
           hideLabel: true,

@@ -151,7 +151,7 @@
                 placeholder="js表达式, values是表单值对象"
               />
             </a-form-item>
-            <a-form-item label="隐藏">
+            <a-form-item label="显示">
               <a-textarea
                 :value="ensureDeps().show"
                 :rows="2"
