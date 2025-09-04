@@ -27,6 +27,8 @@ import DatePicker from './DatePicker.vue'
 import RichText from './RichText.vue';
 import QRCode from './QRCode.vue';
 import ColumnTypeInput from './ColumnTypeInput.vue';
+import LocatePicker from './LocatePicker.vue';
+import Divider from './Divider.vue';
 
 // 所有使用 vben 组件的需异步使用。
 
@@ -50,7 +52,6 @@ const CheckboxGroup = defineAsyncComponent(() =>
   import('ant-design-vue/es/checkbox').then((res) => res.CheckboxGroup),
 );
 
-const Divider = defineAsyncComponent(() => import('ant-design-vue/es/divider'));
 const Input = defineAsyncComponent(() => import('ant-design-vue/es/input'));
 const InputNumber = defineAsyncComponent(
   () => import('ant-design-vue/es/input-number'),
@@ -194,6 +195,7 @@ async function initComponentAdapter() {
     QRCode,
     Items,
     ColumnTypeInput,
+    LocatePicker,
     UIInput,
     PermissionPicker,
     RichText,

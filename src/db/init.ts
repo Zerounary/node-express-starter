@@ -65,6 +65,20 @@ export const defaultColumns = (columns = []) => {
     },
     ...columns.map(autoFill),
     {
+      name: "logDivider",
+      dataType: ColumnDataTypes.VIRTUAL,
+      required: false,
+      description: "日志信息",
+      relatedToTableId: undefined,
+      enumValues: undefined,
+      ui: {
+        mask: "0010000000",
+        width: 200,
+        component: "Divider",
+      },
+      orderno: 1000,
+    },
+    {
       name: "createdBy",
       dataType: ColumnDataTypes.ID,
       required: true,
@@ -838,7 +852,7 @@ function categoryIdOf (name = '') {
 
 
 export const tableInitColumns = () => {
-  return defaultColumns().map((col) => ({
+  return defaultColumns().filter(col => col.dataType != ColumnDataTypes.VIRTUAL).map((col) => ({
     ...col,
     relatedToTableId: tableIdOf(col.relatedToTableId) || null,
   }));

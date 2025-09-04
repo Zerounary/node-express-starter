@@ -236,6 +236,7 @@ interface ColumnUI {
     | 'FkPicker'
     | 'RadioGroup'
     | 'UIInput'
+    | 'Divider'
     | 'ColumnTypeInput'
     | 'PermissionPicker'
     | 'IconPicker'
@@ -289,6 +290,7 @@ const componentTypes = [
   { value: 'FkPicker', label: '外键选择器' },
   { value: 'RadioGroup', label: '单选按钮组' },
   { value: 'UIInput', label: 'UI配置输入' },
+  { value: 'Divider', label: '分隔' },
   { value: 'MediaPicker', label: '媒体选择器' },
   { value: 'IconPicker', label: '图标选择器' },
   { value: 'ColumnTypeInput', label: '字段类型选择器' },
