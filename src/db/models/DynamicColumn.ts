@@ -50,6 +50,11 @@ DynamicColumn.init({
     type: new DataTypes.STRING(128),
     allowNull: false,
   },
+  required: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+    defaultValue: false,
+  },
   ak: {
     type: DataTypes.BOOLEAN,
     allowNull: true,

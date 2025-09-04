@@ -97,6 +97,7 @@ export async function getMenus({ user }) {
       isActive: {
         [Op.eq]: true
       },
+      hideMenu: false,
       ...permLimits
     },
     order: [['orderno', 'ASC'], ['ID', 'ASC']],

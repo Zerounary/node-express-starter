@@ -1,6 +1,7 @@
 import { tableInitColumns } from "@/db/init";
 import { DynamicColumn } from "@/db/models";
 import CacheService from "@/services/CacheService";
+import DynamicDataService from "@/services/DynamicDataService";
 
 export async function beforeCreate(data) {
   data.alias_name = data.alias_name || data.name;
@@ -34,6 +35,18 @@ export async function beforeDelete(id) {
 
 export async function afterDelete(data) {
   await CacheService.reloadTable(data.name);
+}
+
+export async function syncTable({id: tableId, user}) {
+  const table = await CacheService.getTableById(tableId);
+  const Model = await DynamicDataService.getModelForTable(
+    table.name,
+    user.tenantId
+  );
+  await Model.sync({ alter: true });
+  return {
+    message: "Table synchronized successfully",
+  }
 }
 
 export async function getPageConfig({tableName}) {
@@ -71,6 +84,7 @@ export async function getTableConfigById(tableId: number) {
     id: table.id,
     table: table.alias_name || table.name,
     name: table.description,
+    hideMenu: table.hideMenu,
     columns: columns.map((col) => ({
       id: col.id,
       fieldName: col.name,

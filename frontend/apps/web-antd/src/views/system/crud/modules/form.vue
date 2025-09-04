@@ -27,6 +27,7 @@ const [Form, formApi] = useVbenForm({
   commonConfig: {
     colon: true,
     labelClass: 'justify-start',
+    controlClass: 'w-full',
     labelWidth: 80,
   },
   wrapperClass: 'md:border md:rounded-md grid-cols-1 md:grid-cols-2 md:gap-x-2 lg:grid-cols-4 lg:gap-x-5 lg:p-5 ',
@@ -100,6 +101,8 @@ function getNodeClass(node: Recordable<any>) {
 </script>
 <template>
   <Drawer :title="getDrawerTitle">
+    <!-- 按钮组 -->
+
     <Form />
   </Drawer>
 </template>

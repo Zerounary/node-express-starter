@@ -38,12 +38,11 @@ const autoFill = (column, index) => {
   };
 };
 
-const idOf = (arr = [], name = '', key = 'name') => {
+const idOf = (arr = [], name = "", key = "name") => {
   const idx = arr.findIndex((i) => i[key] === name);
   if (idx === -1) return null;
   return idx + 1;
-}
-
+};
 
 export const defaultColumns = (columns = []) => {
   // 如果 column中没有字段维护了 ak dk  则自动用第一个字段做 ak dk
@@ -154,14 +153,14 @@ export const defaultColumns = (columns = []) => {
       ui: {
         mask: "0010101001",
         width: 200,
-        component: 'RadioGroup',
+        component: "RadioGroup",
         componentProps: {
-          buttonStyle: 'solid',
+          buttonStyle: "solid",
           options: [
-            { label: '是', value: true },
-            { label: '否', value: false },
+            { label: "是", value: true },
+            { label: "否", value: false },
           ],
-          optionType: 'button',
+          optionType: "button",
         },
         disabled: true,
       },
@@ -174,68 +173,69 @@ export const tableCategories = [
   {
     name: "概览",
     description: "",
-    type: 'catelog',
+    type: "catelog",
     parentId: null,
     meta: {
-      icon: "lucide:layout-dashboard"
+      icon: "lucide:layout-dashboard",
     },
-    path: '/dashboard'
+    path: "/dashboard",
   },
   {
     name: "用户管理",
     description: "",
-    type: 'catelog',
+    type: "catelog",
     parentId: null,
     meta: {
-      icon: "tabler:user"
+      icon: "tabler:user",
     },
-    path: '/account'
+    path: "/account",
   },
   {
     name: "开发平台",
     description: "",
-    type: 'catelog',
+    type: "catelog",
     parentId: null,
     meta: {
-      icon: "carbon:development"
+      icon: "carbon:development",
     },
-    path: '/system'
+    path: "/system",
   },
   {
     name: "分析页",
     description: "",
-    type: 'menu',
+    type: "menu",
     parentId: "概览",
     meta: {
-      icon: "lucide:area-chart"
+      icon: "lucide:area-chart",
     },
-    path: '/analytics',
+    path: "/analytics",
   },
   {
     name: "工作台",
     description: "",
-    type: 'menu',
+    type: "menu",
     parentId: "概览",
     meta: {
-      icon: "carbon:workspace"
+      icon: "carbon:workspace",
     },
-    path: '/workspace',
+    path: "/workspace",
   },
   {
     name: "组件页",
     description: "",
-    type: 'menu',
+    type: "menu",
     parentId: "概览",
     meta: {
-      icon: "uiw:component"
+      icon: "uiw:component",
     },
-    path: '/playground',
+    path: "/playground",
   },
-]
+];
 
 export const initTableCategories = async () => {
   for (let category of tableCategories) {
-    category.parentId = categoryIdOf(category?.parentId)?.toLocaleString() || null;
+    category.parentId =
+      categoryIdOf(category?.parentId)?.toLocaleString() || null;
     const [cat, created] = await TableCategory.findOrCreate({
       where: { name: category.name },
       defaults: {
@@ -243,15 +243,15 @@ export const initTableCategories = async () => {
         description: category.description,
         parentId: categoryIdOf(category?.parentId) || null,
         meta: category.meta || {},
-      }
+      },
     });
-    if(created) {
+    if (created) {
       await TableCategory.update(category, {
         where: { id: cat.id },
       });
     }
   }
-}
+};
 
 // 系统表字段配置
 export const systemTables = [
@@ -317,6 +317,50 @@ export const systemTables = [
           },
         },
       },
+      {
+        name: "hideMenu",
+        dataType: ColumnDataTypes.BOOLEAN,
+        required: false,
+        description: "隐藏菜单",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: {
+          component: "Checkbox",
+        },
+      },
+      {
+        name: "items",
+        dataType: ColumnDataTypes.VIRTUAL,
+        required: false,
+        description: "表类别",
+        relatedToTableId: "table_categories",
+        enumValues: undefined,
+        ui: {
+          mask: "1111111111",
+          width: 0,
+          component: "Items",
+          hideLabel: true,
+          dependencies: {},
+          componentProps: {
+            tabs: [
+              {
+                key: "tab1",
+                table: "column",
+                title: "字段",
+                parentKey: "tableId",
+                queryExtra: {},
+              },
+              {
+                key: "tab2",
+                table: "actions",
+                title: "动作",
+                parentKey: "tableId",
+                queryExtra: {},
+              },
+            ],
+          },
+        },
+      },
     ]),
   },
   {
@@ -357,7 +401,7 @@ export const systemTables = [
         relatedToTableId: undefined,
         enumValues: undefined,
         ui: {
-          component: "ColumnTypeInput"
+          component: "ColumnTypeInput",
         },
       },
       {
@@ -390,8 +434,19 @@ export const systemTables = [
           },
           dependencies: {
             show: 'values.dataType === "ID"',
-            triggerFields: ['dataType']
-          }
+            triggerFields: ["dataType"],
+          },
+        },
+      },
+      {
+        name: "required",
+        dataType: ColumnDataTypes.BOOLEAN,
+        required: false,
+        description: "必填",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: {
+          component: "Checkbox",
         },
       },
       {
@@ -446,8 +501,7 @@ export const systemTables = [
         ui: {
           mask: "0011001111",
           component: "UIInput",
-          componentProps: {
-          },
+          componentProps: {},
         },
       },
       {
@@ -547,9 +601,7 @@ export const systemTables = [
           mask: "0011000000",
           width: 200,
           component: "PermissionPicker",
-          componentProps: {
-
-          }
+          componentProps: {},
         },
       },
     ]),
@@ -590,13 +642,12 @@ export const systemTables = [
           },
         },
       },
-      
     ]),
   },
   {
-    name: 'table_categories',
-    description: '表类别',
-    alias_name: 'table_categories',
+    name: "table_categories",
+    description: "表类别",
+    alias_name: "table_categories",
     categoryId: categoryIdOf("开发平台"),
     columns: defaultColumns([
       {
@@ -651,8 +702,7 @@ export const systemTables = [
         enumValues: undefined,
         ui: {
           component: "MetaInput",
-          componentProps: {
-          },
+          componentProps: {},
         },
       },
       {
@@ -711,7 +761,7 @@ export const systemTables = [
       },
     ]),
   },
-    {
+  {
     name: "tenants",
     description: "租户",
     alias_name: "tenants",
@@ -744,8 +794,82 @@ export const systemTables = [
           width: 200,
           component: "Input",
         },
-      }])
-    }
+      },
+    ]),
+  },
+  {
+    name: "table_actions",
+    description: "动作定义",
+    alias_name: "actions",
+    categoryId: categoryIdOf("开发平台"),
+    columns: defaultColumns([
+      {
+        name: "tableId",
+        dataType: ColumnDataTypes.ID,
+        required: true,
+        description: "所属表",
+        relatedToTableId: "dynamic_tables",
+        enumValues: undefined,
+        ui: {
+          component: "FkPicker",
+          table: "table",
+          componentProps: {
+            table: "table",
+          },
+        },
+      },
+      {
+        name: "type",
+        dataType: ColumnDataTypes.STRING,
+        required: true,
+        description: "类型",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ak: true,
+        dk: true,
+        ui: {
+          mask: "1111111111",
+          width: 200,
+          component: "Select",
+          componentProps: {
+            options: [
+              { label: "表单动作", value: "form" },
+              { label: "列表动作", value: "list" },
+              { label: "明细动作", value: "item" },
+            ],
+          },
+        },
+      },
+      {
+        name: "name",
+        dataType: ColumnDataTypes.STRING,
+        required: true,
+        description: "名称",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: {
+          mask: "1111111111",
+          width: 200,
+          component: "Input",
+        },
+      },
+      {
+        name: "resource",
+        dataType: ColumnDataTypes.STRING,
+        required: true,
+        description: "接口名称",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ak: true,
+        dk: true,
+        ui: {
+          mask: "1111111111",
+          width: 200,
+          component: "Input",
+        },
+      },
+    ]),
+  },
 ];
 
 export const initSystemData = async () => {
@@ -767,7 +891,6 @@ export const initSystemData = async () => {
     } else {
       await DynamicTable.update(table, { where: { id: tableId } });
     }
-
   }
 
   // 先创建表后，再创建字段， 确保能创建字段关联
@@ -803,7 +926,7 @@ export const adminUser = {
 };
 
 export const initAdminUser = async () => {
-  await initTenantUser(adminUser)
+  await initTenantUser(adminUser);
 };
 
 export const initTenantUser = async (userConfig) => {
@@ -840,20 +963,21 @@ export const initTenantUser = async (userConfig) => {
 
   // 关联角色
   await user.addRole(adminRole);
+};
+
+function tableIdOf(name = "") {
+  return idOf(systemTables, name, "name");
 }
 
-function tableIdOf (name = '') {
-  return idOf(systemTables, name, 'name');
+function categoryIdOf(name = "") {
+  return idOf(tableCategories, name, "name");
 }
-
-function categoryIdOf (name = '') {
-  return idOf(tableCategories, name, 'name');
-}
-
 
 export const tableInitColumns = () => {
-  return defaultColumns().filter(col => col.dataType != ColumnDataTypes.VIRTUAL).map((col) => ({
-    ...col,
-    relatedToTableId: tableIdOf(col.relatedToTableId) || null,
-  }));
-}
+  return defaultColumns()
+    .filter((col) => col.dataType != ColumnDataTypes.VIRTUAL)
+    .map((col) => ({
+      ...col,
+      relatedToTableId: tableIdOf(col.relatedToTableId) || null,
+    }));
+};

@@ -10,6 +10,7 @@ class DynamicTable extends Model {
   public tenantId!: number;
   public categoryId!: number | null;
   public name!: string;
+  public hideMenu?: boolean | null;
   public alias_name!: string;
   public description!: string | null;
   public created!: string;
@@ -43,6 +44,11 @@ DynamicTable.init({
         key: 'id'
     },
     comment: '表类别ID，关联到表分类表'
+  },
+  hideMenu: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+    defaultValue: false,
   },
   name: {
     type: new DataTypes.STRING(128),

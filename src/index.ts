@@ -19,6 +19,7 @@ import CacheService from "./services/CacheService";
 import { DataScope } from "./db/models/DataScope";
 import { initDynamicTables } from "./services/utils/dynamic";
 import Region from "./db/models/Region";
+import { TableAction } from "./db/models/TableAction";
 
 
 async function bootstrap() {
@@ -67,6 +68,7 @@ async function bootstrap() {
         await MediaCategory.sync({ alter: true });
         await Media.sync({ alter: true });
         await Region.sync({ alter: true });
+        await TableAction.sync({ alter: true });
 
         console.log('Core models synchronized');
 
