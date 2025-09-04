@@ -13,6 +13,12 @@ export interface Region {
   children?: Region[];
 }
 
+export interface InitialRegionData {
+  provinces: Region[];
+  cities: Region[];
+  districts: Region[];
+}
+
 export interface RegionTreeNode extends Region {
   children: RegionTreeNode[];
 }
@@ -77,5 +83,9 @@ export const regionApi = {
     parentCode?: string;
   }>): Promise<{ message: string; count: number }> {
     return requestClient.post('/regions/batch-import', { regions });
+  },
+  // 获取完整的区域树
+  getInitialData (codes: string): Promise<InitialRegionData> {
+    return requestClient.get('/regions/initial-data?codes=' + codes);
   },
 };

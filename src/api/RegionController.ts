@@ -14,6 +14,47 @@ const validateAndParseInt = (value: any, fieldName: string) => {
 @Controller("/regions")
 export default class RegionController {
 
+  @Get("/initial-data")
+  async getInitialData(req, res) {
+    try {
+      const { tenantId } = req.user;
+      const { codes } = req.query; // codes will be a comma-separated string, e.g., "provinceCode,cityCode,districtCode"
+      const codeList = codes ? (codes as string).split(',') : [];
+
+      const provinceCode = codeList[0];
+      const cityCode = codeList[1];
+
+      const provincesPromise = Region.findAll({
+        where: { tenantId, level: 1 },
+        order: [['code', 'ASC']],
+      });
+
+      const citiesPromise = provinceCode
+        ? Region.findAll({
+            where: { tenantId, level: 2, parentCode: provinceCode },
+            order: [['code', 'ASC']],
+          })
+        : Promise.resolve([]);
+
+      const districtsPromise = cityCode
+        ? Region.findAll({
+            where: { tenantId, level: 3, parentCode: cityCode },
+            order: [['code', 'ASC']],
+          })
+        : Promise.resolve([]);
+
+      const [provinces, cities, districts] = await Promise.all([
+        provincesPromise,
+        citiesPromise,
+        districtsPromise,
+      ]);
+
+      return ok({ provinces, cities, districts });
+    } catch (error: any) {
+      return fail(error.message, 500);
+    }
+  }
+
   @Get("/provinces")
   async getProvinces(req, res) {
     try {
