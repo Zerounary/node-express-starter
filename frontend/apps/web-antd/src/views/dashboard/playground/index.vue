@@ -64,7 +64,7 @@
 
     <ACard title="地址选择器 (LocatePicker) Playground" :style="{ marginTop: '24px' }">
       <ASpace direction="vertical" size="large" style="width: 100%">
-        
+
         <!-- 基础用法 -->
         <div>
           <h3>基础用法（三级联动）</h3>
@@ -152,7 +152,7 @@
                 placeholder="请选择收货地址"
               />
             </AFormItem>
-            
+
             <AFormItem
               label="详细地址"
               name="detailAddress"
@@ -162,7 +162,7 @@
                 placeholder="请输入详细地址"
               />
             </AFormItem>
-            
+
             <AFormItem>
               <AButton type="primary" html-type="submit">
                 提交
@@ -248,10 +248,16 @@ const formState = reactive({
   richTextContent:
     '<h1>Hello, Rich Text!</h1><p>This is a basic example of the RichText component.</p>',
   // LocatePicker 相关状态
-  basicValue: [] as string[],
+  basicValue: [
+    "150000",
+    "150200",
+    "150203"
+  ] as string[],
   basicFullAddress: '',
   cityValue: [] as string[],
-  provinceValue: [] as string[],
+  provinceValue: [
+    "150000",
+  ] as string[],
   disabledValue: ['440000', '440300', '440304'] as string[],
   sizeValue: [] as string[],
   addressForm: {
