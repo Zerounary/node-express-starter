@@ -366,6 +366,14 @@ export const systemTables = [
         },
       },
       {
+        name: "orderno",
+        dataType: ColumnDataTypes.INTEGER,
+        required: false,
+        description: "序号",
+        relatedToTableId: undefined,
+        ui: undefined,
+      },
+      {
         name: "items",
         dataType: ColumnDataTypes.VIRTUAL,
         required: false,
@@ -397,14 +405,6 @@ export const systemTables = [
             ],
           },
         },
-      },
-      {
-        name: "orderno",
-        dataType: ColumnDataTypes.INTEGER,
-        required: false,
-        description: "序号",
-        relatedToTableId: undefined,
-        ui: undefined,
       },
     ]),
   },
@@ -844,6 +844,8 @@ export const systemTables = [
     alias_name: "actions",
     defaultSort: 'orderno-asc',
     categoryId: categoryIdOf("开发平台"),
+    hideMenu: true,
+
     columns: defaultColumns([
       {
         name: "tableId",
@@ -949,6 +951,7 @@ export const initSystemData = async () => {
         description: table.description,
         categoryId: table.categoryId || null,
         defaultSort: table.defaultSort || null,
+        hideMenu: table.hideMenu || false,
         createdAt: new Date(),
         updatedAt: new Date(),
       });
@@ -976,7 +979,7 @@ export const initSystemData = async () => {
           ...column,
         });
       } else {
-        await DynamicColumn.update(column, { where: { name: column.name } });
+        await DynamicColumn.update(column, { where: { id: existsColumn?.id } });
       }
     }
     // 初始化动作

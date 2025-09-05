@@ -107,7 +107,7 @@ export async function getTableConfigById(tableId: number) {
     defaultSort: table.defaultSort,
     actions,
     columns: columns.map((col) => {
-      let rules = col.ui.rules || col.required ? 'required' : null;
+      let rules = col.ui.rules || (col.required ? 'required' : null);
       return {
         id: col.id,
         fieldName: col.name,
