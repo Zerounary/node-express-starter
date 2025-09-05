@@ -1,5 +1,5 @@
 import { ColumnDataTypes } from "@/utils";
-import { DynamicColumn, DynamicTable, TableCategory } from "./models";
+import { DynamicColumn, DynamicTable, TableAction, TableCategory } from "./models";
 import { Permission, Role } from "./models/Role";
 import Tenant from "./models/Tenant";
 import User from "./models/User";
@@ -265,6 +265,18 @@ export const systemTables = [
     alias_name: "table",
     defaultSort: "orderno-asc",
     categoryId: categoryIdOf("开发平台"),
+    actions:[
+      {
+        type: 'form',
+        name: '应用',
+        resource: 'syncTable',
+      },
+      {
+        type: 'list',
+        name: '应用',
+        resource: 'syncTable',
+      },
+    ],
     columns: defaultColumns([
       {
         name: "name",
@@ -965,6 +977,21 @@ export const initSystemData = async () => {
         });
       } else {
         await DynamicColumn.update(column, { where: { name: column.name } });
+      }
+    }
+    // 初始化动作
+    for(let action of table.actions || []) {
+      const existsAction = await TableAction.findOne({
+        where: { type: action.type, resource: action.resource, tableId },
+      });
+      if(!existsAction) {
+        await TableAction.create({
+          tenantId: 1,
+          tableId,
+          ...action,
+        });
+      } else {
+        await TableAction.update(action, { where: { id: existsAction.id } });
       }
     }
   }
