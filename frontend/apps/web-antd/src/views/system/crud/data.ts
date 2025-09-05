@@ -38,9 +38,7 @@ export function useFormUpdateSchema(table, { formApi, data }): VbenFormSchema[] 
 const columnRulesInit = (col) => {
   // 如果col.rules不是数组，直接返回
   if(!Array.isArray(col.rules)) return col;
-  console.log('🚀 ~ columnRulesInit ~ rules:', col.rules)
   let rules = buildZodSchemaFromRules(col.rules, col.defaultValue);
-  console.log('🚀 ~ columnRulesInit ~ rules:', rules)
   return  {
     ...col,
     rules,
@@ -48,7 +46,6 @@ const columnRulesInit = (col) => {
 }
 
 const wrappItemClass = (col, component) => {
-  console.log('🚀 ~ wrappItemClass ~ component:', component)
   if(['Items', 'MetaInput', 'UIInput', 'Divider'].includes(component)) {
     col.formItemClass = col.formItemClass || 'col-span-1 md:col-span-2 lg:col-span-4'
     col.hideLabel = true;

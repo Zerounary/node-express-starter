@@ -330,7 +330,6 @@ export const systemTables = [
         required: true,
         description: "表类别",
         relatedToTableId: "table_categories",
-
         ui: {
           component: "FkPicker",
           table: "table_categories",
@@ -709,7 +708,7 @@ export const systemTables = [
       {
         name: "description",
         dataType: ColumnDataTypes.STRING,
-        required: true,
+        required: false,
         description: "描述",
         relatedToTableId: undefined,
 
@@ -722,7 +721,7 @@ export const systemTables = [
       {
         name: "parentId",
         dataType: ColumnDataTypes.ID,
-        required: true,
+        required: false,
         description: "父类别",
         relatedToTableId: "table_categories",
 
