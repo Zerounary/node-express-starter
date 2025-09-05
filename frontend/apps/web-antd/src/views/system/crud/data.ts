@@ -1,3 +1,4 @@
+import { buildZodSchemaFromRules } from '#/adapter/component/zod-rules-builder';
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SystemTableApi } from '#/api';
@@ -19,6 +20,7 @@ export function useFormCreateSchema(table, { formApi, data }): VbenFormSchema[] 
     .filter(isCreateVisable)
     .map(mapToCreateSchemaColumn)
     .map(col => applyDependencies(col)) // Apply dependencies
+    .map(col => columnRulesInit(col))
     .map(enhanceComponentProps(formApi, data));
   return [...dynColumns];
 }
@@ -28,8 +30,21 @@ export function useFormUpdateSchema(table, { formApi, data }): VbenFormSchema[] 
     .filter(isUpdateVisable)
     .map(mapToUpdateSchemaColumn)
     .map(col => applyDependencies(col)) // Apply dependencies
+    .map(col => columnRulesInit(col))
     .map(enhanceComponentProps(formApi, data));
   return [...dynColumns];
+}
+
+const columnRulesInit = (col) => {
+  // 如果col.rules不是数组，直接返回
+  if(!Array.isArray(col.rules)) return col;
+  console.log('🚀 ~ columnRulesInit ~ rules:', col.rules)
+  let rules = buildZodSchemaFromRules(col.rules, col.defaultValue);
+  console.log('🚀 ~ columnRulesInit ~ rules:', rules)
+  return  {
+    ...col,
+    rules,
+  }
 }
 
 const wrappItemClass = (col, component) => {

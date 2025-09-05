@@ -272,11 +272,13 @@ export const systemTables = [
         required: true,
         description: "表",
         relatedToTableId: undefined,
-
         ui: {
           mask: "1111111111",
           width: 200,
           component: "Input",
+          rules: [
+            { type: 'identifier', message: '只能是字母、数字、下划线，且开头必须是字母或下划线'}
+          ]
         },
       },
       {
@@ -305,6 +307,9 @@ export const systemTables = [
           mask: "1111111111",
           width: 200,
           component: "Input",
+          rules: [
+            { type: 'identifier', message: '只能是字母、数字、下划线，且开头必须是字母或下划线'}
+          ]
         },
       },
       {
@@ -411,6 +416,9 @@ export const systemTables = [
           mask: "1111111111",
           width: 200,
           component: "Input",
+          rules: [
+            { type: 'identifier', message: '只能是字母、数字、下划线，且开头必须是字母或下划线'}
+          ]
         },
       },
       {
