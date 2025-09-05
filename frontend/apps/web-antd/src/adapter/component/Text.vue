@@ -11,6 +11,10 @@ import { computed, defineModel, defineProps } from 'vue';
 
 const modelValue = defineModel<any>({ default: '' });
 const props = defineProps({
+  row: {
+    type: Object,
+    default: () => ({}),
+  },
   schema: {
     type: Object,
   },
@@ -20,7 +24,7 @@ const Textof = (val, dataType) => {
   switch (dataType) {
     case ColumnDataTypes.ID:
       const fieldName = props.schema?.fieldName;
-      return val?.name;
+      return props.row[`${fieldName}Name`]?.name;
     case ColumnDataTypes.DATENUMBER:
       return dayjs(val).format('YYYY-MM-DD');
     case ColumnDataTypes.DATE:

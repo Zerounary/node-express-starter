@@ -1,6 +1,5 @@
 <template>
   <div class="w-full">
-    {{ modelValue }}
     <div v-if="!disabled" class="w-full flex">
       <Select
         class="flex-grow"
@@ -14,13 +13,14 @@
         :options="selections"
         @change="handleSelectChange"
         @search="search"
+        :loading="loading"
       >
         <template #suffixIcon>
           <FilterOutlined @click="openFilter" />
         </template>
       </Select>
     </div>
-    <div v-else>{{ modelValue }}</div>
+    <div v-else>{{ displayValue }}</div>
     <Modal
       title="选择数据"
       v-model:open="isModalVisible"
@@ -44,14 +44,14 @@
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
-        row-key="id"
+        :row-key="valueKey"
       ></Table>
     </Modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineModel, ref, watch, computed, nextTick, type PropType } from 'vue';
+import { defineProps, defineModel, ref, watch, computed, nextTick } from 'vue';
 import { getPage, getList } from '#/api/system/crud';
 import { Select, Modal, Table, Input } from 'ant-design-vue';
 import { getPageConfig } from '#/api';
@@ -79,21 +79,22 @@ const props = defineProps({
 
 const modelValue = defineModel<any>({ default: undefined });
 
-// Internal state for the Select component
+// Internal state
 const selectValue = ref<any>();
-const selections = ref<any[]>([]); // holds { label, value, _item }
+const selections = ref<any[]>([]); // Cache for options: { label, value, _item }
+const loading = ref(false);
+
+// Mode detection
+const isUpdatingInternally = ref(false);
+const valueIsObject = ref(false);
+const modeDetermined = ref(false);
 
 // Modal state
 const isModalVisible = ref(false);
 const modalSearchKeyword = ref('');
 const refTable = ref<any>({});
 const tableData = ref<any[]>([]);
-const loading = ref(false);
-const pagination = ref({
-  current: 1,
-  pageSize: 10,
-  total: 0,
-});
+const pagination = ref({ current: 1, pageSize: 10, total: 0 });
 const selectedRowKeys = ref<any[]>([]);
 const selectedRows = ref<any[]>([]);
 const currentFilters = ref<any>({});
@@ -106,114 +107,114 @@ const columns = computed(() => {
   })) || [];
 });
 
-// Flag to prevent watch loops
-const isUpdatingInternally = ref(false);
+const displayValue = computed(() => {
+    if (selectValue.value?.label) {
+        return selectValue.value.label;
+    }
+    const mv = modelValue.value;
+    if (!mv) return '';
+    if (typeof mv === 'object' && mv !== null) {
+        return mv.name || mv[props.valueKey] || '';
+    }
+    return mv;
+});
 
-// Search function for the Select dropdown
+// Ensures an option for a given value exists in `selections`, fetching if necessary.
+const ensureOption = async (value: any) => {
+    if (value === undefined || value === null) return null;
+
+    const primitiveValue = (typeof value === 'object' && value !== null) ? value[props.valueKey] : value;
+    if (primitiveValue === undefined || primitiveValue === null) return null;
+
+    const existing = selections.value.find(opt => opt.value === primitiveValue);
+    if (existing) return existing;
+
+    loading.value = true;
+    try {
+        const filter = { [`${props.valueKey}-in`]: primitiveValue };
+        const result: any[] = await getList(props.table, { ...filter, ...props.queryExtra });
+        const item = result.find(r => r[props.valueKey] === primitiveValue);
+        if (item) {
+            const newOption = { label: item.name || item.id, value: item[props.valueKey], _item: item };
+            selections.value.unshift(newOption);
+            return newOption;
+        }
+    } catch (e) {
+        console.error("Failed to fetch option", e);
+    } finally {
+        loading.value = false;
+    }
+    return null;
+};
+
+watch(modelValue, async (newVal) => {
+    if (isUpdatingInternally.value) return;
+
+    if (!modeDetermined.value && newVal !== undefined && newVal !== null) {
+        valueIsObject.value = typeof newVal === 'object' && !Array.isArray(newVal);
+        modeDetermined.value = true;
+    }
+
+    if (newVal === undefined || newVal === null || (Array.isArray(newVal) && newVal.length === 0)) {
+        selectValue.value = undefined;
+        return;
+    }
+
+    const option = await ensureOption(newVal);
+
+    if (option) {
+        selectValue.value = { value: option.value, label: option.label };
+        if (valueIsObject.value && (typeof newVal !== 'object' || !newVal.name)) { // Upgrade to full object if needed
+            isUpdatingInternally.value = true;
+            modelValue.value = option._item;
+            nextTick(() => { isUpdatingInternally.value = false; });
+        }
+    } else {
+        selectValue.value = undefined;
+    }
+}, { immediate: true, deep: true });
+
+const handleSelectChange = (val: any) => {
+    isUpdatingInternally.value = true;
+    if (!val) {
+        modelValue.value = undefined;
+    } else {
+        const selectedOption = selections.value.find(opt => opt.value === val.value);
+        if (selectedOption) {
+            modelValue.value = valueIsObject.value ? selectedOption._item : selectedOption.value;
+        } else {
+            modelValue.value = valueIsObject.value ? null : val.value;
+        }
+    }
+    nextTick(() => { isUpdatingInternally.value = false; });
+};
+
 const search = async (keyword: string) => {
   if (!keyword || keyword.trim() === '') {
-    selections.value = [];
+    selections.value = selections.value.slice(0, 1); // Keep current selection
     return;
   }
   loading.value = true;
   try {
-    const result: any = await getPage(props.table, {
-      page: 1,
-      pageSize: 20,
-      keyword: keyword.trim(),
-      ...props.queryExtra,
-    });
+    const result: any = await getPage(props.table, { page: 1, pageSize: 20, keyword: keyword.trim(), ...props.queryExtra });
     if (result && result.items) {
-      selections.value = result.items.map((item: any) => ({
-        label: item.name || item.id,
-        value: item[props.valueKey],
-        _item: item,
-      }));
-    } else {
-      selections.value = [];
+      const newOptions = result.items.map((item: any) => ({ label: item.name || item.id, value: item[props.valueKey], _item: item }));
+      const currentVal = selectValue.value;
+      if (currentVal && !newOptions.some(opt => opt.value === currentVal.value)) {
+          const currentOption = selections.value.find(opt => opt.value === currentVal.value);
+          if (currentOption) newOptions.unshift(currentOption);
+      }
+      selections.value = newOptions;
     }
   } catch (error) {
     console.error('搜索失败:', error);
-    selections.value = [];
   } finally {
     loading.value = false;
   }
-};
-
-// Watch for external changes to modelValue to initialize/update the component
-watch(modelValue, async (newVal) => {
-  if (isUpdatingInternally.value) return;
-
-  if (!newVal || (Array.isArray(newVal) && newVal.length === 0)) {
-    selectValue.value = undefined;
-    selections.value = [];
-    return;
-  }
-
-  const alreadyLoaded = selections.value.some(opt => opt.value === newVal);
-  if (alreadyLoaded) {
-    const currentSelection = selections.value.find(opt => opt.value === newVal);
-    if (currentSelection) {
-        selectValue.value = {
-            value: currentSelection.value,
-            label: currentSelection.label,
-        };
-    }
-    return;
-  }
-
-  loading.value = true;
-  try {
-    const filter = { [`${props.valueKey}-in`]: Array.isArray(newVal) ? newVal.join(',') : newVal };
-    const result: any[] = await getList(props.table, { ...filter, ...props.queryExtra });
-
-    if (result && result.length > 0) {
-      // For now, focusing on single mode initialization
-      const item = result.find(r => r[props.valueKey] === newVal);
-      if (item) {
-        const newOption = {
-          label: item.name || item.id,
-          value: item[props.valueKey],
-          _item: item,
-        };
-        selections.value = [newOption, ...selections.value.filter(opt => opt.value !== newOption.value)];
-        selectValue.value = {
-          value: newOption.value,
-          label: newOption.label,
-        };
-      }
-    }
-  } catch (error) {
-    console.error('恢复值失败:', error);
-  } finally {
-    loading.value = false;
-  }
-}, { immediate: true });
-
-// Handle user selection from the dropdown
-const handleSelectChange = (val: any) => {
-  isUpdatingInternally.value = true;
-  modelValue.value = val?.value;
-
-  if (val) {
-    const existing = selections.value.find(opt => opt.value === val.value);
-    if (!existing) {
-      selections.value.push({
-        label: val.label,
-        value: val.value,
-      });
-    }
-  }
-
-  nextTick(() => {
-    isUpdatingInternally.value = false;
-  });
 };
 
 // --- Modal Logic ---
-
 const openFilter = async () => {
-  console.log('Filter opened for table:', props.table, modelValue);
   refTable.value = await getPageConfig(props.table);
   isModalVisible.value = true;
 };
@@ -224,34 +225,20 @@ watch(isModalVisible, (newVal) => {
     currentFilters.value = {};
     pagination.value.current = 1;
     fetchData();
-    // Pre-select rows based on current modelValue
-    const currentVal = modelValue.value;
-    if (currentVal) {
-        selectedRowKeys.value = Array.isArray(currentVal) ? currentVal : [currentVal];
-        // selectedRows might need to be fetched if not already present
-    } else {
-        selectedRowKeys.value = [];
-    }
-    selectedRows.value = []; // Reset selected rows, will be populated by table logic
+    const currentVal = valueIsObject.value ? modelValue.value?.[props.valueKey] : modelValue.value;
+    selectedRowKeys.value = currentVal ? (Array.isArray(currentVal) ? currentVal : [currentVal]) : [];
+    selectedRows.value = [];
   }
 });
 
 const fetchData = async (params = {}) => {
   loading.value = true;
   try {
-    const result: any = await getPage(props.table as string, {
-      page: pagination.value.current,
-      pageSize: pagination.value.pageSize,
-      ...props.queryExtra,
-      ...currentFilters.value,
-      ...params,
-    });
+    const result: any = await getPage(props.table, { page: pagination.value.current, pageSize: pagination.value.pageSize, ...props.queryExtra, ...currentFilters.value, ...params });
     tableData.value = result.items;
     pagination.value.total = result.total;
   } catch (error) {
     console.error('获取数据失败:', error);
-    tableData.value = [];
-    pagination.value.total = 0;
   } finally {
     loading.value = false;
   }
@@ -259,57 +246,43 @@ const fetchData = async (params = {}) => {
 
 const handleOk = () => {
   isUpdatingInternally.value = true;
-
   if (props.mode === 'multiple') {
-    // Not implemented in detail as per focus on single mode refactor
-    modelValue.value = selectedRows.value.map(item => item[props.valueKey]);
+    const newItems = selectedRows.value;
+    modelValue.value = valueIsObject.value ? newItems : newItems.map(item => item[props.valueKey]);
   } else {
-    // Single mode
     if (selectedRows.value.length > 0) {
       const selectedItem = selectedRows.value[0];
-      const newOption = {
-        label: selectedItem.name || selectedItem.id,
-        value: selectedItem[props.valueKey],
-        _item: selectedItem,
-      };
-      selections.value = [newOption];
+      const newOption = { label: selectedItem.name || selectedItem.id, value: selectedItem[props.valueKey], _item: selectedItem };
+      if (!selections.value.some(opt => opt.value === newOption.value)) {
+          selections.value.unshift(newOption);
+      }
       selectValue.value = { value: newOption.value, label: newOption.label };
-      modelValue.value = newOption.value;
+      modelValue.value = valueIsObject.value ? selectedItem : newOption.value;
     } else {
-      selections.value = [];
       selectValue.value = undefined;
       modelValue.value = undefined;
     }
   }
-
   isModalVisible.value = false;
-  nextTick(() => {
-    isUpdatingInternally.value = false;
-  });
+  nextTick(() => { isUpdatingInternally.value = false; });
 };
 
-const handleCancel = () => {
-  isModalVisible.value = false;
-};
-
+const handleCancel = () => { isModalVisible.value = false; };
 const onSelectChange = (keys: any[], rows: any[]) => {
   selectedRowKeys.value = keys;
   selectedRows.value = rows;
 };
-
 const rowSelection = computed(() => ({
   selectedRowKeys: selectedRowKeys.value,
   type: (props.mode === 'single' ? 'radio' : 'checkbox') as 'radio' | 'checkbox',
   onChange: onSelectChange,
   preserveSelectedRowKeys: true,
 }));
-
 const handleModalSearch = (value: string) => {
   currentFilters.value = { ...currentFilters.value, keyword: value };
   pagination.value.current = 1;
   fetchData();
 };
-
 const handleModalSearchChange = (e: any) => {
   if (!e.target.value) {
     const { keyword, ...otherFilters } = currentFilters.value;
@@ -318,25 +291,17 @@ const handleModalSearchChange = (e: any) => {
     fetchData();
   }
 };
-
 const handleTableChange = (pag: any, filters: any, sorter: any) => {
   pagination.value.current = pag.current;
   pagination.value.pageSize = pag.pageSize;
-
-  // 处理过滤条件
   const newFilters: any = { ...currentFilters.value };
   Object.keys(filters).forEach(key => {
-    if (filters[key] && filters[key].length > 0) {
-      newFilters[`${key}-in`] = filters[key].join(',');
-    }
+    if (filters[key]?.length) newFilters[`${key}-in`] = filters[key].join(',');
   });
-
-  // 处理排序
-  if (sorter && sorter.field) {
+  if (sorter?.field) {
     newFilters.sortBy = sorter.field;
     newFilters.sortOrder = sorter.order === 'ascend' ? 'asc' : 'desc';
   }
-
   currentFilters.value = newFilters;
   fetchData();
 };

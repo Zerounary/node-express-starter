@@ -143,7 +143,7 @@ export default class DynamicController {
         const tableData = relatedDataMap.get(tableName);
         if (tableData && tableData.has(fkId)) {
           // 在这里，我们用获取到的对象替换了原来的ID
-          item[column.fieldName] = tableData.get(fkId);
+          item[`${column.fieldName}Name`] = tableData.get(fkId);
         }
       }
     }
