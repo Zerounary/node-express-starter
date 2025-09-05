@@ -13,7 +13,6 @@ class DynamicColumn extends Model {
   public updated!: string;
   public description!: string;
   public relatedToTableId?: number | null;
-  public enumValues?: string[] | null;
   public ui?: any | null;
   public ak?: boolean| null;
   public dk?: boolean| null;
@@ -84,10 +83,6 @@ DynamicColumn.init({
       model: 'dynamic_tables',
       key: 'id',
     },
-  },
-  enumValues: {
-    type: DataTypes.JSON,
-    allowNull: true,
   },
   ui: {
     type: DataTypes.JSON,

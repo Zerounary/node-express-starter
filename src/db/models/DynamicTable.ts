@@ -14,8 +14,10 @@ class DynamicTable extends Model {
   public hideMenu?: boolean | null;
   public alias_name!: string;
   public description!: string | null;
+  public defaultSort?: string;
   public created!: string;
   public updated!: string;
+  
 
   public getColumns!: HasManyGetAssociationsMixin<DynamicColumn>;
   public columns?: DynamicColumn[];
@@ -64,6 +66,10 @@ DynamicTable.init({
     unique: 'dynamic_tables_alias_name_key',
   },
   description: {
+    type: new DataTypes.STRING(255),
+    allowNull: true,
+  },
+  defaultSort: {
     type: new DataTypes.STRING(255),
     allowNull: true,
   },

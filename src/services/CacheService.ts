@@ -2,7 +2,7 @@ import { DynamicTable, DynamicColumn, TableAction } from '../db/models';
 import { logError, logInfo } from '../logger';
 import DynamicDataService from './DynamicDataService';
 
-type TableWithColumns = DynamicTable & { columns: DynamicColumn[]; actions: TableAction[] };
+export type TableWithColumns = DynamicTable & { columns: DynamicColumn[]; actions: TableAction[] };
 
 function deepFreeze<T>(obj: T, seen = new WeakSet<object>()): T {
   if (obj && typeof obj === 'object') {

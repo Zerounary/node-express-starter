@@ -28,7 +28,7 @@ class DynamicDataService {
       if (column.dataType === 'RELATIONSHIP') {
         attributes[column.name] = { type: DataTypes.INTEGER, allowNull: true };
       } else if (column.dataType === 'ENUM') {
-        attributes[column.name] = { type: DataTypes.ENUM(...(column.enumValues || [])), allowNull: true };
+        // attributes[column.name] = { type: DataTypes.ENUM(...(column.enumValues || [])), allowNull: true };
       } else {
         attributes[column.name] = { type: this.mapDataType(column.dataType), allowNull: true };
       }

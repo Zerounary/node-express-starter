@@ -207,9 +207,12 @@ export default class DynamicController {
     return where;
   }
 
-  private getParsedSorts(sorts: any): any[] {
+  private getParsedSorts(sorts: any, defaultSorts: any): any[] {
     // sorts 格式： field1-ASC,field2-DESC
-    if (!sorts) return [];
+    if (!sorts) {
+      sorts = defaultSorts;
+      if(!sorts) return [];
+    };
     const order: any[] = [];
     const sortItems = Array.isArray(sorts) ? sorts : sorts.split(",");
     for (const sortItem of sortItems) {
@@ -230,10 +233,10 @@ export default class DynamicController {
       const { tableName } = req.params;
       const { sorts, ...filters } = req.query;
       const where = await this.getParsedWhere(req, filters);
-      const order = this.getParsedSorts(sorts);
 
       // 获取表配置
       const tableConfig = await getTableConfig(tableName);
+      const order = this.getParsedSorts(sorts, tableConfig?.defaultSort);
       if (!tableConfig) {
         return fail("表配置未找到", 404);
       }
@@ -267,10 +270,10 @@ export default class DynamicController {
       const { tableName } = req.params;
       const { page = 1, pageSize = 10, sorts, ...filters } = req.query;
       const where = await this.getParsedWhere(req, filters);
-      const order = this.getParsedSorts(sorts);
 
       // 获取表配置
       const tableConfig = await getTableConfig(tableName);
+      const order = this.getParsedSorts(sorts, tableConfig?.defaultSort);
       if (!tableConfig) {
         return fail("表配置未找到", 404);
       }

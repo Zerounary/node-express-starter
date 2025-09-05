@@ -25,13 +25,17 @@ const getColumnFilterOp = (column) => {
 };
 
 const autoFill = (column, index) => {
+  let defaultComponentMap = {
+    [ColumnDataTypes.INTEGER]: "InputNumber",
+    [ColumnDataTypes.QTY]: "InputNumber",
+  }
   return {
     ...column,
     orderno: column.orderno || (index + 1) * 10,
     ui: {
       mask: "1111111111",
       width: 100,
-      component: "Input",
+      component: defaultComponentMap[column.dataType] || "Input",
       filterOp: getColumnFilterOp(column),
       ...column.ui,
     },
@@ -50,10 +54,10 @@ export const defaultColumns = (columns = []) => {
     {
       name: "id",
       dataType: ColumnDataTypes.ID,
-      required: true,
+      required: false,
       description: "ID",
       relatedToTableId: undefined,
-      enumValues: undefined,
+
       ui: {
         mask: "0000000000",
         width: 100,
@@ -69,7 +73,7 @@ export const defaultColumns = (columns = []) => {
       required: false,
       description: "日志信息",
       relatedToTableId: undefined,
-      enumValues: undefined,
+
       ui: {
         mask: "0010000000",
         width: 200,
@@ -80,10 +84,10 @@ export const defaultColumns = (columns = []) => {
     {
       name: "createdBy",
       dataType: ColumnDataTypes.ID,
-      required: true,
+      required: false,
       description: "创建人",
       relatedToTableId: "users",
-      enumValues: undefined,
+
       ui: {
         mask: "0010101001",
         width: 200,
@@ -98,10 +102,10 @@ export const defaultColumns = (columns = []) => {
     {
       name: "createdAt",
       dataType: ColumnDataTypes.DATE,
-      required: true,
+      required: false,
       description: "创建时间",
       relatedToTableId: undefined,
-      enumValues: undefined,
+
       ui: {
         mask: "0010101001",
         width: 200,
@@ -113,10 +117,10 @@ export const defaultColumns = (columns = []) => {
     {
       name: "updatedBy",
       dataType: ColumnDataTypes.ID,
-      required: true,
+      required: false,
       description: "修改人",
       relatedToTableId: "users",
-      enumValues: undefined,
+
       ui: {
         mask: "0010101001",
         width: 200,
@@ -134,7 +138,7 @@ export const defaultColumns = (columns = []) => {
       required: false,
       description: "更新时间",
       relatedToTableId: undefined,
-      enumValues: undefined,
+
       ui: {
         mask: "0010101001",
         width: 200,
@@ -149,7 +153,7 @@ export const defaultColumns = (columns = []) => {
       required: false,
       description: "可用",
       relatedToTableId: undefined,
-      enumValues: undefined,
+
       ui: {
         mask: "0010101001",
         width: 200,
@@ -259,6 +263,7 @@ export const systemTables = [
     name: "dynamic_tables",
     description: "表",
     alias_name: "table",
+    defaultSort: "orderno-asc",
     categoryId: categoryIdOf("开发平台"),
     columns: defaultColumns([
       {
@@ -267,7 +272,7 @@ export const systemTables = [
         required: true,
         description: "表",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: {
           mask: "1111111111",
           width: 200,
@@ -280,7 +285,7 @@ export const systemTables = [
         required: true,
         description: "描述",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ak: true,
         dk: true,
         ui: {
@@ -292,10 +297,10 @@ export const systemTables = [
       {
         name: "alias_name",
         dataType: ColumnDataTypes.STRING,
-        required: true,
+        required: false,
         description: "表别名",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: {
           mask: "1111111111",
           width: 200,
@@ -308,7 +313,7 @@ export const systemTables = [
         required: true,
         description: "表类别",
         relatedToTableId: "table_categories",
-        enumValues: undefined,
+
         ui: {
           component: "FkPicker",
           table: "table_categories",
@@ -323,9 +328,24 @@ export const systemTables = [
         required: false,
         description: "隐藏菜单",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: {
           component: "Checkbox",
+        },
+      },
+      {
+        name: "defaultSort",
+        dataType: ColumnDataTypes.STRING,
+        required: false,
+        description: "默认排序",
+        relatedToTableId: undefined,
+        ui: {
+          mask: "1111111111",
+          width: 200,
+          component: "Input",
+          componentProps: {
+            placeholder: "格式：[fileName]-[asc|desc],多个逗号分隔",
+          },
         },
       },
       {
@@ -334,7 +354,7 @@ export const systemTables = [
         required: false,
         description: "表类别",
         relatedToTableId: "table_categories",
-        enumValues: undefined,
+
         ui: {
           mask: "0011000000",
           width: 0,
@@ -361,12 +381,21 @@ export const systemTables = [
           },
         },
       },
+      {
+        name: "orderno",
+        dataType: ColumnDataTypes.INTEGER,
+        required: false,
+        description: "序号",
+        relatedToTableId: undefined,
+        ui: undefined,
+      },
     ]),
   },
   {
     name: "dynamic_columns",
     description: "字段",
     alias_name: "column",
+    defaultSort: "orderno-asc",
     categoryId: categoryIdOf("开发平台"),
     columns: defaultColumns([
       {
@@ -375,7 +404,7 @@ export const systemTables = [
         required: true,
         description: "数据库名称",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ak: true,
         dk: true,
         ui: {
@@ -390,7 +419,7 @@ export const systemTables = [
         required: true,
         description: "描述",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: undefined,
       },
       {
@@ -399,7 +428,7 @@ export const systemTables = [
         required: true,
         description: "字段类型",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: {
           component: "ColumnTypeInput",
         },
@@ -410,7 +439,7 @@ export const systemTables = [
         required: true,
         description: "所属表",
         relatedToTableId: "dynamic_tables",
-        enumValues: undefined,
+
         ui: {
           component: "FkPicker",
           table: "table",
@@ -422,10 +451,10 @@ export const systemTables = [
       {
         name: "relatedToTableId",
         dataType: ColumnDataTypes.ID,
-        required: true,
+        required: false,
         description: "外键表",
         relatedToTableId: "dynamic_tables",
-        enumValues: undefined,
+
         ui: {
           component: "FkPicker",
           table: "table",
@@ -444,7 +473,7 @@ export const systemTables = [
         required: false,
         description: "必填",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: {
           component: "Checkbox",
         },
@@ -455,7 +484,7 @@ export const systemTables = [
         required: false,
         description: "输入键",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: {
           component: "Checkbox",
         },
@@ -466,7 +495,7 @@ export const systemTables = [
         required: false,
         description: "显示键",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: {
           component: "Checkbox",
         },
@@ -477,27 +506,18 @@ export const systemTables = [
         required: false,
         description: "可排序",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: {
           component: "Checkbox",
         },
       },
       {
-        name: "enumValues",
-        dataType: ColumnDataTypes.JSON,
-        required: true,
-        description: "枚举值",
-        relatedToTableId: undefined,
-        enumValues: undefined,
-        ui: undefined,
-      },
-      {
         name: "ui",
         dataType: ColumnDataTypes.JSON,
-        required: true,
+        required: false,
         description: "界面配置",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: {
           mask: "0011001111",
           component: "UIInput",
@@ -507,10 +527,10 @@ export const systemTables = [
       {
         name: "orderno",
         dataType: ColumnDataTypes.INTEGER,
-        required: true,
+        required: false,
         description: "序号",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: undefined,
       },
     ]),
@@ -527,7 +547,7 @@ export const systemTables = [
         required: true,
         description: "用户名",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ak: true,
         dk: true,
         ui: {
@@ -542,7 +562,7 @@ export const systemTables = [
         required: true,
         description: "姓名",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: undefined,
       },
       {
@@ -551,7 +571,7 @@ export const systemTables = [
         required: true,
         description: "密码",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: {
           mask: "1111001111",
           width: 200,
@@ -572,7 +592,7 @@ export const systemTables = [
         required: true,
         description: "名称",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ak: true,
         dk: true,
         ui: {
@@ -587,7 +607,7 @@ export const systemTables = [
         required: true,
         description: "描述",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: undefined,
       },
       {
@@ -596,7 +616,7 @@ export const systemTables = [
         required: false,
         description: "授权",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: {
           mask: "0011000000",
           width: 200,
@@ -618,7 +638,7 @@ export const systemTables = [
         required: true,
         description: "用户",
         relatedToTableId: "users",
-        enumValues: undefined,
+
         ui: {
           component: "FkPicker",
           table: "users",
@@ -633,7 +653,7 @@ export const systemTables = [
         required: true,
         description: "角色",
         relatedToTableId: "roles",
-        enumValues: undefined,
+
         ui: {
           component: "FkPicker",
           table: "roles",
@@ -649,6 +669,7 @@ export const systemTables = [
     description: "表类别",
     alias_name: "table_categories",
     categoryId: categoryIdOf("开发平台"),
+    defaultSort: 'orderno-asc',
     columns: defaultColumns([
       {
         name: "name",
@@ -658,7 +679,7 @@ export const systemTables = [
         ak: true,
         dk: true,
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: {
           mask: "1111111111",
           width: 200,
@@ -671,7 +692,7 @@ export const systemTables = [
         required: true,
         description: "描述",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: {
           mask: "1111111111",
           width: 200,
@@ -684,7 +705,7 @@ export const systemTables = [
         required: true,
         description: "父类别",
         relatedToTableId: "table_categories",
-        enumValues: undefined,
+
         ui: {
           component: "FkPicker",
           table: "table_categories",
@@ -696,10 +717,10 @@ export const systemTables = [
       {
         name: "meta",
         dataType: ColumnDataTypes.JSON,
-        required: true,
+        required: false,
         description: "界面配置",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: {
           component: "MetaInput",
           componentProps: {},
@@ -711,7 +732,7 @@ export const systemTables = [
         required: true,
         description: "路径",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ak: true,
         dk: true,
         ui: {
@@ -723,10 +744,10 @@ export const systemTables = [
       {
         name: "url",
         dataType: ColumnDataTypes.STRING,
-        required: true,
+        required: false,
         description: "路由",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ak: true,
         dk: true,
         ui: {
@@ -738,10 +759,10 @@ export const systemTables = [
       {
         name: "redirect",
         dataType: ColumnDataTypes.STRING,
-        required: true,
+        required: false,
         description: "重定向",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ak: true,
         dk: true,
         ui: {
@@ -753,10 +774,10 @@ export const systemTables = [
       {
         name: "orderno",
         dataType: ColumnDataTypes.INTEGER,
-        required: true,
+        required: false,
         description: "序号",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: undefined,
       },
     ]),
@@ -773,7 +794,7 @@ export const systemTables = [
         required: true,
         description: "名称",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: {
           mask: "1111111111",
           width: 200,
@@ -786,7 +807,7 @@ export const systemTables = [
         required: true,
         description: "描述",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ak: true,
         dk: true,
         ui: {
@@ -801,6 +822,7 @@ export const systemTables = [
     name: "table_actions",
     description: "动作定义",
     alias_name: "actions",
+    defaultSort: 'orderno-asc',
     categoryId: categoryIdOf("开发平台"),
     columns: defaultColumns([
       {
@@ -809,7 +831,7 @@ export const systemTables = [
         required: true,
         description: "所属表",
         relatedToTableId: "dynamic_tables",
-        enumValues: undefined,
+
         ui: {
           component: "FkPicker",
           table: "table",
@@ -824,7 +846,7 @@ export const systemTables = [
         required: true,
         description: "类型",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ak: true,
         dk: true,
         ui: {
@@ -846,7 +868,7 @@ export const systemTables = [
         required: true,
         description: "名称",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: {
           mask: "1111111111",
           width: 200,
@@ -859,7 +881,7 @@ export const systemTables = [
         required: true,
         description: "接口名称",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ak: true,
         dk: true,
         ui: {
@@ -871,10 +893,10 @@ export const systemTables = [
       {
         name: "btnUI",
         dataType: ColumnDataTypes.JSON,
-        required: true,
+        required: false,
         description: "按钮配置",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: {
           mask: "0011001111",
           component: "BtnUIInput",
@@ -887,7 +909,7 @@ export const systemTables = [
         required: true,
         description: "序号",
         relatedToTableId: undefined,
-        enumValues: undefined,
+
         ui: undefined,
       },
     ]),
@@ -906,6 +928,7 @@ export const initSystemData = async () => {
         alias_name: table.alias_name || table.name,
         description: table.description,
         categoryId: table.categoryId || null,
+        defaultSort: table.defaultSort || null,
         createdAt: new Date(),
         updatedAt: new Date(),
       });
@@ -996,9 +1019,8 @@ function categoryIdOf(name = "") {
 }
 
 export const tableInitColumns = () => {
-  return defaultColumns()
-    .map((col) => ({
-      ...col,
-      relatedToTableId: tableIdOf(col.relatedToTableId) || null,
-    }));
+  return defaultColumns().map((col) => ({
+    ...col,
+    relatedToTableId: tableIdOf(col.relatedToTableId) || null,
+  }));
 };

@@ -104,6 +104,7 @@ export async function getTableConfigById(tableId: number) {
     table: table.alias_name || table.name,
     name: table.description,
     hideMenu: table.hideMenu,
+    defaultSort: table.defaultSort,
     actions,
     columns: columns.map((col) => {
       let rules = col.required ? 'required' : null;
