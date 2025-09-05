@@ -869,6 +869,19 @@ export const systemTables = [
         },
       },
       {
+        name: "btnUI",
+        dataType: ColumnDataTypes.JSON,
+        required: true,
+        description: "按钮配置",
+        relatedToTableId: undefined,
+        enumValues: undefined,
+        ui: {
+          mask: "0011001111",
+          component: "BtnUIInput",
+          componentProps: {},
+        },
+      },
+      {
         name: "orderno",
         dataType: ColumnDataTypes.INTEGER,
         required: true,
@@ -984,7 +997,6 @@ function categoryIdOf(name = "") {
 
 export const tableInitColumns = () => {
   return defaultColumns()
-    .filter((col) => col.dataType != ColumnDataTypes.VIRTUAL)
     .map((col) => ({
       ...col,
       relatedToTableId: tableIdOf(col.relatedToTableId) || null,

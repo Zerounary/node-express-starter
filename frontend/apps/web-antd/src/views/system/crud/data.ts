@@ -105,6 +105,7 @@ const mapToGridColumn = (col) => {
 
 const mapToOpFilterColumn = (col) => ({
   ...col,
+  rules: null,
   fieldName: col.filterOp ? `${col.fieldName}-${col.filterOp}` : col.fieldName,
 });
 

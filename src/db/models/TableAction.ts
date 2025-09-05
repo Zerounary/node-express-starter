@@ -47,6 +47,10 @@ TableAction.init({
     type: DataTypes.STRING,
     allowNull: false,
   },
+  btnUI: {
+    type: DataTypes.JSON,
+    allowNull: true,
+  },
   orderno: {
     type: DataTypes.INTEGER,
     allowNull: true,
@@ -59,7 +63,7 @@ TableAction.init({
   indexes: [
     {
       unique: true,
-      fields: ['tableId', 'resource'],
+      fields: ['type', 'tableId', 'resource'],
     },
   ],
 });

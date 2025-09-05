@@ -112,7 +112,7 @@ function getNodeClass(node: Recordable<any>) {
 </script>
 <template>
   <Drawer :title="getDrawerTitle">
-    <div class="rounded-md bg-gray-50 md:p-4">
+    <div class=" rounded-md bg-gray-50 md:px-4 md:py-2">
       <!-- 按钮组 -->
       <ActionButtonGroup
         v-if="formData?.id"
@@ -123,7 +123,7 @@ function getNodeClass(node: Recordable<any>) {
           id: formData?.id,
         }"
       />
-      <Form class="bg-white" />
+      <Form class="bg-white mt-2" />
     </div>
   </Drawer>
 </template>

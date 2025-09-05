@@ -17,6 +17,7 @@ class DynamicColumn extends Model {
   public ui?: any | null;
   public ak?: boolean| null;
   public dk?: boolean| null;
+  public required?: boolean| null;
   public sortable?: boolean| null;
   public orderno?: number | null;
 

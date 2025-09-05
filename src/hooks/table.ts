@@ -37,20 +37,35 @@ export async function afterDelete(data) {
   await CacheService.reloadTable(data.name);
 }
 
-export async function syncTable({id: tableId, user}) {
-  const table = await CacheService.getTableById(tableId);
-  const Model = await DynamicDataService.getModelForTable(
-    table.name,
-    user.tenantId
-  );
-  await Model.sync({ alter: true });
-  await CacheService.reloadTable(table.alias_name);
+export async function syncTable({ ids, id: tableId, user }) {
+  if (tableId) {
+    const table = await CacheService.getTableById(tableId);
+    const Model = await DynamicDataService.getModelForTable(
+      table.name,
+      user.tenantId
+    );
+    await Model.sync({ alter: true });
+    await CacheService.reloadTable(table.alias_name);
+  } else {
+    if (ids.length === 0) {
+      throw new Error("请至少选择一个数据表");
+    }
+    for (const id of ids) {
+      const table = await CacheService.getTableById(id);
+      const Model = await DynamicDataService.getModelForTable(
+        table.name,
+        user.tenantId
+      );
+      await Model.sync({ alter: true });
+      await CacheService.reloadTable(table.alias_name);
+    }
+  }
   return {
     message: "数据表同步成功",
-  }
+  };
 }
 
-export async function getPageConfig({tableName}) {
+export async function getPageConfig({ tableName }) {
   return await getTableConfig(tableName);
 }
 
@@ -67,23 +82,22 @@ export async function getTableConfigById(tableId: number) {
   if (!table) {
     throw new Error("Table not found");
   }
-  const columns = [...table.columns].sort(
-    (a, b) => a.orderno - b.orderno
-  );
+  const columns = [...table.columns].sort((a, b) => a.orderno - b.orderno);
 
   const relatedTables = {};
   for (const col of columns) {
     if (col.relatedToTableId) {
-      const relatedTable = await CacheService.getTableById(col.relatedToTableId);
+      const relatedTable = await CacheService.getTableById(
+        col.relatedToTableId
+      );
       if (relatedTable) {
-        relatedTables[col.relatedToTableId] = relatedTable.alias_name || relatedTable.name;
+        relatedTables[col.relatedToTableId] =
+          relatedTable.alias_name || relatedTable.name;
       }
     }
   }
 
-  const actions = [...table.actions].sort(
-    (a, b) => a.orderno - b.orderno
-  )
+  const actions = [...table.actions].sort((a, b) => a.orderno - b.orderno);
 
   return {
     id: table.id,
@@ -91,17 +105,21 @@ export async function getTableConfigById(tableId: number) {
     name: table.description,
     hideMenu: table.hideMenu,
     actions,
-    columns: columns.map((col) => ({
-      id: col.id,
-      fieldName: col.name,
-      label: col.description,
-      ak: col.ak,
-      dk: col.dk,
-      sortable: col.sortable,
-      dataType: col.dataType,
-      relatedToTableId: col.relatedToTableId,
-      relatedToTableName: relatedTables[col.relatedToTableId],
-      ...col.ui,
-    })),
+    columns: columns.map((col) => {
+      let rules = col.required ? 'required' : null;
+      return {
+        id: col.id,
+        fieldName: col.name,
+        label: col.description,
+        ak: col.ak,
+        dk: col.dk,
+        sortable: col.sortable,
+        dataType: col.dataType,
+        relatedToTableId: col.relatedToTableId,
+        relatedToTableName: relatedTables[col.relatedToTableId],
+        rules,
+        ...col.ui,
+      };
+    }),
   };
 }

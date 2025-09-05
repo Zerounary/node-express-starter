@@ -66,7 +66,7 @@ watch(activeKey, (key) => {
 
 <template>
   <div class="items-wrapper">
-    <Tabs v-model:activeKey="activeKey">
+    <Tabs v-model:activeKey="activeKey" :tabBarStyle="{ marginBottom: '0' }">
       <Tabs.TabPane v-for="tab in tabs" :key="tab.key" :tab="tabState[tab.key]?.config?.name || tab.title || tab.table">
         <div v-if="tabState[tab.key]?.loading" class="p-4 text-gray-400">Loading...</div>
         <div v-else-if="tabState[tab.key]?.error" class="p-4 text-red-500">加载失败</div>

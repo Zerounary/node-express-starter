@@ -13,7 +13,7 @@ import { Page, useVbenDrawer } from '@vben/common-ui';
 import { useTabs } from '@vben/hooks';
 import { Plus } from '@vben/icons';
 
-import { Button, message, Modal } from 'ant-design-vue';
+import { Button, message, Modal, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { getPage, remove } from '#/api/system/crud';
@@ -22,20 +22,21 @@ import { useSystem } from '#/store/system';
 
 import { useColumns, useGridFormSchema } from './data';
 import Form from './modules/form.vue';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
+import ActionButtonGroup from '#/adapter/component/ActionButtonGroup.vue';
 
 const route = useRoute();
 const system = useSystem();
-
+const selectionIds = ref<number[]>([]);
 const { setTabTitle } = useTabs();
 const tableName = route.params.table;
-console.log('🚀 ~ route.params:', route.params)
+console.log('🚀 ~ route.params:', route.params);
 
 // const table = system.table(tableName);
-const table  = route.params
+const table = route.params;
 
 setTabTitle(table?.name);
-document.title = table?.name
+document.title = table?.name;
 
 const [FormDrawer, formDrawerApi] = useVbenDrawer({
   connectedComponent: Form,
@@ -55,13 +56,21 @@ const [Grid, gridApi] = useVbenVxeGrid({
     submitOnChange: false,
   },
   gridOptions: {
-    columns: useColumns(table, onActionClick, onStatusChange),
+    checkboxConfig: {
+      highlight: true,
+    },
+    columns: [
+      {type: 'checkbox', width: 40},
+      {type: 'seq', width: 40},
+      ...useColumns(table, onActionClick, onStatusChange)
+    ],
     height: 'auto',
     keepSource: true,
+    stripe: true,
     proxyConfig: {
       ajax: {
         query: async ({ page }, formValues) => {
-          console.log('loadx')
+          console.log('loadx');
           return await getPage(table.table, {
             page: page.currentPage,
             pageSize: page.pageSize,
@@ -72,6 +81,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     },
     rowConfig: {
       keyField: 'id',
+      isHover: true,
     },
     sortConfig: {
       remote: true,
@@ -85,13 +95,23 @@ const [Grid, gridApi] = useVbenVxeGrid({
     },
   } as VxeTableGridOptions<SystemTableApi.SystemTable>,
   gridEvents: {
+    checkboxChange({checked, row}) {
+      if(checked) {
+        selectionIds.value.push(row.id);
+      } else {
+        const index = selectionIds.value.findIndex(id => id === row.id);
+        if(index > -1) {
+          selectionIds.value.splice(index, 1);
+        }
+      }
+    },
     sortChange: ({ field, order }) => {
       console.log('🚀 ~ sortChange ~ field, order:', field, order);
       gridApi.query({
         sorts: `${field}-${order}`,
       });
     },
-  }
+  },
 });
 
 function onActionClick(e: OnActionClickParams<SystemTableApi.SystemTable>) {
@@ -185,19 +205,31 @@ function onRefresh() {
 onMounted(() => {
   gridApi.query();
 });
-
 </script>
 <template>
   <Page auto-content-height>
     <FormDrawer class="w-full" :table="table" />
-    <Grid :table-title="$t('system.table.list')">
-      <template #toolbar-tools>
-        <AccessControl :codes="getTableAccessCodes(tableName, 'create')" type="code">
-          <Button type="primary" @click="onCreate">
-            <Plus class="size-5" />
-            {{ $t('ui.actionTitle.create', []) }}
-          </Button>
-        </AccessControl>
+    <Grid>
+      <template #toolbar-actions>
+        <space>
+          <AccessControl
+            :codes="getTableAccessCodes(tableName, 'create')"
+            type="code"
+          >
+            <Button type="primary" @click="onCreate">
+              <Plus class="size-5" />
+              {{ $t('ui.actionTitle.create', []) }}
+            </Button>
+          </AccessControl>
+          <ActionButtonGroup
+            type="list"
+            :table="tableName"
+            :actions="table.actions"
+            :params="{
+              ids: selectionIds,
+            }"
+          />
+        </space>
       </template>
     </Grid>
   </Page>

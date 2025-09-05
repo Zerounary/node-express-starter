@@ -1,17 +1,17 @@
 <template>
-  <space class="mb-3">
+  <space>
     <Button
       type="primary"
-      v-for="btn of actions.slice(0, MAX_BUTTONS)"
+      v-for="btn of actionsFiltered.slice(0, MAX_BUTTONS)"
       :key="btn.resource"
       @click="executeAction(btn)"
       >{{ btn.name }}</Button
     >
-    <Dropdown v-if="actions.length > MAX_BUTTONS">
+    <Dropdown v-if="actionsFiltered.length > MAX_BUTTONS">
       <template #overlay>
         <space direction="vertical">
           <Button
-            v-for="btn of actions.slice(MAX_BUTTONS)"
+            v-for="btn of actionsFiltered.slice(MAX_BUTTONS)"
             :key="btn.resource"
             class="w-full text-left"
             @click="executeAction(btn)"
@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { defineProps, computed } from 'vue';
 import { Space, Button, message, Dropdown } from 'ant-design-vue';
 import { execute } from '#/api/system/crud';
 
@@ -46,6 +46,10 @@ const props = defineProps<{
   params: object;
   actions: TableActionItem[];
 }>();
+
+const actionsFiltered = computed(() => {
+  return props.actions.filter(e => e.type === props.type);
+});
 
 const executeAction = async (action: TableActionItem) => {
   try {

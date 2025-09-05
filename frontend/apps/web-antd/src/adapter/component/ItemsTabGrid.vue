@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import type { PropType } from 'vue';
 import type { Recordable } from '@vben/types';
-import type { OnActionClickParams, VxeTableGridOptions } from '#/adapter/vxe-table';
+import type {
+  OnActionClickParams,
+  VxeTableGridOptions,
+} from '#/adapter/vxe-table';
 import type { SystemTableApi } from '#/api';
 import type { TableConfig } from './types';
 
-import { computed, onMounted, defineProps, toRaw } from 'vue';
+import { computed, onMounted, defineProps, toRaw, ref } from 'vue';
 import { AccessControl, getTableAccessCodes } from '@vben/access';
-import { Button, message, Modal } from 'ant-design-vue';
+import { Space, Button, message, Modal } from 'ant-design-vue';
 import { Plus } from '@vben/icons';
 
 import { useVbenDrawer } from '@vben/common-ui';
@@ -17,6 +20,7 @@ import { $t } from '#/locales';
 
 import { useColumns, useGridFormSchema } from '#/views/system/crud/data';
 import Form from '#/views/system/crud/modules/form.vue';
+import ActionButtonGroup from '#/adapter/component/ActionButtonGroup.vue';
 
 const props = defineProps({
   tableConfig: { type: Object as PropType<TableConfig>, required: true },
@@ -24,8 +28,17 @@ const props = defineProps({
   parentId: { type: [String, Number], required: true },
   row: { type: Object, default: () => ({}) },
   queryExtra: { type: Object, default: () => ({}) },
-  tab: { type: Object as PropType<{ key: string; table: string; extraQuery?: Record<string, any> }>, required: true },
+  tab: {
+    type: Object as PropType<{
+      key: string;
+      table: string;
+      extraQuery?: Record<string, any>;
+    }>,
+    required: true,
+  },
 });
+
+const selectionIds = ref<number[]>([]);
 
 const filteredTableConfig = computed(() => {
   const queryExtraKeys = Object.keys(props.queryExtra);
@@ -34,7 +47,10 @@ const filteredTableConfig = computed(() => {
   if (newConfig.columns) {
     newConfig.columns = newConfig.columns.filter(
       (field: { fieldName: string }) => {
-        return !queryExtraKeys.includes(field.fieldName) && field.fieldName != props.parentKey
+        return (
+          !queryExtraKeys.includes(field.fieldName) &&
+          field.fieldName != props.parentKey
+        );
       },
     );
   }
@@ -49,9 +65,14 @@ const [FormDrawer, formDrawerApi] = useVbenDrawer({
   },
 });
 
-const gridFormSchema = computed(() => useGridFormSchema(toRaw(filteredTableConfig.value)));
+const gridFormSchema = computed(() =>
+  useGridFormSchema(toRaw(filteredTableConfig.value)),
+);
 const columns = computed(() =>
-  useColumns<SystemTableApi.SystemTable>(filteredTableConfig.value, onActionClick),
+  useColumns<SystemTableApi.SystemTable>(
+    filteredTableConfig.value,
+    onActionClick,
+  ),
 );
 
 const [Grid, gridApi] = useVbenVxeGrid({
@@ -62,7 +83,11 @@ const [Grid, gridApi] = useVbenVxeGrid({
     submitOnChange: false,
   },
   gridOptions: {
-    columns: columns.value,
+    columns: [
+      { type: 'checkbox', width: 40 },
+      { type: 'seq', width: 40 },
+      ...columns.value,
+    ],
     formConfig: {
       collapsed: true,
     },
@@ -70,11 +95,14 @@ const [Grid, gridApi] = useVbenVxeGrid({
     keepSource: true,
     proxyConfig: {
       ajax: {
-        query: async ({ page }: { page: { currentPage: number; pageSize: number } }, formValues: Recordable<any>) => {
+        query: async (
+          { page }: { page: { currentPage: number; pageSize: number } },
+          formValues: Recordable<any>,
+        ) => {
           const queryExtra = {
             ...props.queryExtra,
             [props.parentKey]: props.parentId,
-          }
+          };
           return await getPage(props.tableConfig.table, {
             page: page.currentPage,
             pageSize: page.pageSize,
@@ -96,21 +124,46 @@ const [Grid, gridApi] = useVbenVxeGrid({
     },
   } as VxeTableGridOptions<SystemTableApi.SystemTable>,
   gridEvents: {
-    sortChange: ({ field, order }: { field: string; order: 'asc' | 'desc' | null }) => {
+    checkboxChange({checked, row}) {
+      if(checked) {
+        selectionIds.value.push(row.id);
+      } else {
+        const index = selectionIds.value.findIndex(id => id === row.id);
+        if(index > -1) {
+          selectionIds.value.splice(index, 1);
+        }
+      }
+    },
+    sortChange: ({
+      field,
+      order,
+    }: {
+      field: string;
+      order: 'asc' | 'desc' | null;
+    }) => {
       gridApi.query({ sorts: `${field}-${order}` });
     },
   },
 });
 
 function onCreate() {
-  formDrawerApi.setData({ _parentKey: props.parentKey, _parentId: props.parentId, ...props.queryExtra });
+  formDrawerApi.setData({
+    _parentKey: props.parentKey,
+    _parentId: props.parentId,
+    ...props.queryExtra,
+  });
   // HACK: The type for `open` is incorrect, expecting 0 arguments.
   // Using `as any` to pass props to the connected component.
   (formDrawerApi.open as any)({ table: filteredTableConfig.value });
 }
 
 function onEdit(row: SystemTableApi.SystemTable) {
-  formDrawerApi.setData({ ...row, _parentKey: props.parentKey, _parentId: props.parentId,  ...props.queryExtra });
+  formDrawerApi.setData({
+    ...row,
+    _parentKey: props.parentKey,
+    _parentId: props.parentId,
+    ...props.queryExtra,
+  });
   // HACK: The type for `open` is incorrect, expecting 0 arguments.
   // Using `as any` to pass props to the connected component.
   (formDrawerApi.open as any)({ table: filteredTableConfig.value });
@@ -158,23 +211,27 @@ onMounted(() => {
 
 <template>
   <div>
-    <FormDrawer
-      class="w-full"
-      :table="filteredTableConfig"
-    />
+    <FormDrawer class="w-full" :table="filteredTableConfig" />
     <Grid>
-      <template #toolbar-tools>
-        <AccessControl
-          :codes="getTableAccessCodes(filteredTableConfig.table, 'create')"
-          type="code"
-        >
-          <Button
-            type="primary"
-            @click="onCreate"
+      <template #toolbar-actions>
+        <space>
+          <AccessControl
+            :codes="getTableAccessCodes(filteredTableConfig.table, 'create')"
+            type="code"
           >
-            <Plus class="size-5" />{{ $t('ui.actionTitle.create', []) }}
-          </Button>
-        </AccessControl>
+            <Button type="primary" @click="onCreate">
+              <Plus class="size-5" />{{ $t('ui.actionTitle.create', []) }}
+            </Button>
+          </AccessControl>
+          <ActionButtonGroup
+            type="item"
+            :table="tableConfig.table"
+            :actions="tableConfig.actions"
+            :params="{
+              ids: selectionIds,
+            }"
+          />
+        </space>
       </template>
     </Grid>
   </div>
