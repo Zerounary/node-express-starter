@@ -479,7 +479,8 @@ export default class DynamicController {
   @Put("/:id", [checkPermission("data::tableName:update")])
   async update(req, res) {
     try {
-      const { tableName, id } = req.params;
+      const { tableName } = req.params;
+      const id = Number(req.params.id);
       const { tenantId } = req.user;
       let body = await req.json();
 
@@ -522,7 +523,8 @@ export default class DynamicController {
   @Delete("/:id", [checkPermission("data::tableName:delete")])
   async remove(req, res) {
     try {
-      const { tableName, id } = req.params;
+      const { tableName } = req.params;
+      const id = Number(req.params.id);
       const { tenantId } = req.user;
 
       // beforeDelete hook

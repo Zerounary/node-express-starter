@@ -23,8 +23,9 @@ export async function afterCreate(data) {
   await CacheService.reloadTable(data.name);
 }
 
-export async function afterUpdate(data) {
-  await CacheService.reloadTable(data.name);
+export async function afterUpdate(id) {
+  let table = await CacheService.getTableById(id)
+  await CacheService.reloadTable(table.alias_name);
 }
 
 export async function beforeDelete(id) {
