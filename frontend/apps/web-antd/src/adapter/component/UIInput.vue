@@ -1,10 +1,10 @@
 <template>
-  <div class="ui-input bg-white dark:bg-gray-800 border rounded-md p-4">
+  <div class="ui-input rounded-md border bg-white p-4 dark:bg-gray-800">
     <a-tabs default-active-key="general">
       <!-- General Settings -->
       <a-tab-pane key="general" tab="通用设置">
         <a-form :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2  lg:grid-cols-3">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             <a-form-item
               label="可见性掩码"
               :rules="[
@@ -73,7 +73,10 @@
               <div class="mt-1 text-xs text-gray-500">请输入合法的JSON格式</div>
             </a-form-item>
             <!-- Specific UI for 'Items' component tabs -->
-            <div v-if="model.component === 'Items'" class="md:col-span-2 lg:col-span-3">
+            <div
+              v-if="model.component === 'Items'"
+              class="md:col-span-2 lg:col-span-3"
+            >
               <h3 class="mb-2 font-semibold text-gray-800">子项列表配置</h3>
               <div
                 v-for="(tab, index) in tabs"
@@ -91,12 +94,19 @@
                     <a-input v-model:value="tab.key" />
                   </a-form-item>
                   <a-form-item label="表" required>
-                    <FkPicker table="table" value-key="alias_name" v-model="tab.table" />
+                    <FkPicker
+                      table="table"
+                      value-key="alias_name"
+                      v-model="tab.table"
+                    />
                   </a-form-item>
                   <a-form-item label="父表字段名" required>
-                    <FkPicker table="column" value-key="name" :query-extra="{
-
-                    }" v-model="tab.parentKey" />
+                    <FkPicker
+                      table="column"
+                      value-key="name"
+                      :query-extra="{}"
+                      v-model="tab.parentKey"
+                    />
                   </a-form-item>
                   <a-form-item label="标题">
                     <a-input v-model:value="tab.title" />
@@ -202,6 +212,80 @@
           </div>
         </a-form>
       </a-tab-pane>
+      <a-tab-pane key="rules" tab="字段规则">
+        <div class="flex flex-col">
+          <a-form-item label="默认值">
+            <a-input
+              v-model:value="model.defaultValue"
+              placeholder="设置字段的默认值"
+            />
+          </a-form-item>
+          <a-form :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }">
+          </a-form>
+          <!-- Rule Generator UI -->
+          <div
+            v-for="(rule, index) in model.rules"
+            :key="index"
+            class="grid grid-cols-[1fr_1fr_1fr_auto] items-start gap-2 rounded-md border p-3"
+          >
+            <a-form-item label="类型">
+              <a-select
+                v-model:value="rule.type"
+                @change="handleRuleTypeChange(rule)"
+              >
+                <a-select-opt-group
+                  v-for="group in groupedValidationTypes"
+                  :key="group.label"
+                  :label="group.label"
+                >
+                  <a-select-option
+                    v-for="t in group.options"
+                    :key="t.value"
+                    :value="t.value"
+                  >
+                    {{ t.label }}
+                  </a-select-option>
+                </a-select-opt-group>
+              </a-select>
+            </a-form-item>
+
+            <a-form-item label="参数" v-if="getRuleParamType(rule.type)">
+              <a-input-number
+                v-if="getRuleParamType(rule.type) === 'number'"
+                v-model:value="rule.value"
+                class="w-full"
+              />
+              <a-input
+                v-else-if="getRuleParamType(rule.type) === 'string'"
+                v-model:value="rule.value"
+              />
+            </a-form-item>
+            <div v-else></div>
+            <!-- Placeholder for grid alignment -->
+
+            <a-form-item label="错误信息">
+              <a-input v-model:value="rule.message" placeholder="可选" />
+            </a-form-item>
+
+            <a-button type="link" danger @click="removeRule(index)">
+              <DeleteOutlined />
+            </a-button>
+          </div>
+
+          <a-button type="dashed" class="w-full" @click="addRule">
+            <PlusOutlined /> 添加规则
+          </a-button>
+
+          <!-- Generated Zod Schema Preview -->
+          <div class="mt-4">
+            <h3 class="font-semibold">生成的 Zod Schema:</h3>
+            <pre
+              class="mt-2 rounded-md bg-gray-100 p-3 text-sm text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+              >{{ generatedZodSchema }}</pre
+            >
+          </div>
+        </div>
+      </a-tab-pane>
     </a-tabs>
   </div>
 </template>
@@ -215,6 +299,7 @@ import {
   Input as AInput,
   InputNumber as AInputNumber,
   Select as ASelect,
+  SelectOptGroup as ASelectOptGroup,
   SelectOption as ASelectOption,
   Switch as ASwitch,
   TabPane as ATabPane,
@@ -222,7 +307,15 @@ import {
   Textarea as ATextarea,
 } from 'ant-design-vue';
 import FkPicker from './FkPicker.vue';
-import { PlusOutlined } from '@ant-design/icons-vue';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue';
+import { z } from '@vben/common-ui';
+
+// Define the rule interface
+interface ZodRule {
+  type: string;
+  value?: any;
+  message?: string;
+}
 
 // Define the interface based on the provided structure
 interface ColumnUI {
@@ -263,6 +356,8 @@ interface ColumnUI {
     required?: string;
     componentProps?: string;
   };
+  rules?: ZodRule[];
+  defaultValue?: any;
 }
 
 interface TabProp {
@@ -275,11 +370,20 @@ interface TabProp {
 
 // Use defineModel to create a two-way binding
 const model = defineModel<ColumnUI>({
-  default: () => ({ component: 'Input', dependencies: {} }),
+  default: () => ({
+    component: 'Input',
+    dependencies: {},
+    rules: [],
+    defaultValue: undefined,
+  }),
 });
 // 确保渲染前存在 dependencies，兼容历史数据（可能缺少该字段）
 if (!model.value.dependencies || typeof model.value.dependencies !== 'object') {
   model.value.dependencies = {};
+}
+// Ensure rules array exists
+if (!model.value.rules) {
+  model.value.rules = [];
 }
 
 const componentTypes = [
@@ -478,6 +582,209 @@ const handlePropsChange = (e: Event) => {
   const target = e.target as HTMLTextAreaElement;
   componentPropsString.value = target.value;
 };
+
+// Zod Rules Configuration
+const validationTypes = [
+  // Type definition
+  { value: 'string', label: '字符串', param: null, group: '类型' },
+  { value: 'number', label: '数字', param: null, group: '类型' },
+  { value: 'boolean', label: '布尔值', param: null, group: '类型' },
+  { value: 'date', label: '日期', param: null, group: '类型' },
+
+  { value: 'required', label: '必填', param: null, group: '通用校验' },
+
+  // String validations
+  { value: 'min', label: '最小长度', param: 'number', group: '字符串校验' },
+  { value: 'max', label: '最大长度', param: 'number', group: '字符串校验' },
+  { value: 'length', label: '固定长度', param: 'number', group: '字符串校验' },
+  { value: 'email', label: '邮箱地址', param: null, group: '字符串校验' },
+  { value: 'url', label: 'URL', param: null, group: '字符串校验' },
+  { value: 'uuid', label: 'UUID', param: null, group: '字符串校验' },
+  { value: 'cuid', label: 'CUID', param: null, group: '字符串校验' },
+  {
+    value: 'datetime',
+    label: 'ISO 日期时间',
+    param: null,
+    group: '字符串校验',
+  },
+  {
+    value: 'startsWith',
+    label: '以此开头',
+    param: 'string',
+    group: '字符串校验',
+  },
+  {
+    value: 'endsWith',
+    label: '以此结尾',
+    param: 'string',
+    group: '字符串校验',
+  },
+  { value: 'regex', label: '正则表达式', param: 'string', group: '字符串校验' },
+  { value: 'identifier', label: '标识符', param: null, group: '字符串校验' },
+
+  // Number validations
+  { value: 'gt', label: '大于', param: 'number', group: '数字校验' },
+  { value: 'gte', label: '大于等于 (min)', param: 'number', group: '数字校验' },
+  { value: 'lt', label: '小于', param: 'number', group: '数字校验' },
+  { value: 'lte', label: '小于等于 (max)', param: 'number', group: '数字校验' },
+  { value: 'int', label: '整数', param: null, group: '数字校验' },
+  { value: 'positive', label: '正数 (> 0)', param: null, group: '数字校验' },
+  { value: 'negative', label: '负数 (< 0)', param: null, group: '数字校验' },
+  {
+    value: 'nonpositive',
+    label: '非正数 (<= 0)',
+    param: null,
+    group: '数字校验',
+  },
+  {
+    value: 'nonnegative',
+    label: '非负数 (>= 0)',
+    param: null,
+    group: '数字校验',
+  },
+  {
+    value: 'multipleOf',
+    label: '...的倍数',
+    param: 'number',
+    group: '数字校验',
+  },
+];
+
+const groupedValidationTypes = computed(() => {
+  const groups: Record<
+    string,
+    { label: string; options: typeof validationTypes }
+  > = {};
+  validationTypes.forEach((vt) => {
+    if (!groups[vt.group]) {
+      groups[vt.group] = { label: vt.group, options: [] };
+    }
+    groups[vt.group].options.push(vt);
+  });
+  return Object.values(groups);
+});
+
+function getRuleParamType(type: string): 'string' | 'number' | null {
+  const ruleDef = validationTypes.find((t) => t.value === type);
+  return ruleDef ? (ruleDef.param as 'string' | 'number' | null) : null;
+}
+
+function handleRuleTypeChange(rule: ZodRule) {
+  // Reset value when type changes to avoid type mismatch
+  rule.value = undefined;
+}
+
+function addRule() {
+  if (!model.value.rules) {
+    model.value.rules = [];
+  }
+  // Add a string type by default for new rules if it's the first one
+  const type = model.value.rules.length === 0 ? 'string' : 'required';
+  model.value.rules.push({ type });
+}
+
+function removeRule(index: number) {
+  model.value.rules?.splice(index, 1);
+}
+
+const generatedZodSchema = computed(() => {
+  const rules = model.value.rules;
+  if (!rules || rules.length === 0) {
+    return 'z.any()';
+  }
+
+  let schema = 'z';
+  let baseType = '';
+
+  // Find base type, default to 'string'
+  const typeRule = rules.find((r) =>
+    ['string', 'number', 'boolean', 'date'].includes(r.type),
+  );
+  if (typeRule) {
+    baseType = typeRule.type;
+  } else {
+    baseType = 'string';
+  }
+  schema += `.${baseType}()`;
+
+  // Filter out the type rule and process others
+  const validationRules = rules.filter((r) => r.type !== baseType);
+
+  validationRules.forEach((rule) => {
+    let methodName = rule.type;
+    const args = [];
+
+    // --- Method Name Translations ---
+    if (methodName === 'required' && baseType === 'string') {
+      methodName = 'nonempty';
+    } else if (methodName === 'required') {
+      return; // Is default for other types
+    }
+
+    if (baseType === 'number') {
+      if (methodName === 'gte') methodName = 'min';
+      if (methodName === 'lte') methodName = 'max';
+    }
+
+    if (methodName === 'identifier') {
+      methodName = 'regex';
+      args.push('/^[a-zA-Z_][a-zA-Z0-9_]*$/');
+      if (rule.message) {
+        args.push(`"${rule.message.replace(/"/g, '\\"')}"`);
+      }
+      schema += `.${methodName}(${args.join(', ')})`;
+      return;
+    }
+
+    // --- Argument Formatting ---
+    if (rule.value !== undefined && rule.value !== null && rule.value !== '') {
+      if (methodName === 'regex') {
+        args.push(rule.value); // Assume user enters a valid regex literal string
+      } else if (typeof rule.value === 'string') {
+        args.push(`"${rule.value.replace(/"/g, '\\"')}"`);
+      } else {
+        args.push(String(rule.value));
+      }
+    }
+
+    if (rule.message) {
+      args.push(`"${rule.message.replace(/"/g, '\\"')}"`);
+    }
+
+    schema += `.${methodName}(${args.join(', ')})`;
+  });
+
+  // --- Default Value ---
+  const defaultValue = model.value.defaultValue;
+  if (
+    defaultValue !== undefined &&
+    defaultValue !== null &&
+    defaultValue !== ''
+  ) {
+    let formattedDefault;
+    if (baseType === 'string') {
+      formattedDefault = `"${String(defaultValue).replace(/"/g, '\\"')}"`;
+    } else if (baseType === 'number') {
+      const num = parseFloat(defaultValue);
+      if (!isNaN(num)) {
+        formattedDefault = String(num);
+      }
+    } else if (baseType === 'boolean') {
+      formattedDefault = ['true', '1', 'yes'].includes(
+        String(defaultValue).toLowerCase(),
+      );
+    } else {
+      // For date and other types, just treat as string for now.
+      formattedDefault = `"${String(defaultValue).replace(/"/g, '\\"')}"`;
+    }
+
+    if (formattedDefault !== undefined) {
+      schema += `.default(${formattedDefault})`;
+    }
+  }
+
+  return schema;
+});
 </script>
 
 <style scoped>
