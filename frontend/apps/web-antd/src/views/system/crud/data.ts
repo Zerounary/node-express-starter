@@ -1,3 +1,4 @@
+import type { TableConfig } from '#/adapter/component/types';
 import { buildZodSchemaFromRules } from '#/adapter/component/zod-rules-builder';
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
@@ -130,9 +131,8 @@ export function useGridFormSchema(table): VbenFormSchema[] {
 }
 
 export function useColumns<T = SystemTableApi.SystemTable>(
-  table,
-  onActionClick: OnActionClickFn<T>,
-  onStatusChange?: (newStatus: any, row: T) => PromiseLike<boolean | undefined>,
+  table: TableConfig,
+  onActionClick: OnActionClickFn<T> | undefined,
 ): VxeTableGridOptions['columns'] {
   const dynColumns = (table.columns || [])
     .filter(isListVisable)
@@ -144,7 +144,7 @@ export function useColumns<T = SystemTableApi.SystemTable>(
   });
   return [
     ...dynColumns,
-    ...(options.length ? [{
+    ...(onActionClick && options.length ? [{
       align: 'center',
       cellRender: {
         options,

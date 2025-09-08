@@ -1,4 +1,5 @@
 <template>
+
   <PageContainer>
     <div class="playground-grid">
       <ACard title="MediaPicker Playground">
@@ -45,6 +46,11 @@
         </AForm>
       </ACard>
 
+      <ACard title="FkPicker外键选择">
+        <FkPicker v-model="formState.tableId" table="table" />
+        <FkPicker class="mt-3" mode="multiple" v-model="formState.tableIds" table="table" />
+      </ACard>
+
       <div class="right-column">
         <ACard title="QRCode Playground" class="component-card">
           <AFormItem label="QR Code Content">
@@ -62,9 +68,11 @@
       </div>
     </div>
 
-    <ACard title="地址选择器 (LocatePicker) Playground" :style="{ marginTop: '24px' }">
+    <ACard
+      title="地址选择器 (LocatePicker) Playground"
+      :style="{ marginTop: '24px' }"
+    >
       <ASpace direction="vertical" size="large" style="width: 100%">
-
         <!-- 基础用法 -->
         <div>
           <h3>基础用法（三级联动）</h3>
@@ -142,21 +150,14 @@
             layout="vertical"
             @finish="handleAddressSubmit"
           >
-            <AFormItem
-              label="收货地址"
-              name="address"
-              required
-            >
+            <AFormItem label="收货地址" name="address" required>
               <LocatePicker
                 v-model="formState.addressForm.address"
                 placeholder="请选择收货地址"
               />
             </AFormItem>
 
-            <AFormItem
-              label="详细地址"
-              name="detailAddress"
-            >
+            <AFormItem label="详细地址" name="detailAddress">
               <AInput
                 v-model:value="formState.addressForm.detailAddress"
                 placeholder="请输入详细地址"
@@ -164,13 +165,10 @@
             </AFormItem>
 
             <AFormItem>
-              <AButton type="primary" html-type="submit">
-                提交
-              </AButton>
+              <AButton type="primary" html-type="submit"> 提交 </AButton>
             </AFormItem>
           </AForm>
         </div>
-
       </ASpace>
     </ACard>
 
@@ -179,9 +177,7 @@
     </ACard>
 
     <ACard title="Items Playground" :style="{ marginTop: '24px' }">
-      <Items
-        :tabs="itemsTabs"
-      />
+      <Items :tabs="itemsTabs" />
     </ACard>
 
     <ACard title="Form State" :style="{ marginTop: '24px' }">
@@ -212,6 +208,7 @@ import LocatePicker from '#/adapter/component/LocatePicker.vue';
 import { useVbenForm } from '#/adapter/form';
 import { applyDependencies } from '#/utils';
 import Items from '#/adapter/component/Items.vue';
+import FkPicker from '#/adapter/component/FkPicker.vue';
 
 const itemsTabs = [
   { key: 'column', table: 'column', title: 'Column', parentKey: 'tableId' },
@@ -248,16 +245,12 @@ const formState = reactive({
   richTextContent:
     '<h1>Hello, Rich Text!</h1><p>This is a basic example of the RichText component.</p>',
   // LocatePicker 相关状态
-  basicValue: [
-    "150000",
-    "150200",
-    "150203"
-  ] as string[],
+  basicValue: ['150000', '150200', '150203'] as string[],
   basicFullAddress: '',
   cityValue: [] as string[],
-  provinceValue: [
-    "150000",
-  ] as string[],
+  tableId: null,
+  tableIds: [],
+  provinceValue: ['150000'] as string[],
   disabledValue: ['440000', '440300', '440304'] as string[],
   sizeValue: [] as string[],
   addressForm: {
@@ -294,7 +287,7 @@ const [DependencyForm, formApi] = useVbenForm({
 // LocatePicker 处理函数
 const handleBasicChange = (value: string[], selectedOptions: any[]) => {
   console.log('Basic change:', value, selectedOptions);
-  formState.basicFullAddress = selectedOptions.map(opt => opt.label).join('');
+  formState.basicFullAddress = selectedOptions.map((opt) => opt.label).join('');
 };
 
 const handleCityChange = (value: string[], selectedOptions: any[]) => {
@@ -306,9 +299,7 @@ const handleProvinceChange = (value: string[], selectedOptions: any[]) => {
 };
 
 const addressFormRules = {
-  address: [
-    { required: true, message: '请选择收货地址', trigger: 'change' }
-  ],
+  address: [{ required: true, message: '请选择收货地址', trigger: 'change' }],
 };
 
 const handleAddressSubmit = (values: any) => {

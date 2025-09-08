@@ -20,7 +20,6 @@ import { ApiComponent, globalShareState, IconPicker } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
-import FkPicker from './FkPicker.vue';
 import PermissionPicker from './PermissionPicker.vue'
 import Text from './Text.vue'
 import DatePicker from './DatePicker.vue'
@@ -32,7 +31,9 @@ import Divider from './Divider.vue';
 import ActionButtonGroup from './ActionButtonGroup.vue';
 
 // 所有使用 vben 组件的需异步使用。
-
+const FkPicker = defineAsyncComponent(
+  () => import('./FkPicker.vue'),
+);
 const UIInput = defineAsyncComponent(
   () => import('./UIInput.vue'),
 );

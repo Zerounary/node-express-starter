@@ -62,7 +62,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     columns: [
       {type: 'checkbox', width: 40},
       {type: 'seq', width: 40},
-      ...useColumns(table, onActionClick, onStatusChange)
+      ...useColumns(table, onActionClick)
     ],
     height: 'auto',
     keepSource: true,
@@ -147,28 +147,6 @@ function confirm(content: string, title: string) {
   });
 }
 
-/**
- * 状态开关即将改变
- * @param newStatus 期望改变的状态值
- * @param row 行数据
- * @returns 返回false则中止改变，返回其他值（undefined、true）则允许改变
- */
-async function onStatusChange(newStatus: number, row) {
-  const status: Recordable<string> = {
-    0: '禁用',
-    1: '启用',
-  };
-  try {
-    await confirm(
-      `你要将${row.name}的状态切换为 【${status[newStatus.toString()]}】 吗？`,
-      `切换状态`,
-    );
-    await (row.id, { status: newStatus });
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 function onCreate() {
   formDrawerApi.setData({}).open();
