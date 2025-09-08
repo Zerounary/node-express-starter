@@ -1,27 +1,24 @@
 <template>
   <div class="w-full">
     <div v-if="!disabled" class="flex w-full">
-      <AutoComplete
+      <Select
         class="flex-grow"
-        v-model:value="displayValue"
+        v-model:value="selectValue"
         :open="searchOpen"
-        :default-active-first-option="false"
         label-in-value
         show-search
         :filter-option="false"
-        :mode="mode"
+        :mode="props.mode === 'multiple' ? 'multiple' : undefined"
         :options="selections"
-        @select="(value) => (searchOpen = false)"
+        @select="() => (searchOpen = false)"
         @change="handleSelectChange"
         @search="search"
         :loading="loading"
-      >
-        <InputSearch @search="openFilter">
-          <template #enterButton>
-            <FilterOutlined />
-          </template>
-        </InputSearch>
-      </AutoComplete>
+        :allow-clear="true"
+        :max-tag-count="props.mode === 'multiple' ? 0 : undefined"
+        :placeholder="placeholder"
+      />
+      <Button @click="openFilter" class="ml-1"><FilterOutlined /></Button>
     </div>
     <div v-else>{{ displayValue }}</div>
     <Modal title="请选择" class="w-[800px]">
@@ -33,7 +30,7 @@
 <script setup lang="ts">
 import { defineProps, defineModel, ref, watch, computed, nextTick } from 'vue';
 import { getPage, getList } from '#/api/system/crud';
-import { AutoComplete, InputSearch } from 'ant-design-vue';
+import { Select, Button } from 'ant-design-vue';
 import { getPageConfig, keywordSearch } from '#/api';
 import { FilterOutlined } from '@ant-design/icons-vue';
 import { useVbenVxeGrid } from '../vxe-table';
@@ -52,7 +49,7 @@ const props = defineProps({
   },
 });
 
-const modelValue = defineModel<any>({ default: undefined });
+const modelValue = defineModel<any>();
 
 // --- Internal State ---
 const loading = ref(false);
@@ -61,7 +58,7 @@ const valueIsObject = ref(false); // Determines if v-model is an object or primi
 const modeDetermined = ref(false); // Flag to check if v-model type has been determined
 
 // --- AutoComplete State ---
-const selectValue = ref<any>(); // The value shown in the AutoComplete input
+const selectValue = ref<any>(props.mode === 'multiple' ? [] : undefined); // The value shown in the AutoComplete input
 const selections = ref<any[]>([]); // Options for AutoComplete: { label, value, _item }
 const searchOpen = ref(false);
 
@@ -71,14 +68,29 @@ const selectedRowKeys = ref<any[]>([]);
 const selectedRows = ref<any[]>([]);
 
 // --- Computed Properties ---
+const placeholder = computed(() => {
+  if (props.mode === 'multiple') {
+    if (Array.isArray(selectValue.value) && selectValue.value.length > 0) {
+      return selectValue.value.map((v) => v.label).join(', ');
+    }
+    return '请选择';
+  }
+  return '请选择';
+});
+
 const displayValue = computed(() => {
+  if (props.mode === 'multiple') {
+    if (!selectValue.value || selectValue.value.length === 0) return '';
+    return selectValue.value.map((v) => v.label).join(', ');
+  }
+
   if (selectValue.value?.label) {
     return selectValue.value.label;
   }
+  // Fallback for initial value before selectValue is populated
   const mv = modelValue.value;
   if (!mv) return '';
   if (typeof mv === 'object' && mv !== null) {
-    // For object value, display 'name' or the value of 'valueKey' prop
     return mv.name || mv[props.valueKey] || '';
   }
   return mv;
@@ -86,43 +98,65 @@ const displayValue = computed(() => {
 
 // --- Core Logic: v-model synchronization ---
 /**
- * Ensures an option for a given value exists in `selections` cache.
- * If not present, it fetches the item from the server.
- * This is crucial for initializing the component with a value that hasn't been searched for yet.
+ * Ensures options for given values exist in `selections` cache.
+ * If not present, it fetches items from the server.
+ * This is crucial for initializing the component with values that haven't been searched for yet.
  */
-const ensureOption = async (value: any) => {
-  if (value === undefined || value === null) return null;
+const ensureOptionsInCache = async (values: any | any[]) => {
+  const valueArr = Array.isArray(values) ? values : [values];
+  if (
+    valueArr.length === 0 ||
+    valueArr.every((v) => v === undefined || v === null)
+  ) {
+    return [];
+  }
 
-  const primitiveValue =
-    typeof value === 'object' && value !== null ? value[props.valueKey] : value;
-  if (primitiveValue === undefined || primitiveValue === null) return null;
+  const primitiveValues = valueArr
+    .map((v) => (typeof v === 'object' && v !== null ? v[props.valueKey] : v))
+    .filter((v) => v !== undefined && v !== null);
 
-  const existing = selections.value.find((opt) => opt.value === primitiveValue);
-  if (existing) return existing;
+  if (primitiveValues.length === 0) return [];
+
+  const existingOptions = selections.value.filter((opt) =>
+    primitiveValues.includes(opt.value),
+  );
+  const missingValues = primitiveValues.filter(
+    (pv) => !existingOptions.some((opt) => opt.value === pv),
+  );
+
+  if (missingValues.length === 0) {
+    return existingOptions;
+  }
 
   loading.value = true;
   try {
-    const filter = { [`${props.valueKey}-in`]: primitiveValue };
+    const filter = { [`${props.valueKey}-in`]: missingValues };
     const result: any[] = await getList(props.table, {
       ...filter,
       ...props.queryExtra,
     });
-    const item = result.find((r) => r[props.valueKey] === primitiveValue);
-    if (item) {
-      const newOption = {
-        label: item.name || item.id,
-        value: item[props.valueKey],
-        _item: item,
-      };
-      selections.value.unshift(newOption);
-      return newOption;
-    }
+
+    const newOptions = result.map((item) => ({
+      label: item.name || item.id,
+      value: item[props.valueKey],
+      _item: item,
+    }));
+
+    // Add to cache, avoiding duplicates
+    const existingValues = new Set(selections.value.map((s) => s.value));
+    const uniqueNewOptions = newOptions.filter(
+      (opt) => !existingValues.has(opt.value),
+    );
+    selections.value.unshift(...uniqueNewOptions);
+
+    // Find all requested options from the updated cache
+    return selections.value.filter((opt) => primitiveValues.includes(opt.value));
   } catch (e) {
-    console.error('Failed to fetch option', e);
+    console.error('Failed to fetch options', e);
   } finally {
     loading.value = false;
   }
-  return null;
+  return existingOptions; // Return what we found if fetch fails
 };
 
 watch(
@@ -137,30 +171,37 @@ watch(
       modeDetermined.value = true;
     }
 
-    if (
-      newVal === undefined ||
-      newVal === null ||
-      (Array.isArray(newVal) && newVal.length === 0)
-    ) {
-      selectValue.value = undefined;
+    const isMultiEmpty =
+      props.mode === 'multiple' && Array.isArray(newVal) && newVal.length === 0;
+    if (newVal === undefined || newVal === null || isMultiEmpty) {
+      selectValue.value = props.mode === 'multiple' ? [] : undefined;
       return;
     }
 
-    const option = await ensureOption(newVal);
+    const options = await ensureOptionsInCache(newVal);
 
-    if (option) {
-      selectValue.value = { value: option.value, label: option.label };
-      // If v-model is expected to be an object but a primitive was passed,
-      // upgrade it to the full object.
-      if (valueIsObject.value && (typeof newVal !== 'object' || !newVal.name)) {
-        isUpdatingInternally.value = true;
-        modelValue.value = option._item;
-        nextTick(() => {
-          isUpdatingInternally.value = false;
-        });
-      }
+    if (props.mode === 'multiple') {
+      selectValue.value = options.map((opt) => ({
+        value: opt.value,
+        label: opt.label,
+      }));
     } else {
-      selectValue.value = undefined;
+      const option = options[0];
+      if (option) {
+        selectValue.value = { value: option.value, label: option.label };
+        if (
+          valueIsObject.value &&
+          (typeof newVal !== 'object' || !newVal.name)
+        ) {
+          isUpdatingInternally.value = true;
+          modelValue.value = option._item;
+          nextTick(() => {
+            isUpdatingInternally.value = false;
+          });
+        }
+      } else {
+        selectValue.value = undefined;
+      }
     }
   },
   { immediate: true, deep: true },
@@ -169,22 +210,37 @@ watch(
 // --- AutoComplete Event Handlers ---
 const handleSelectChange = (val: any) => {
   isUpdatingInternally.value = true;
-  if (!val) {
-    modelValue.value = undefined;
+  selectValue.value = val; // val is the source of truth from Select component
+
+  if (!val || (Array.isArray(val) && val.length === 0)) {
+    modelValue.value = props.mode === 'multiple' ? [] : undefined;
   } else {
-    const selectedOption = selections.value.find(
-      (opt) => opt.value === val.value,
-    );
-    if (selectedOption) {
-      modelValue.value = valueIsObject.value
-        ? selectedOption._item
-        : selectedOption.value;
+    if (props.mode === 'multiple') {
+      const values = val.map((v) => v.value);
+      const selectedFullOptions = selections.value.filter((opt) =>
+        values.includes(opt.value),
+      );
+
+      if (valueIsObject.value) {
+        modelValue.value = selectedFullOptions.map((opt) => opt._item);
+      } else {
+        modelValue.value = values;
+      }
     } else {
-      // This case should ideally not happen if ensureOption works correctly
-      modelValue.value = valueIsObject.value ? null : val.value;
+      // single mode
+      const selectedOption = selections.value.find(
+        (opt) => opt.value === val.value,
+      );
+      if (selectedOption) {
+        modelValue.value = valueIsObject.value
+          ? selectedOption._item
+          : selectedOption.value;
+      } else {
+        modelValue.value = valueIsObject.value ? null : val.value;
+      }
     }
   }
-  selectValue.value = val;
+
   nextTick(() => {
     isUpdatingInternally.value = false;
   });
