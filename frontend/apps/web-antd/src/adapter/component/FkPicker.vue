@@ -40,19 +40,11 @@ import { useVbenVxeGrid } from '../vxe-table';
 import { useGridFormSchema, useColumns } from '#/views/system/crud/data';
 import { useVbenModal } from '@vben/common-ui';
 
+// --- Component Props and Model ---
 const props = defineProps({
-  disabled: {
-    type: Boolean,
-    default: false,
-  },
-  table: {
-    type: String,
-    required: true,
-  },
-  valueKey: {
-    type: String,
-    default: 'id',
-  },
+  disabled: { type: Boolean, default: false },
+  table: { type: String, required: true },
+  valueKey: { type: String, default: 'id' },
   queryExtra: { type: Object, default: () => ({}) },
   mode: {
     type: String,
@@ -62,37 +54,23 @@ const props = defineProps({
 
 const modelValue = defineModel<any>({ default: undefined });
 
-// Internal state
-const selectValue = ref<any>();
-const selections = ref<any[]>([]); // Cache for options: { label, value, _item }
+// --- Internal State ---
 const loading = ref(false);
+const isUpdatingInternally = ref(false); // Flag to prevent watch loops
+const valueIsObject = ref(false); // Determines if v-model is an object or primitive
+const modeDetermined = ref(false); // Flag to check if v-model type has been determined
+
+// --- AutoComplete State ---
+const selectValue = ref<any>(); // The value shown in the AutoComplete input
+const selections = ref<any[]>([]); // Options for AutoComplete: { label, value, _item }
 const searchOpen = ref(false);
 
-// Mode detection
-const isUpdatingInternally = ref(false);
-const valueIsObject = ref(false);
-const modeDetermined = ref(false);
-
-// Modal state
-const isModalVisible = ref(false);
-const modalSearchKeyword = ref('');
-const refTable = ref<any>({});
-const tableData = ref<any[]>([]);
-const pagination = ref({ current: 1, pageSize: 10, total: 0 });
+// --- Modal & Grid State ---
+const refTable = ref<any>({}); // Configuration for the grid table
 const selectedRowKeys = ref<any[]>([]);
 const selectedRows = ref<any[]>([]);
-const currentFilters = ref<any>({});
 
-const columns = computed(() => {
-  return (
-    refTable.value.columns?.map((col: any) => ({
-      title: col.label,
-      dataIndex: col.fieldName,
-      key: col.fieldName,
-    })) || []
-  );
-});
-
+// --- Computed Properties ---
 const displayValue = computed(() => {
   if (selectValue.value?.label) {
     return selectValue.value.label;
@@ -100,12 +78,18 @@ const displayValue = computed(() => {
   const mv = modelValue.value;
   if (!mv) return '';
   if (typeof mv === 'object' && mv !== null) {
+    // For object value, display 'name' or the value of 'valueKey' prop
     return mv.name || mv[props.valueKey] || '';
   }
   return mv;
 });
 
-// Ensures an option for a given value exists in `selections`, fetching if necessary.
+// --- Core Logic: v-model synchronization ---
+/**
+ * Ensures an option for a given value exists in `selections` cache.
+ * If not present, it fetches the item from the server.
+ * This is crucial for initializing the component with a value that hasn't been searched for yet.
+ */
 const ensureOption = async (value: any) => {
   if (value === undefined || value === null) return null;
 
@@ -146,6 +130,7 @@ watch(
   async (newVal) => {
     if (isUpdatingInternally.value) return;
 
+    // Determine if the v-model is an object based on its initial value.
     if (!modeDetermined.value && newVal !== undefined && newVal !== null) {
       valueIsObject.value =
         typeof newVal === 'object' && !Array.isArray(newVal);
@@ -165,8 +150,9 @@ watch(
 
     if (option) {
       selectValue.value = { value: option.value, label: option.label };
+      // If v-model is expected to be an object but a primitive was passed,
+      // upgrade it to the full object.
       if (valueIsObject.value && (typeof newVal !== 'object' || !newVal.name)) {
-        // Upgrade to full object if needed
         isUpdatingInternally.value = true;
         modelValue.value = option._item;
         nextTick(() => {
@@ -180,6 +166,7 @@ watch(
   { immediate: true, deep: true },
 );
 
+// --- AutoComplete Event Handlers ---
 const handleSelectChange = (val: any) => {
   isUpdatingInternally.value = true;
   if (!val) {
@@ -193,6 +180,7 @@ const handleSelectChange = (val: any) => {
         ? selectedOption._item
         : selectedOption.value;
     } else {
+      // This case should ideally not happen if ensureOption works correctly
       modelValue.value = valueIsObject.value ? null : val.value;
     }
   }
@@ -219,6 +207,7 @@ const search = async (keyword: string) => {
         value: item[props.valueKey],
         _item: item,
       }));
+      // Keep the currently selected item in the list if it's not in the search results
       const currentVal = selectValue.value;
       if (
         currentVal &&
@@ -232,18 +221,67 @@ const search = async (keyword: string) => {
       selections.value = newOptions;
     }
   } catch (error) {
-    console.error('搜索失败:', error);
+    console.error('Search failed:', error);
   } finally {
     loading.value = false;
   }
 };
 
-watch(isModalVisible, (newVal) => {
-  if (newVal) {
-    modalSearchKeyword.value = '';
-    currentFilters.value = {};
-    pagination.value.current = 1;
-    fetchData();
+// --- Modal and Grid Composables ---
+const [Grid, gridApi] = useVbenVxeGrid({
+  formOptions: {
+    collapsed: true,
+    fieldMappingTime: [['createTime', ['startTime', 'endTime']]],
+    schema: [],
+    submitOnChange: false,
+  },
+  gridOptions: {
+    checkboxConfig: { highlight: true },
+    radioConfig: { trigger: 'row' },
+    columns: [],
+    height: '400px',
+    keepSource: true,
+    stripe: true,
+    proxyConfig: {
+      ajax: {
+        query: async ({ page }, formValues) => {
+          return await getPage(refTable.value.table, {
+            page: page.currentPage,
+            pageSize: page.pageSize,
+            ...formValues,
+            ...props.queryExtra,
+          });
+        },
+      },
+    },
+    rowConfig: { keyField: props.valueKey, isHover: true },
+    sortConfig: { remote: true },
+  },
+  gridEvents: {
+    radioChange({ row }) {
+      selectedRows.value = [row];
+      selectedRowKeys.value = [row[props.valueKey]];
+    },
+    checkboxChange({ checked, row }) {
+      const key = row[props.valueKey];
+      const isSelected = selectedRowKeys.value.includes(key);
+
+      if (checked && !isSelected) {
+        selectedRowKeys.value.push(key);
+        selectedRows.value.push(row);
+      } else if (!checked && isSelected) {
+        selectedRowKeys.value = selectedRowKeys.value.filter(id => id !== key);
+        selectedRows.value = selectedRows.value.filter(item => item[props.valueKey] !== key);
+      }
+    },
+  },
+});
+
+const [Modal, modalApi] = useVbenModal({
+  draggable: true,
+  onConfirm: () => handleOk(),
+  onOpened: () => {
+    // Initialize grid with current selection
     const currentVal = valueIsObject.value
       ? modelValue.value?.[props.valueKey]
       : modelValue.value;
@@ -252,32 +290,36 @@ watch(isModalVisible, (newVal) => {
         ? currentVal
         : [currentVal]
       : [];
-    selectedRows.value = [];
-  }
+    selectedRows.value = []; // Will be populated by grid logic if needed
+
+    // Configure and load grid data
+    gridApi.formApi.setState({
+      schema: useGridFormSchema(refTable.value),
+    });
+    gridApi.setState({
+      gridOptions: {
+        columns: [
+          props.mode === 'multiple'
+            ? { type: 'checkbox', width: 40 }
+            : { type: 'radio', width: 40 },
+          { type: 'seq', width: 40 },
+          ...useColumns(refTable.value, null),
+        ],
+      },
+    });
+    gridApi.query();
+  },
 });
 
-const fetchData = async (params = {}) => {
-  loading.value = true;
-  try {
-    const result: any = await getPage(props.table, {
-      page: pagination.value.current,
-      pageSize: pagination.value.pageSize,
-      ...props.queryExtra,
-      ...currentFilters.value,
-      ...params,
-    });
-    tableData.value = result.items;
-    pagination.value.total = result.total;
-  } catch (error) {
-    console.error('获取数据失败:', error);
-  } finally {
-    loading.value = false;
-  }
+// --- Modal and Grid Event Handlers ---
+const openFilter = async () => {
+  refTable.value = await getPageConfig(props.table);
+  modalApi.open();
 };
 
 const handleOk = () => {
   isUpdatingInternally.value = true;
-  console.log('Selected Rows:', selectedRows.value);
+
   if (props.mode === 'multiple') {
     const newItems = selectedRows.value;
     modelValue.value = valueIsObject.value
@@ -291,6 +333,7 @@ const handleOk = () => {
         value: selectedItem[props.valueKey],
         _item: selectedItem,
       };
+      // Add to cache if not present
       if (!selections.value.some((opt) => opt.value === newOption.value)) {
         selections.value.unshift(newOption);
       }
@@ -301,140 +344,11 @@ const handleOk = () => {
       modelValue.value = undefined;
     }
   }
+
   modalApi.close();
   nextTick(() => {
     isUpdatingInternally.value = false;
   });
-};
-
-const handleCancel = () => {
-  modalApi.close();
-};
-const onSelectChange = (keys: any[], rows: any[]) => {
-  selectedRowKeys.value = keys;
-  selectedRows.value = rows;
-};
-const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
-  type: (props.mode === 'single' ? 'radio' : 'checkbox') as
-    | 'radio'
-    | 'checkbox',
-  onChange: onSelectChange,
-  preserveSelectedRowKeys: true,
-}));
-const handleModalSearch = (value: string) => {
-  currentFilters.value = { ...currentFilters.value, keyword: value };
-  pagination.value.current = 1;
-  fetchData();
-};
-const handleModalSearchChange = (e: any) => {
-  if (!e.target.value) {
-    const { keyword, ...otherFilters } = currentFilters.value;
-    currentFilters.value = otherFilters;
-    pagination.value.current = 1;
-    fetchData();
-  }
-};
-const handleTableChange = (pag: any, filters: any, sorter: any) => {
-  pagination.value.current = pag.current;
-  pagination.value.pageSize = pag.pageSize;
-  const newFilters: any = { ...currentFilters.value };
-  Object.keys(filters).forEach((key) => {
-    if (filters[key]?.length) newFilters[`${key}-in`] = filters[key].join(',');
-  });
-  if (sorter?.field) {
-    newFilters.sortBy = sorter.field;
-    newFilters.sortOrder = sorter.order === 'ascend' ? 'asc' : 'desc';
-  }
-  currentFilters.value = newFilters;
-  fetchData();
-};
-
-const [Grid, gridApi] = useVbenVxeGrid({
-  formOptions: {
-    collapsed: true,
-    fieldMappingTime: [['createTime', ['startTime', 'endTime']]],
-    schema: [],
-    submitOnChange: false,
-  },
-  gridOptions: {
-    checkboxConfig: {
-      highlight: true,
-    },
-    columns: [],
-    height: '400px',
-    keepSource: true,
-    stripe: true,
-    proxyConfig: {
-      ajax: {
-        query: async ({ page }, formValues) => {
-          return await getPage(refTable.value.table, {
-            page: page.currentPage,
-            pageSize: page.pageSize,
-            ...formValues,
-          });
-        },
-      },
-    },
-    rowConfig: {
-      keyField: 'id',
-      isHover: true,
-    },
-    sortConfig: {
-      remote: true,
-    },
-  },
-  gridEvents: {
-    radioChange({ row }) {
-      selectedRows.value = [row];
-      selectedRowKeys.value = [row.id]
-    },
-    checkboxChange({checked, row}) {
-      console.log('🚀 ~ checkboxChange ~ checked, row:', checked, row);
-      if(checked) {
-        selectedRowKeys.value.push(row.id);
-        selectedRows.value.push(row);
-      } else {
-        const index = selectedRowKeys.value.findIndex(id => id === row.id);
-        if(index > -1) {
-          selectedRowKeys.value.splice(index, 1);
-          selectedRows.value.splice(index, 1);
-        }
-      }
-    },
-  },
-});
-
-const [Modal, modalApi] = useVbenModal({
-  draggable: true,
-  onConfirm() {
-    console.log('Modal onConfirm');
-    handleOk();
-  },
-  onOpened() {
-    gridApi.formApi.setState({
-      schema: useGridFormSchema(refTable.value),
-    });
-    gridApi.setState({
-      gridOptions: {
-        columns: [
-          ...[
-            props.mode === 'multiple'
-              ? { type: 'checkbox', width: 40 }
-              : { type: 'radio', width: 40 },
-          ],
-          { type: 'seq', width: 40 },
-          ...useColumns(refTable.value, null),
-        ],
-      },
-    });
-    gridApi.query();
-  },
-});
-// --- Modal Logic ---
-const openFilter = async () => {
-  refTable.value = await getPageConfig(props.table);
-  modalApi.open();
 };
 </script>
 
