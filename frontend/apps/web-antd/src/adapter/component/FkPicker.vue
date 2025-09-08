@@ -1,24 +1,27 @@
 <template>
   <div class="w-full">
     <div v-if="!disabled" class="flex w-full">
-      <Select
+      <AutoComplete
         class="flex-grow"
-        v-model:value="selectValue"
+        v-model:value="displayValue"
+        :open="searchOpen"
         :default-active-first-option="false"
-        show-search
         label-in-value
+        show-search
         :filter-option="false"
-        allow-clear
         :mode="mode"
         :options="selections"
+        @select="(value) => (searchOpen = false)"
         @change="handleSelectChange"
         @search="search"
         :loading="loading"
       >
-        <template #suffixIcon>
-          <FilterOutlined @click="openFilter" />
-        </template>
-      </Select>
+        <InputSearch @search="openFilter">
+          <template #enterButton>
+            <FilterOutlined />
+          </template>
+        </InputSearch>
+      </AutoComplete>
     </div>
     <div v-else>{{ displayValue }}</div>
     <Modal title="请选择" class="w-[800px]">
@@ -30,8 +33,8 @@
 <script setup lang="ts">
 import { defineProps, defineModel, ref, watch, computed, nextTick } from 'vue';
 import { getPage, getList } from '#/api/system/crud';
-import { Select } from 'ant-design-vue';
-import { getPageConfig } from '#/api';
+import { AutoComplete, InputSearch } from 'ant-design-vue';
+import { getPageConfig, keywordSearch } from '#/api';
 import { FilterOutlined } from '@ant-design/icons-vue';
 import { useVbenVxeGrid } from '../vxe-table';
 import { useGridFormSchema, useColumns } from '#/views/system/crud/data';
@@ -63,6 +66,7 @@ const modelValue = defineModel<any>({ default: undefined });
 const selectValue = ref<any>();
 const selections = ref<any[]>([]); // Cache for options: { label, value, _item }
 const loading = ref(false);
+const searchOpen = ref(false);
 
 // Mode detection
 const isUpdatingInternally = ref(false);
@@ -192,6 +196,7 @@ const handleSelectChange = (val: any) => {
       modelValue.value = valueIsObject.value ? null : val.value;
     }
   }
+  selectValue.value = val;
   nextTick(() => {
     isUpdatingInternally.value = false;
   });
@@ -203,11 +208,9 @@ const search = async (keyword: string) => {
     return;
   }
   loading.value = true;
+  searchOpen.value = true;
   try {
-    const result: any = await getPage(props.table, {
-      page: 1,
-      pageSize: 20,
-      keyword: keyword.trim(),
+    const result: any = await keywordSearch(props.table, keyword.trim(), {
       ...props.queryExtra,
     });
     if (result && result.items) {
@@ -274,6 +277,7 @@ const fetchData = async (params = {}) => {
 
 const handleOk = () => {
   isUpdatingInternally.value = true;
+  console.log('Selected Rows:', selectedRows.value);
   if (props.mode === 'multiple') {
     const newItems = selectedRows.value;
     modelValue.value = valueIsObject.value
@@ -297,7 +301,7 @@ const handleOk = () => {
       modelValue.value = undefined;
     }
   }
-  isModalVisible.value = false;
+  modalApi.close();
   nextTick(() => {
     isUpdatingInternally.value = false;
   });
@@ -381,17 +385,32 @@ const [Grid, gridApi] = useVbenVxeGrid({
     },
   },
   gridEvents: {
-    radioChange({ checked, row }) {
-      console.log('🚀 ~ radioChange ~ checked, row:', checked, row);
+    radioChange({ row }) {
+      selectedRows.value = [row];
+      selectedRowKeys.value = [row.id]
     },
-    checkboxChange({ checked, row }) {
+    checkboxChange({checked, row}) {
       console.log('🚀 ~ checkboxChange ~ checked, row:', checked, row);
+      if(checked) {
+        selectedRowKeys.value.push(row.id);
+        selectedRows.value.push(row);
+      } else {
+        const index = selectedRowKeys.value.findIndex(id => id === row.id);
+        if(index > -1) {
+          selectedRowKeys.value.splice(index, 1);
+          selectedRows.value.splice(index, 1);
+        }
+      }
     },
   },
 });
 
 const [Modal, modalApi] = useVbenModal({
   draggable: true,
+  onConfirm() {
+    console.log('Modal onConfirm');
+    handleOk();
+  },
   onOpened() {
     gridApi.formApi.setState({
       schema: useGridFormSchema(refTable.value),
@@ -399,7 +418,11 @@ const [Modal, modalApi] = useVbenModal({
     gridApi.setState({
       gridOptions: {
         columns: [
-          ...[props.mode === 'multiple' ? { type: 'checkbox', width: 40 } : { type: 'radio', width: 40 }],
+          ...[
+            props.mode === 'multiple'
+              ? { type: 'checkbox', width: 40 }
+              : { type: 'radio', width: 40 },
+          ],
           { type: 'seq', width: 40 },
           ...useColumns(refTable.value, null),
         ],

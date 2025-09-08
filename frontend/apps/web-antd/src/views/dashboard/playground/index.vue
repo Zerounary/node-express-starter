@@ -1,5 +1,4 @@
 <template>
-
   <PageContainer>
     <div class="playground-grid">
       <ACard title="MediaPicker Playground">
@@ -47,8 +46,20 @@
       </ACard>
 
       <ACard title="FkPicker外键选择">
-        <FkPicker v-model="formState.tableId" table="table" />
-        <FkPicker class="mt-3" mode="multiple" v-model="formState.tableIds" table="table" />
+        <div class="flex flex-col gap-4">
+          <FkPicker v-model="formState.tableId" table="table" />
+          <FkPicker v-model="formState.tableIdExists" table="table" />
+          <FkPicker
+            mode="multiple"
+            v-model="formState.tableIds"
+            table="table"
+          />
+          <FkPicker
+            mode="multiple"
+            v-model="formState.tableIdsExists"
+            table="table"
+          />
+        </div>
       </ACard>
 
       <div class="right-column">
@@ -249,7 +260,9 @@ const formState = reactive({
   basicFullAddress: '',
   cityValue: [] as string[],
   tableId: null,
+  tableIdExists: 1,
   tableIds: [],
+  tableIdsExists: [1, 2],
   provinceValue: ['150000'] as string[],
   disabledValue: ['440000', '440300', '440304'] as string[],
   sizeValue: [] as string[],
