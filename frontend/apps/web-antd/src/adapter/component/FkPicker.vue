@@ -10,7 +10,9 @@
         :filter-option="false"
         :mode="props.mode === 'multiple' ? 'multiple' : undefined"
         :options="selections"
-        @select="() => (searchOpen = false)"
+        @select="onSelect"
+        @focus="onFocus"
+        @blur="onBlur"
         @change="handleSelectChange"
         @search="search"
         :loading="loading"
@@ -62,6 +64,8 @@ const modeDetermined = ref(false); // Flag to check if v-model type has been det
 const selectValue = ref<any>(props.mode === 'multiple' ? [] : undefined); // The value shown in the AutoComplete input
 const selections = ref<any[]>([]); // Options for AutoComplete: { label, value, _item }
 const searchOpen = ref(false);
+const optionMode = ref<'search' | 'selections'>('selections');
+const selectionsBak = ref<any[]>([]); // Options for AutoComplete: { label, value, _item }
 
 // --- Modal & Grid State ---
 const refTable = ref<any>({}); // Configuration for the grid table
@@ -248,6 +252,11 @@ const handleSelectChange = (val: any) => {
 };
 
 const search = async (keyword: string) => {
+  if(optionMode.value != 'search') {
+    // 存储当的前的已选项
+    selectionsBak.value = [...selections.value];
+    optionMode.value = 'search';
+  }
   if (!keyword || keyword.trim() === '') {
     selections.value = selections.value.slice(0, 1); // Keep current selection
     return;
@@ -406,6 +415,27 @@ const handleOk = () => {
   nextTick(() => {
     isUpdatingInternally.value = false;
   });
+};
+
+const onSelect = (val) => {
+  if (props.mode === 'single') {
+    searchOpen.value = false;
+  } else if(props.mode === 'multiple' && optionMode.value === 'search') {
+    // 恢复 selections
+    selections.value = [...selectionsBak.value, val];
+    optionMode.value = 'selections';
+  }
+};
+
+const onFocus = () => {
+  if (props.mode === 'multiple') {
+    // 存储当前的已选项
+    searchOpen.value = true;
+  }
+};
+
+const onBlur = () => {
+  searchOpen.value = false;
 };
 </script>
 
