@@ -59,6 +59,12 @@
             v-model="formState.tableIdsExists"
             table="table"
           />
+          {{ {
+            tableId: formState.tableId,
+            tableIdExists: formState.tableIdExists,
+            tableIds: formState.tableIds,
+            tableIdsExists: formState.tableIdsExists,
+          } }}
         </div>
       </ACard>
 

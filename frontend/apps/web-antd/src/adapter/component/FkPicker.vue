@@ -78,9 +78,9 @@ const placeholder = computed(() => {
     if (Array.isArray(selectValue.value) && selectValue.value.length > 0) {
       return selectValue.value.map((v) => v.label).join(', ');
     }
-    return '请选择';
+    return '输入关键字搜索选择，或点击右侧「按钮」';
   }
-  return '请选择';
+  return '输入关键字搜索选择，或点击右侧「按钮」';
 });
 
 const displayValue = computed(() => {
@@ -388,9 +388,12 @@ const handleOk = () => {
 
   if (props.mode === 'multiple') {
     const newItems = selectedRows.value;
-    modelValue.value = valueIsObject.value
-      ? newItems
-      : newItems.map((item) => item[props.valueKey]);
+    newItems.map((item) => ({
+      label: item[refTable.value.dkFieldName],
+      value: item[props.valueKey],
+      _item: item,
+    })).forEach(onSelect);
+
   } else {
     if (selectedRows.value.length > 0) {
       const selectedItem = selectedRows.value[0];
@@ -421,8 +424,13 @@ const onSelect = (val) => {
   if (props.mode === 'single') {
     searchOpen.value = false;
   } else if(props.mode === 'multiple' && optionMode.value === 'search') {
-    // 恢复 selections
-    selections.value = [...selectionsBak.value, val];
+    // 恢复 selections 注意去重
+    const isExist = selectionsBak.value.some(item => item.value === val.value);
+    if(!isExist) {
+      selections.value = [...selectionsBak.value, val];
+    } else {
+      selections.value = [...selectionsBak.value];
+    }
     optionMode.value = 'selections';
   }
 };

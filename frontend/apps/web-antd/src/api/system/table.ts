@@ -6,6 +6,7 @@ import { alert } from '@vben/common-ui';
 import { useSystem } from '#/store/system';
 import { execute, getKeywordList, getPage, search } from './crud';
 import { debounce } from '#/utils';
+import type { TableConfig } from '#/adapter/component/types';
 
 export namespace SystemTableApi {
   export interface SystemTable {
@@ -104,7 +105,8 @@ export async function deleteTable(id: string) {
 }
 
 export async function getPageConfig(table: string) {
- return execute("table", `getPageConfig`, { tableName: table});
+ let tableConfig = await execute("table", `getPageConfig`, { tableName: table});
+ return new TableConfigBuilder(tableConfig);
 }
 
 const debouncedKeywordSearch = debounce(async (table: string, keyword: string, filters: any = {}) => {
@@ -115,3 +117,31 @@ export async function keywordSearch(table: string, keyword: string, filters: any
   return debouncedKeywordSearch(table, keyword, filters);
 }
 
+
+export class TableConfigBuilder {
+  tableConfig: TableConfig;
+  name?: string;
+  table: string;
+  hideMenu?: boolean;
+  defaultSort?: string
+  columns: any[] = [];
+  actions: any[] = [];
+  dk: any;
+  ak: any;
+  dkFieldName: any;
+  akFieldName: any;
+
+  constructor(tableConfig: TableConfig) {
+    this.tableConfig = tableConfig;
+    this.name = tableConfig.name
+    this.table = tableConfig.table
+    this.hideMenu = tableConfig.hideMenu
+    this.defaultSort = tableConfig.defaultSort
+    this.columns = tableConfig.columns || [];
+    this.actions = tableConfig.actions || [];
+    this.ak = this.columns.find(col => col.ak)
+    this.dk = this.columns.find(col => col.dk)
+    this.akFieldName = this.ak?.fieldName
+    this.dkFieldName = this.dk?.fieldName
+  }
+}
