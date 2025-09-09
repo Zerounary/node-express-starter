@@ -15,7 +15,7 @@
         @search="search"
         :loading="loading"
         :allow-clear="true"
-        :max-tag-count="props.mode === 'multiple' ? 0 : undefined"
+        :max-tag-count="props.mode === 'multiple' ? 2 : undefined"
         :placeholder="placeholder"
       />
       <Button @click="openFilter" class="ml-1"><FilterOutlined /></Button>
@@ -50,6 +50,7 @@ const props = defineProps({
 });
 
 const modelValue = defineModel<any>();
+
 
 // --- Internal State ---
 const loading = ref(false);
@@ -130,7 +131,7 @@ const ensureOptionsInCache = async (values: any | any[]) => {
 
   loading.value = true;
   try {
-    const filter = { [`${props.valueKey}-in`]: missingValues };
+    const filter = { [`${props.valueKey}-in`]: Array.isArray(missingValues) ? missingValues.join(',') : missingValues };
     const result: any[] = await getList(props.table, {
       ...filter,
       ...props.queryExtra,
