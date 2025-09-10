@@ -48,7 +48,6 @@ Region.init(
     code: {
       type: DataTypes.STRING(20),
       allowNull: false,
-      unique: true,
     },
     name: {
       type: DataTypes.STRING(100),
@@ -84,16 +83,21 @@ Region.init(
     timestamps: true,
     indexes: [
       {
-        fields: ['code']
+        unique: true,
+        fields: ['code'],
+        name: 'region_code'
       },
       {
-        fields: ['parentCode']
+        fields: ['parentCode'],
+        name: 'region_parentCode'
       },
       {
-        fields: ['level']
+        fields: ['level'],
+        name: 'region_level',
       },
       {
-        fields: ['tenantId', 'level']
+        fields: ['tenantId', 'level'],
+        name: 'region_tenantId_level'
       }
     ]
   }

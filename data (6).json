@@ -1,0 +1,3078 @@
+{
+  "tables": [
+    {
+      "id": 3,
+      "tenantId": 1,
+      "categoryId": 2,
+      "hideMenu": false,
+      "name": "users",
+      "alias_name": "users",
+      "description": "用户",
+      "defaultSort": null,
+      "orderno": null,
+      "createdBy": null,
+      "updatedBy": null,
+      "isActive": true,
+      "createdAt": "2025-09-05T07:35:09.000Z",
+      "updatedAt": "2025-09-10T08:36:07.000Z",
+      "columns": [
+        {
+          "id": 40,
+          "tenantId": 1,
+          "name": "createdAt",
+          "description": "创建时间",
+          "dataType": "DATE",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 3,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "DatePicker"
+          },
+          "orderno": 1200,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 39,
+          "tenantId": 1,
+          "name": "createdBy",
+          "description": "创建人",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 3,
+          "relatedToTableId": 3,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "users"
+            }
+          },
+          "orderno": 1100,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 34,
+          "tenantId": 1,
+          "name": "id",
+          "description": "ID",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 3,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0000000000",
+            "width": 100,
+            "disabled": true,
+            "component": "Input"
+          },
+          "orderno": 9,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 43,
+          "tenantId": 1,
+          "name": "isActive",
+          "description": "可用",
+          "dataType": "BOOLEAN",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 3,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "RadioGroup",
+            "componentProps": {
+              "options": [
+                {
+                  "label": "是",
+                  "value": true
+                },
+                {
+                  "label": "否",
+                  "value": false
+                }
+              ],
+              "optionType": "button",
+              "buttonStyle": "solid"
+            }
+          },
+          "orderno": 1500,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 38,
+          "tenantId": 1,
+          "name": "logDivider",
+          "description": "日志信息",
+          "dataType": "VIRTUAL",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 3,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010000000",
+            "width": 200,
+            "component": "Divider"
+          },
+          "orderno": 1000,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 37,
+          "tenantId": 1,
+          "name": "password",
+          "description": "密码",
+          "dataType": "STRING",
+          "required": true,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 3,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111001111",
+            "width": 200,
+            "filterOp": "like",
+            "component": "InputPassword"
+          },
+          "orderno": 30,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 36,
+          "tenantId": 1,
+          "name": "realName",
+          "description": "姓名",
+          "dataType": "STRING",
+          "required": true,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 3,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 100,
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 20,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 42,
+          "tenantId": 1,
+          "name": "updatedAt",
+          "description": "更新时间",
+          "dataType": "DATE",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 3,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "DatePicker"
+          },
+          "orderno": 1400,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 41,
+          "tenantId": 1,
+          "name": "updatedBy",
+          "description": "修改人",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 3,
+          "relatedToTableId": 3,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "users"
+            }
+          },
+          "orderno": 1300,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 35,
+          "tenantId": 1,
+          "name": "username",
+          "description": "用户名",
+          "dataType": "STRING",
+          "required": true,
+          "ak": true,
+          "dk": true,
+          "sortable": true,
+          "tableId": 3,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 200,
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 10,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        }
+      ],
+      "actions": []
+    },
+    {
+      "id": 4,
+      "tenantId": 1,
+      "categoryId": 2,
+      "hideMenu": false,
+      "name": "roles",
+      "alias_name": "roles",
+      "description": "角色",
+      "defaultSort": null,
+      "orderno": null,
+      "createdBy": null,
+      "updatedBy": null,
+      "isActive": true,
+      "createdAt": "2025-09-05T07:35:09.000Z",
+      "updatedAt": "2025-09-10T08:36:07.000Z",
+      "columns": [
+        {
+          "id": 50,
+          "tenantId": 1,
+          "name": "createdAt",
+          "description": "创建时间",
+          "dataType": "DATE",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 4,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "DatePicker"
+          },
+          "orderno": 1200,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 49,
+          "tenantId": 1,
+          "name": "createdBy",
+          "description": "创建人",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 4,
+          "relatedToTableId": 3,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "users"
+            }
+          },
+          "orderno": 1100,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 46,
+          "tenantId": 1,
+          "name": "description",
+          "description": "描述",
+          "dataType": "STRING",
+          "required": true,
+          "ak": true,
+          "dk": true,
+          "sortable": true,
+          "tableId": 4,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 100,
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 20,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 44,
+          "tenantId": 1,
+          "name": "id",
+          "description": "ID",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 4,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0000000000",
+            "width": 100,
+            "disabled": true,
+            "component": "Input"
+          },
+          "orderno": 9,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 53,
+          "tenantId": 1,
+          "name": "isActive",
+          "description": "可用",
+          "dataType": "BOOLEAN",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 4,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "RadioGroup",
+            "componentProps": {
+              "options": [
+                {
+                  "label": "是",
+                  "value": true
+                },
+                {
+                  "label": "否",
+                  "value": false
+                }
+              ],
+              "optionType": "button",
+              "buttonStyle": "solid"
+            }
+          },
+          "orderno": 1500,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 48,
+          "tenantId": 1,
+          "name": "logDivider",
+          "description": "日志信息",
+          "dataType": "VIRTUAL",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 4,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010000000",
+            "width": 200,
+            "component": "Divider"
+          },
+          "orderno": 1000,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 45,
+          "tenantId": 1,
+          "name": "name",
+          "description": "名称",
+          "dataType": "STRING",
+          "required": true,
+          "ak": true,
+          "dk": true,
+          "sortable": true,
+          "tableId": 4,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 200,
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 10,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 47,
+          "tenantId": 1,
+          "name": "perms",
+          "description": "授权",
+          "dataType": "VIRTUAL",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 4,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0011000000",
+            "width": 200,
+            "filterOp": "eq",
+            "component": "PermissionPicker",
+            "componentProps": {}
+          },
+          "orderno": 30,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 52,
+          "tenantId": 1,
+          "name": "updatedAt",
+          "description": "更新时间",
+          "dataType": "DATE",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 4,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "DatePicker"
+          },
+          "orderno": 1400,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 51,
+          "tenantId": 1,
+          "name": "updatedBy",
+          "description": "修改人",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 4,
+          "relatedToTableId": 3,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "users"
+            }
+          },
+          "orderno": 1300,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        }
+      ],
+      "actions": []
+    },
+    {
+      "id": 5,
+      "tenantId": 1,
+      "categoryId": 2,
+      "hideMenu": false,
+      "name": "user_roles",
+      "alias_name": "user_roles",
+      "description": "用户角色授权",
+      "defaultSort": null,
+      "orderno": null,
+      "createdBy": null,
+      "updatedBy": null,
+      "isActive": true,
+      "createdAt": "2025-09-05T07:35:09.000Z",
+      "updatedAt": "2025-09-10T08:36:07.000Z",
+      "columns": [
+        {
+          "id": 59,
+          "tenantId": 1,
+          "name": "createdAt",
+          "description": "创建时间",
+          "dataType": "DATE",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 5,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "DatePicker"
+          },
+          "orderno": 1200,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 58,
+          "tenantId": 1,
+          "name": "createdBy",
+          "description": "创建人",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 5,
+          "relatedToTableId": 3,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "users"
+            }
+          },
+          "orderno": 1100,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 54,
+          "tenantId": 1,
+          "name": "id",
+          "description": "ID",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 5,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0000000000",
+            "width": 100,
+            "disabled": true,
+            "component": "Input"
+          },
+          "orderno": 9,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 62,
+          "tenantId": 1,
+          "name": "isActive",
+          "description": "可用",
+          "dataType": "BOOLEAN",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 5,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "RadioGroup",
+            "componentProps": {
+              "options": [
+                {
+                  "label": "是",
+                  "value": true
+                },
+                {
+                  "label": "否",
+                  "value": false
+                }
+              ],
+              "optionType": "button",
+              "buttonStyle": "solid"
+            }
+          },
+          "orderno": 1500,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 57,
+          "tenantId": 1,
+          "name": "logDivider",
+          "description": "日志信息",
+          "dataType": "VIRTUAL",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 5,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010000000",
+            "width": 200,
+            "component": "Divider"
+          },
+          "orderno": 1000,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 56,
+          "tenantId": 1,
+          "name": "roleId",
+          "description": "角色",
+          "dataType": "ID",
+          "required": true,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 5,
+          "relatedToTableId": 4,
+          "ui": {
+            "mask": "1111111111",
+            "table": "roles",
+            "width": 100,
+            "filterOp": "eq",
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "roles"
+            }
+          },
+          "orderno": 20,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 61,
+          "tenantId": 1,
+          "name": "updatedAt",
+          "description": "更新时间",
+          "dataType": "DATE",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 5,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "DatePicker"
+          },
+          "orderno": 1400,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 60,
+          "tenantId": 1,
+          "name": "updatedBy",
+          "description": "修改人",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 5,
+          "relatedToTableId": 3,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "users"
+            }
+          },
+          "orderno": 1300,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 55,
+          "tenantId": 1,
+          "name": "userId",
+          "description": "用户",
+          "dataType": "ID",
+          "required": true,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 5,
+          "relatedToTableId": 3,
+          "ui": {
+            "mask": "1111111111",
+            "table": "users",
+            "width": 100,
+            "filterOp": "eq",
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "users"
+            }
+          },
+          "orderno": 10,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        }
+      ],
+      "actions": []
+    },
+    {
+      "id": 1,
+      "tenantId": 1,
+      "categoryId": 3,
+      "hideMenu": false,
+      "name": "dynamic_tables",
+      "alias_name": "table",
+      "description": "表",
+      "defaultSort": "orderno-asc",
+      "orderno": null,
+      "createdBy": null,
+      "updatedBy": 1,
+      "isActive": true,
+      "createdAt": "2025-09-05T07:35:09.000Z",
+      "updatedAt": "2025-09-10T08:36:07.000Z",
+      "columns": [
+        {
+          "id": 4,
+          "tenantId": 1,
+          "name": "alias_name",
+          "description": "表别名",
+          "dataType": "STRING",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 1,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "rules": [
+              {
+                "type": "identifier",
+                "message": "只能是字母、数字、下划线，且开头必须是字母或下划线"
+              }
+            ],
+            "width": 200,
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 30,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 5,
+          "tenantId": 1,
+          "name": "categoryId",
+          "description": "表类别",
+          "dataType": "ID",
+          "required": true,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 1,
+          "relatedToTableId": 6,
+          "ui": {
+            "mask": "1111111111",
+            "table": "table_categories",
+            "width": 100,
+            "filterOp": "eq",
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "table_categories"
+            }
+          },
+          "orderno": 40,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 12,
+          "tenantId": 1,
+          "name": "createdAt",
+          "description": "创建时间",
+          "dataType": "DATE",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 1,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "DatePicker"
+          },
+          "orderno": 1200,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 11,
+          "tenantId": 1,
+          "name": "createdBy",
+          "description": "创建人",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 1,
+          "relatedToTableId": 3,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "users"
+            }
+          },
+          "orderno": 1100,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 7,
+          "tenantId": 1,
+          "name": "defaultSort",
+          "description": "默认排序",
+          "dataType": "STRING",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 1,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 200,
+            "filterOp": "like",
+            "component": "Input",
+            "componentProps": {
+              "placeholder": "格式：[fileName]-[asc|desc],多个逗号分隔"
+            }
+          },
+          "orderno": 60,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 3,
+          "tenantId": 1,
+          "name": "description",
+          "description": "描述",
+          "dataType": "STRING",
+          "required": true,
+          "ak": true,
+          "dk": true,
+          "sortable": true,
+          "tableId": 1,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 200,
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 20,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 6,
+          "tenantId": 1,
+          "name": "hideMenu",
+          "description": "隐藏菜单",
+          "dataType": "BOOLEAN",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 1,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 100,
+            "filterOp": "eq",
+            "component": "Checkbox"
+          },
+          "orderno": 50,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 1,
+          "tenantId": 1,
+          "name": "id",
+          "description": "ID",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 1,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0000000000",
+            "width": 100,
+            "disabled": true,
+            "component": "Input"
+          },
+          "orderno": 9,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 15,
+          "tenantId": 1,
+          "name": "isActive",
+          "description": "可用",
+          "dataType": "BOOLEAN",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 1,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "RadioGroup",
+            "componentProps": {
+              "options": [
+                {
+                  "label": "是",
+                  "value": true
+                },
+                {
+                  "label": "否",
+                  "value": false
+                }
+              ],
+              "optionType": "button",
+              "buttonStyle": "solid"
+            }
+          },
+          "orderno": 1500,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 8,
+          "tenantId": 1,
+          "name": "items",
+          "description": "表类别",
+          "dataType": "VIRTUAL",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 1,
+          "relatedToTableId": 6,
+          "ui": {
+            "mask": "0011000000",
+            "width": 0,
+            "filterOp": "eq",
+            "component": "Items",
+            "hideLabel": true,
+            "dependencies": {},
+            "componentProps": {
+              "tabs": [
+                {
+                  "key": "tab1",
+                  "table": "column",
+                  "title": "字段",
+                  "parentKey": "tableId",
+                  "queryExtra": {}
+                },
+                {
+                  "key": "tab2",
+                  "table": "actions",
+                  "title": "动作",
+                  "parentKey": "tableId",
+                  "queryExtra": {}
+                }
+              ]
+            }
+          },
+          "orderno": 80,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 10,
+          "tenantId": 1,
+          "name": "logDivider",
+          "description": "日志信息",
+          "dataType": "VIRTUAL",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 1,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010000000",
+            "width": 200,
+            "component": "Divider"
+          },
+          "orderno": 1000,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 2,
+          "tenantId": 1,
+          "name": "name",
+          "description": "表",
+          "dataType": "STRING",
+          "required": true,
+          "ak": true,
+          "dk": true,
+          "sortable": true,
+          "tableId": 1,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "rules": [
+              {
+                "type": "identifier",
+                "message": "只能是字母、数字、下划线，且开头必须是字母或下划线"
+              }
+            ],
+            "width": 200,
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 10,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 9,
+          "tenantId": 1,
+          "name": "orderno",
+          "description": "序号",
+          "dataType": "INTEGER",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 1,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 100,
+            "filterOp": "eq",
+            "component": "InputNumber"
+          },
+          "orderno": 70,
+          "createdBy": null,
+          "updatedBy": 1,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 14,
+          "tenantId": 1,
+          "name": "updatedAt",
+          "description": "更新时间",
+          "dataType": "DATE",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 1,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "DatePicker"
+          },
+          "orderno": 1400,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 13,
+          "tenantId": 1,
+          "name": "updatedBy",
+          "description": "修改人",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 1,
+          "relatedToTableId": 3,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "users"
+            }
+          },
+          "orderno": 1300,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        }
+      ],
+      "actions": [
+        {
+          "id": 1,
+          "tenantId": 1,
+          "tableId": 1,
+          "type": "form",
+          "name": "应用",
+          "resource": "syncTable",
+          "btnUI": null,
+          "orderno": null,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:49:58.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 2,
+          "tenantId": 1,
+          "tableId": 1,
+          "type": "list",
+          "name": "应用",
+          "resource": "syncTable",
+          "btnUI": null,
+          "orderno": null,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:49:58.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 3,
+          "tenantId": 1,
+          "tableId": 1,
+          "type": "list",
+          "name": "导出配置",
+          "resource": "exportTableConfig",
+          "btnUI": null,
+          "orderno": null,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-10T07:10:14.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "tenantId": 1,
+      "categoryId": 3,
+      "hideMenu": false,
+      "name": "dynamic_columns",
+      "alias_name": "column",
+      "description": "字段",
+      "defaultSort": "orderno-asc",
+      "orderno": null,
+      "createdBy": null,
+      "updatedBy": null,
+      "isActive": true,
+      "createdAt": "2025-09-05T07:35:09.000Z",
+      "updatedAt": "2025-09-10T08:36:07.000Z",
+      "columns": [
+        {
+          "id": 23,
+          "tenantId": 1,
+          "name": "ak",
+          "description": "输入键",
+          "dataType": "BOOLEAN",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 2,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 100,
+            "filterOp": "eq",
+            "component": "Checkbox"
+          },
+          "orderno": 70,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 30,
+          "tenantId": 1,
+          "name": "createdAt",
+          "description": "创建时间",
+          "dataType": "DATE",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 2,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "DatePicker"
+          },
+          "orderno": 1200,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 29,
+          "tenantId": 1,
+          "name": "createdBy",
+          "description": "创建人",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 2,
+          "relatedToTableId": 3,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "users"
+            }
+          },
+          "orderno": 1100,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 19,
+          "tenantId": 1,
+          "name": "dataType",
+          "description": "字段类型",
+          "dataType": "STRING",
+          "required": true,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 2,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 100,
+            "filterOp": "like",
+            "component": "ColumnTypeInput"
+          },
+          "orderno": 30,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 18,
+          "tenantId": 1,
+          "name": "description",
+          "description": "描述",
+          "dataType": "STRING",
+          "required": true,
+          "ak": true,
+          "dk": true,
+          "sortable": true,
+          "tableId": 2,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 100,
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 20,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 24,
+          "tenantId": 1,
+          "name": "dk",
+          "description": "显示键",
+          "dataType": "BOOLEAN",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 2,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 100,
+            "filterOp": "eq",
+            "component": "Checkbox"
+          },
+          "orderno": 80,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 16,
+          "tenantId": 1,
+          "name": "id",
+          "description": "ID",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 2,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0000000000",
+            "width": 100,
+            "disabled": true,
+            "component": "Input"
+          },
+          "orderno": 9,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 33,
+          "tenantId": 1,
+          "name": "isActive",
+          "description": "可用",
+          "dataType": "BOOLEAN",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 2,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "RadioGroup",
+            "componentProps": {
+              "options": [
+                {
+                  "label": "是",
+                  "value": true
+                },
+                {
+                  "label": "否",
+                  "value": false
+                }
+              ],
+              "optionType": "button",
+              "buttonStyle": "solid"
+            }
+          },
+          "orderno": 1500,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 28,
+          "tenantId": 1,
+          "name": "logDivider",
+          "description": "日志信息",
+          "dataType": "VIRTUAL",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 2,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010000000",
+            "width": 200,
+            "component": "Divider"
+          },
+          "orderno": 1000,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 17,
+          "tenantId": 1,
+          "name": "name",
+          "description": "数据库名称",
+          "dataType": "STRING",
+          "required": true,
+          "ak": true,
+          "dk": true,
+          "sortable": true,
+          "tableId": 2,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "rules": [
+              {
+                "type": "identifier",
+                "message": "只能是字母、数字、下划线，且开头必须是字母或下划线"
+              }
+            ],
+            "width": 200,
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 10,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 27,
+          "tenantId": 1,
+          "name": "orderno",
+          "description": "序号",
+          "dataType": "INTEGER",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 2,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 100,
+            "filterOp": "eq",
+            "component": "InputNumber"
+          },
+          "orderno": 110,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 21,
+          "tenantId": 1,
+          "name": "relatedToTableId",
+          "description": "外键表",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 2,
+          "relatedToTableId": 1,
+          "ui": {
+            "mask": "1111111111",
+            "table": "table",
+            "width": 100,
+            "filterOp": "eq",
+            "component": "FkPicker",
+            "dependencies": {
+              "show": "values.dataType === \"ID\"",
+              "triggerFields": [
+                "dataType"
+              ]
+            },
+            "componentProps": {
+              "table": "table"
+            }
+          },
+          "orderno": 50,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 22,
+          "tenantId": 1,
+          "name": "required",
+          "description": "必填",
+          "dataType": "BOOLEAN",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 2,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 100,
+            "filterOp": "eq",
+            "component": "Checkbox"
+          },
+          "orderno": 60,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 25,
+          "tenantId": 1,
+          "name": "sortable",
+          "description": "可排序",
+          "dataType": "BOOLEAN",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 2,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 100,
+            "filterOp": "eq",
+            "component": "Checkbox"
+          },
+          "orderno": 90,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 20,
+          "tenantId": 1,
+          "name": "tableId",
+          "description": "所属表",
+          "dataType": "ID",
+          "required": true,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 2,
+          "relatedToTableId": 1,
+          "ui": {
+            "mask": "1111111111",
+            "table": "table",
+            "width": 100,
+            "filterOp": "eq",
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "table"
+            }
+          },
+          "orderno": 40,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 26,
+          "tenantId": 1,
+          "name": "ui",
+          "description": "界面配置",
+          "dataType": "JSON",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 2,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0011001111",
+            "width": 100,
+            "filterOp": "like",
+            "component": "UIInput",
+            "componentProps": {}
+          },
+          "orderno": 100,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 32,
+          "tenantId": 1,
+          "name": "updatedAt",
+          "description": "更新时间",
+          "dataType": "DATE",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 2,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "DatePicker"
+          },
+          "orderno": 1400,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 31,
+          "tenantId": 1,
+          "name": "updatedBy",
+          "description": "修改人",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 2,
+          "relatedToTableId": 3,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "users"
+            }
+          },
+          "orderno": 1300,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:09.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        }
+      ],
+      "actions": []
+    },
+    {
+      "id": 6,
+      "tenantId": 1,
+      "categoryId": 3,
+      "hideMenu": false,
+      "name": "table_categories",
+      "alias_name": "table_categories",
+      "description": "表类别",
+      "defaultSort": "orderno-asc",
+      "orderno": null,
+      "createdBy": null,
+      "updatedBy": null,
+      "isActive": true,
+      "createdAt": "2025-09-05T07:35:09.000Z",
+      "updatedAt": "2025-09-10T08:36:07.000Z",
+      "columns": [
+        {
+          "id": 74,
+          "tenantId": 1,
+          "name": "createdAt",
+          "description": "创建时间",
+          "dataType": "DATE",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 6,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "DatePicker"
+          },
+          "orderno": 1200,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 73,
+          "tenantId": 1,
+          "name": "createdBy",
+          "description": "创建人",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 6,
+          "relatedToTableId": 3,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "users"
+            }
+          },
+          "orderno": 1100,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 65,
+          "tenantId": 1,
+          "name": "description",
+          "description": "描述",
+          "dataType": "STRING",
+          "required": false,
+          "ak": true,
+          "dk": true,
+          "sortable": true,
+          "tableId": 6,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 200,
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 20,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 63,
+          "tenantId": 1,
+          "name": "id",
+          "description": "ID",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 6,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0000000000",
+            "width": 100,
+            "disabled": true,
+            "component": "Input"
+          },
+          "orderno": 9,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 77,
+          "tenantId": 1,
+          "name": "isActive",
+          "description": "可用",
+          "dataType": "BOOLEAN",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 6,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "RadioGroup",
+            "componentProps": {
+              "options": [
+                {
+                  "label": "是",
+                  "value": true
+                },
+                {
+                  "label": "否",
+                  "value": false
+                }
+              ],
+              "optionType": "button",
+              "buttonStyle": "solid"
+            }
+          },
+          "orderno": 1500,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 72,
+          "tenantId": 1,
+          "name": "logDivider",
+          "description": "日志信息",
+          "dataType": "VIRTUAL",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 6,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010000000",
+            "width": 200,
+            "component": "Divider"
+          },
+          "orderno": 1000,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 67,
+          "tenantId": 1,
+          "name": "meta",
+          "description": "界面配置",
+          "dataType": "JSON",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 6,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 100,
+            "filterOp": "like",
+            "component": "MetaInput",
+            "componentProps": {}
+          },
+          "orderno": 40,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 64,
+          "tenantId": 1,
+          "name": "name",
+          "description": "名称",
+          "dataType": "STRING",
+          "required": true,
+          "ak": true,
+          "dk": true,
+          "sortable": true,
+          "tableId": 6,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 200,
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 10,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 71,
+          "tenantId": 1,
+          "name": "orderno",
+          "description": "序号",
+          "dataType": "INTEGER",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 6,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 100,
+            "filterOp": "eq",
+            "component": "InputNumber"
+          },
+          "orderno": 80,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 66,
+          "tenantId": 1,
+          "name": "parentId",
+          "description": "父类别",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 6,
+          "relatedToTableId": 6,
+          "ui": {
+            "mask": "1111111111",
+            "table": "table_categories",
+            "width": 100,
+            "filterOp": "eq",
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "table_categories"
+            }
+          },
+          "orderno": 30,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 68,
+          "tenantId": 1,
+          "name": "path",
+          "description": "路径",
+          "dataType": "STRING",
+          "required": true,
+          "ak": true,
+          "dk": true,
+          "sortable": true,
+          "tableId": 6,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 200,
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 50,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 70,
+          "tenantId": 1,
+          "name": "redirect",
+          "description": "重定向",
+          "dataType": "STRING",
+          "required": false,
+          "ak": true,
+          "dk": true,
+          "sortable": true,
+          "tableId": 6,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 200,
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 70,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 76,
+          "tenantId": 1,
+          "name": "updatedAt",
+          "description": "更新时间",
+          "dataType": "DATE",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 6,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "DatePicker"
+          },
+          "orderno": 1400,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 75,
+          "tenantId": 1,
+          "name": "updatedBy",
+          "description": "修改人",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 6,
+          "relatedToTableId": 3,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "users"
+            }
+          },
+          "orderno": 1300,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 69,
+          "tenantId": 1,
+          "name": "url",
+          "description": "路由",
+          "dataType": "STRING",
+          "required": false,
+          "ak": true,
+          "dk": true,
+          "sortable": true,
+          "tableId": 6,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 200,
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 60,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        }
+      ],
+      "actions": [
+        {
+          "id": 5,
+          "tenantId": 1,
+          "tableId": 6,
+          "type": "list",
+          "name": "导出配置",
+          "resource": "exportTableConfig",
+          "btnUI": null,
+          "orderno": null,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-10T07:53:29.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "tenantId": 1,
+      "categoryId": 3,
+      "hideMenu": false,
+      "name": "tenants",
+      "alias_name": "tenants",
+      "description": "租户",
+      "defaultSort": null,
+      "orderno": null,
+      "createdBy": null,
+      "updatedBy": null,
+      "isActive": true,
+      "createdAt": "2025-09-05T07:35:09.000Z",
+      "updatedAt": "2025-09-10T08:36:07.000Z",
+      "columns": [
+        {
+          "id": 83,
+          "tenantId": 1,
+          "name": "createdAt",
+          "description": "创建时间",
+          "dataType": "DATE",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 7,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "DatePicker"
+          },
+          "orderno": 1200,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 82,
+          "tenantId": 1,
+          "name": "createdBy",
+          "description": "创建人",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 7,
+          "relatedToTableId": 3,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "users"
+            }
+          },
+          "orderno": 1100,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 80,
+          "tenantId": 1,
+          "name": "description",
+          "description": "描述",
+          "dataType": "STRING",
+          "required": true,
+          "ak": true,
+          "dk": true,
+          "sortable": true,
+          "tableId": 7,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 200,
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 20,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 78,
+          "tenantId": 1,
+          "name": "id",
+          "description": "ID",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 7,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0000000000",
+            "width": 100,
+            "disabled": true,
+            "component": "Input"
+          },
+          "orderno": 9,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 86,
+          "tenantId": 1,
+          "name": "isActive",
+          "description": "可用",
+          "dataType": "BOOLEAN",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 7,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "RadioGroup",
+            "componentProps": {
+              "options": [
+                {
+                  "label": "是",
+                  "value": true
+                },
+                {
+                  "label": "否",
+                  "value": false
+                }
+              ],
+              "optionType": "button",
+              "buttonStyle": "solid"
+            }
+          },
+          "orderno": 1500,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 81,
+          "tenantId": 1,
+          "name": "logDivider",
+          "description": "日志信息",
+          "dataType": "VIRTUAL",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 7,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010000000",
+            "width": 200,
+            "component": "Divider"
+          },
+          "orderno": 1000,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 79,
+          "tenantId": 1,
+          "name": "name",
+          "description": "名称",
+          "dataType": "STRING",
+          "required": true,
+          "ak": true,
+          "dk": true,
+          "sortable": true,
+          "tableId": 7,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 200,
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 10,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 85,
+          "tenantId": 1,
+          "name": "updatedAt",
+          "description": "更新时间",
+          "dataType": "DATE",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 7,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "DatePicker"
+          },
+          "orderno": 1400,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 84,
+          "tenantId": 1,
+          "name": "updatedBy",
+          "description": "修改人",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 7,
+          "relatedToTableId": 3,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "users"
+            }
+          },
+          "orderno": 1300,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        }
+      ],
+      "actions": []
+    },
+    {
+      "id": 8,
+      "tenantId": 1,
+      "categoryId": 3,
+      "hideMenu": true,
+      "name": "table_actions",
+      "alias_name": "actions",
+      "description": "动作定义",
+      "defaultSort": "orderno-asc",
+      "orderno": null,
+      "createdBy": null,
+      "updatedBy": null,
+      "isActive": true,
+      "createdAt": "2025-09-05T07:35:09.000Z",
+      "updatedAt": "2025-09-10T08:36:07.000Z",
+      "columns": [
+        {
+          "id": 92,
+          "tenantId": 1,
+          "name": "btnUI",
+          "description": "按钮配置",
+          "dataType": "JSON",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 8,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0011001111",
+            "width": 100,
+            "filterOp": "like",
+            "component": "BtnUIInput",
+            "componentProps": {}
+          },
+          "orderno": 50,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 96,
+          "tenantId": 1,
+          "name": "createdAt",
+          "description": "创建时间",
+          "dataType": "DATE",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 8,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "DatePicker"
+          },
+          "orderno": 1200,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 95,
+          "tenantId": 1,
+          "name": "createdBy",
+          "description": "创建人",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 8,
+          "relatedToTableId": 3,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "users"
+            }
+          },
+          "orderno": 1100,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 87,
+          "tenantId": 1,
+          "name": "id",
+          "description": "ID",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 8,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0000000000",
+            "width": 100,
+            "disabled": true,
+            "component": "Input"
+          },
+          "orderno": 9,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 99,
+          "tenantId": 1,
+          "name": "isActive",
+          "description": "可用",
+          "dataType": "BOOLEAN",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 8,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "RadioGroup",
+            "componentProps": {
+              "options": [
+                {
+                  "label": "是",
+                  "value": true
+                },
+                {
+                  "label": "否",
+                  "value": false
+                }
+              ],
+              "optionType": "button",
+              "buttonStyle": "solid"
+            }
+          },
+          "orderno": 1500,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 94,
+          "tenantId": 1,
+          "name": "logDivider",
+          "description": "日志信息",
+          "dataType": "VIRTUAL",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 8,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010000000",
+            "width": 200,
+            "component": "Divider"
+          },
+          "orderno": 1000,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 90,
+          "tenantId": 1,
+          "name": "name",
+          "description": "名称",
+          "dataType": "STRING",
+          "required": true,
+          "ak": true,
+          "dk": true,
+          "sortable": true,
+          "tableId": 8,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 200,
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 30,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 93,
+          "tenantId": 1,
+          "name": "orderno",
+          "description": "序号",
+          "dataType": "INTEGER",
+          "required": true,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 8,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 100,
+            "filterOp": "eq",
+            "component": "InputNumber"
+          },
+          "orderno": 60,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 91,
+          "tenantId": 1,
+          "name": "resource",
+          "description": "接口名称",
+          "dataType": "STRING",
+          "required": true,
+          "ak": true,
+          "dk": true,
+          "sortable": true,
+          "tableId": 8,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 200,
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 40,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 88,
+          "tenantId": 1,
+          "name": "tableId",
+          "description": "所属表",
+          "dataType": "ID",
+          "required": true,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 8,
+          "relatedToTableId": 1,
+          "ui": {
+            "mask": "1111111111",
+            "table": "table",
+            "width": 100,
+            "filterOp": "eq",
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "table"
+            }
+          },
+          "orderno": 10,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 89,
+          "tenantId": 1,
+          "name": "type",
+          "description": "类型",
+          "dataType": "STRING",
+          "required": true,
+          "ak": true,
+          "dk": true,
+          "sortable": true,
+          "tableId": 8,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 200,
+            "filterOp": "like",
+            "component": "Select",
+            "componentProps": {
+              "options": [
+                {
+                  "label": "表单动作",
+                  "value": "form"
+                },
+                {
+                  "label": "列表动作",
+                  "value": "list"
+                },
+                {
+                  "label": "明细动作",
+                  "value": "item"
+                }
+              ]
+            }
+          },
+          "orderno": 20,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 98,
+          "tenantId": 1,
+          "name": "updatedAt",
+          "description": "更新时间",
+          "dataType": "DATE",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 8,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "DatePicker"
+          },
+          "orderno": 1400,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        },
+        {
+          "id": 97,
+          "tenantId": 1,
+          "name": "updatedBy",
+          "description": "修改人",
+          "dataType": "ID",
+          "required": false,
+          "ak": null,
+          "dk": null,
+          "sortable": true,
+          "tableId": 8,
+          "relatedToTableId": 3,
+          "ui": {
+            "mask": "0010101001",
+            "width": 200,
+            "disabled": true,
+            "component": "FkPicker",
+            "componentProps": {
+              "table": "users"
+            }
+          },
+          "orderno": 1300,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-05T07:35:10.000Z",
+          "updatedAt": "2025-09-10T08:36:07.000Z"
+        }
+      ],
+      "actions": [
+        {
+          "id": 4,
+          "tenantId": 1,
+          "tableId": 8,
+          "type": "list",
+          "name": "导出配置",
+          "resource": "exportTableConfig",
+          "btnUI": null,
+          "orderno": null,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-10T07:39:06.000Z",
+          "updatedAt": "2025-09-10T07:52:25.000Z"
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "tenantId": 1,
+      "type": "catelog",
+      "name": "概览",
+      "description": "",
+      "parentId": null,
+      "meta": {
+        "icon": "lucide:layout-dashboard"
+      },
+      "path": "/dashboard",
+      "url": null,
+      "redirect": null,
+      "orderno": null,
+      "createdBy": null,
+      "updatedBy": null,
+      "isActive": true,
+      "createdAt": "2025-09-05T07:35:09.000Z",
+      "updatedAt": "2025-09-05T07:35:09.000Z"
+    },
+    {
+      "id": 2,
+      "tenantId": 1,
+      "type": "catelog",
+      "name": "用户管理",
+      "description": "",
+      "parentId": null,
+      "meta": {
+        "icon": "tabler:user"
+      },
+      "path": "/account",
+      "url": null,
+      "redirect": null,
+      "orderno": null,
+      "createdBy": null,
+      "updatedBy": null,
+      "isActive": true,
+      "createdAt": "2025-09-05T07:35:09.000Z",
+      "updatedAt": "2025-09-05T07:35:09.000Z"
+    },
+    {
+      "id": 3,
+      "tenantId": 1,
+      "type": "catelog",
+      "name": "开发平台",
+      "description": "",
+      "parentId": null,
+      "meta": {
+        "icon": "carbon:development"
+      },
+      "path": "/system",
+      "url": null,
+      "redirect": null,
+      "orderno": null,
+      "createdBy": null,
+      "updatedBy": null,
+      "isActive": true,
+      "createdAt": "2025-09-05T07:35:09.000Z",
+      "updatedAt": "2025-09-05T07:35:09.000Z"
+    },
+    {
+      "id": 4,
+      "tenantId": 1,
+      "type": "menu",
+      "name": "分析页",
+      "description": "",
+      "parentId": 1,
+      "meta": {
+        "icon": "lucide:area-chart"
+      },
+      "path": "/analytics",
+      "url": null,
+      "redirect": null,
+      "orderno": null,
+      "createdBy": null,
+      "updatedBy": null,
+      "isActive": true,
+      "createdAt": "2025-09-05T07:35:09.000Z",
+      "updatedAt": "2025-09-05T07:35:09.000Z"
+    },
+    {
+      "id": 5,
+      "tenantId": 1,
+      "type": "menu",
+      "name": "工作台",
+      "description": "",
+      "parentId": 1,
+      "meta": {
+        "icon": "carbon:workspace"
+      },
+      "path": "/workspace",
+      "url": null,
+      "redirect": null,
+      "orderno": null,
+      "createdBy": null,
+      "updatedBy": null,
+      "isActive": true,
+      "createdAt": "2025-09-05T07:35:09.000Z",
+      "updatedAt": "2025-09-05T07:35:09.000Z"
+    },
+    {
+      "id": 6,
+      "tenantId": 1,
+      "type": "menu",
+      "name": "组件页",
+      "description": "",
+      "parentId": 1,
+      "meta": {
+        "icon": "uiw:component"
+      },
+      "path": "/playground",
+      "url": null,
+      "redirect": null,
+      "orderno": null,
+      "createdBy": null,
+      "updatedBy": null,
+      "isActive": true,
+      "createdAt": "2025-09-05T07:35:09.000Z",
+      "updatedAt": "2025-09-05T07:35:09.000Z"
+    }
+  ]
+}
