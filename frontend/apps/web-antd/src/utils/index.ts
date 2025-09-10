@@ -50,8 +50,47 @@ const applyDependencies = (col) => {
   };
 };
 
+function downloadJson(jsonData, fileName = 'data.json', space = 2) {
+    try {
+        // 验证JSON数据
+        if (typeof jsonData !== 'object' || jsonData === null) {
+            throw new Error('请传入有效的JSON对象');
+        }
+
+        // 转换为JSON字符串并格式化
+        const jsonStr = JSON.stringify(jsonData, null, space);
+
+        // 创建Blob对象
+        const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+
+        // 创建下载链接
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+
+        // 处理文件名（确保以.json结尾）
+        const fileExt = '.json';
+        a.download = fileName.endsWith(fileExt) ? fileName : `${fileName}${fileExt}`;
+
+        // 触发下载
+        document.body.appendChild(a);
+        a.click();
+
+        // 清理资源
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 0);
+
+    } catch (error) {
+        console.error('JSON下载失败:', error.message);
+        throw error; // 允许外部捕获错误
+    }
+}
+
 export {
   debounce,
   applyDependencies,
   ColumnDataTypes,
+  downloadJson
 }

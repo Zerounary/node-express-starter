@@ -38,6 +38,27 @@ export async function afterDelete(data) {
   await CacheService.reloadTable(data.name);
 }
 
+export async function exportTableConfig({ids, id: tableId, user, res}) {
+  let results = []
+  if (tableId) {
+    results.push(await CacheService.getTableById(tableId))
+  } else {
+    if (ids.length === 0) {
+      throw new Error("请至少选择一个数据表");
+    }
+    if(ids?.length){
+      for(let id of ids) {
+        results.push(await CacheService.getTableById(id))
+      }
+    }
+  }
+  return {
+    msg: '导出成功',
+    action: 'download',
+    data: results
+  }
+}
+
 export async function syncTable({ ids, id: tableId, user }) {
   if (tableId) {
     const table = await CacheService.getTableById(tableId);

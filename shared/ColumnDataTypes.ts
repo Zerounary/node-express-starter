@@ -9,6 +9,7 @@ export const ColumnDataTypes = {
   STRING: 'STRING',
   TEXT: 'TEXT',
   JSON: 'JSON',
+  REGION: 'JSON',
   INTEGER: 'INTEGER',
   BOOLEAN: 'BOOLEAN',
   DECIMAL: 'DECIMAL',

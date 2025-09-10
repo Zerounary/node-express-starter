@@ -276,6 +276,11 @@ export const systemTables = [
         name: '应用',
         resource: 'syncTable',
       },
+      {
+        type: 'list',
+        name: '导出配置',
+        resource: 'exportTableConfig',
+      },
     ],
     columns: defaultColumns([
       {

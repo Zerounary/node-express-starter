@@ -1,9 +1,9 @@
 <template>
   <space>
     <Button
-      type="primary"
-      v-for="btn of actionsFiltered.slice(0, MAX_BUTTONS)"
+      v-for="(btn, idx) of actionsFiltered.slice(0, MAX_BUTTONS)"
       :key="btn.resource"
+      :loading="isLoading[btn?.resource]"
       @click="executeAction(btn)"
       >{{ btn.name }}</Button
     >
@@ -13,6 +13,7 @@
           <Button
             v-for="btn of actionsFiltered.slice(MAX_BUTTONS)"
             :key="btn.resource"
+            :loading="isLoading[btn?.resource]"
             class="w-full text-left"
             @click="executeAction(btn)"
           >
@@ -26,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed } from 'vue';
+import { defineProps, computed, ref } from 'vue';
 import { Space, Button, message, Dropdown } from 'ant-design-vue';
 import { execute } from '#/api/system/crud';
 
@@ -47,19 +48,27 @@ const props = defineProps<{
   actions: TableActionItem[];
 }>();
 
+const isLoading = ref({})
+
 const actionsFiltered = computed(() => {
   return props.actions.filter(e => e.type === props.type);
 });
 
 const executeAction = async (action: TableActionItem) => {
+  if (isLoading.value[action.resource]) {
+    return;
+  }
   try {
+    isLoading.value[action.resource] = true;
     const res = await execute(props.table, action.resource, props.params);
-    if(res?.msg || res?.message) {
+    if (res?.msg || res?.message) {
       message.success(res?.msg || res?.message || res?.error);
     }
     console.log('Action executed:', res);
   } catch (error) {
     console.error('Error executing action:', error);
+  } finally {
+    isLoading.value[action.resource] = false;
   }
 };
 </script>

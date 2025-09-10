@@ -21,10 +21,11 @@ export default class DynamicController {
         ...req.params,
         ...req.query,
         ...body,
+        res,
         user: req.user,
       });
 
-            // Try to start a workflow for the new record
+      // Try to start a workflow for the new record
       await WorkflowService.createInstanceForRecord(req.user.tenantId, tableName, id);
 
       return ok(result);
