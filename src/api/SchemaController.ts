@@ -1,149 +1,115 @@
-import { Controller, Post, Put, Delete } from "@/utils/routeDecorators";
+import { Controller, Post } from "@/utils/routeDecorators";
 import { ok, fail } from "@/router/api";
-import { DynamicTable, DynamicColumn } from "../db/models";
-import SchemaService from '../services/SchemaService';
-import { z } from 'zod';
-import { logError } from "../logger";
-
-const columnSchema = z.object({
-  name: z.string().regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/),
-  dataType: z.enum(['STRING', 'TEXT', 'INTEGER', 'FLOAT', 'DOUBLE', 'DECIMAL', 'BOOLEAN', 'DATE', 'JSON', 'RELATIONSHIP', 'ENUM']),
-  relatedToTableId: z.number().int().optional().nullable(),
-  enumValues: z.array(z.string()).optional().nullable(),
-});
-
-const createTableSchema = z.object({
-  name: z.string().regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/),
-  description: z.string().optional(),
-  columns: z.array(columnSchema),
-});
+import { DynamicTable, DynamicColumn, TableCategory, TableAction } from "../db/models";
+import logger from "../logger";
+import { syncTable } from "../hooks/table";
+import CacheService from "../services/CacheService";
 
 @Controller("/schemas")
 export default class SchemaController {
 
-  @Post("/tables")
-  async createTable(req, res) {
+  @Post("/import")
+  async importSchemas(req, res) {
     try {
       const { tenantId } = req.user;
       const body = await req.json();
-      const validationResult = createTableSchema.safeParse(body);
-      if (!validationResult.success) {
-        return fail(validationResult.error.errors, 400);
-      }
-      const { name, description, columns } = validationResult.data;
 
-      // 1. 创建表定义
-      const table = await DynamicTable.create({ name, description, tenantId });
-
-      // 2. 创建列定义
-      if (columns && columns.length > 0) {
-        const columnDefs = columns.map(c => ({ ...c, tableId: table.id }));
-        await DynamicColumn.bulkCreate(columnDefs);
+      const tablesToImport = Array.isArray(body) ? body : body.tables;
+      if (!tablesToImport || !Array.isArray(tablesToImport)) {
+        return fail("Invalid import data format. Expected an array of tables or an object with a 'tables' property.");
       }
 
-      // 3. 在数据库中创建物理表
-      await SchemaService.createTableFromDefinition(table.id);
+      // 1. 导入表类别
+      const categoryNameToId = new Map<string, number>();
+      const allCategories = tablesToImport.map(t => t.category).filter(Boolean);
+      const uniqueCategories = [...new Map(allCategories.map(item => [item['name'], item])).values()];
 
-      return ok(table);
-    } catch (error) {
-      logError(error);
-      return fail(error.message);
-    }
-  }
-
-  @Put('/tables/:name')
-  async mergeTable(req, res) {
-    try {
-      const { tenantId } = req.user;
-      const { name: tableName } = req.params;
-      const body = await req.json();
-      const validationResult = createTableSchema.safeParse({ name: tableName, ...body });
-      if (!validationResult.success) {
-        return fail(validationResult.error.errors, 400);
-      }
-      const { columns: newColumns } = validationResult.data;
-
-      const table = await DynamicTable.findOne({ where: { name: tableName, tenantId }, include: [{ model: DynamicColumn, as: 'columns' }] });
-
-      if (!table) {
-        return fail('Table not found in your tenant', 404);
+      for (const categoryData of uniqueCategories) {
+        if (!categoryData.name) continue;
+        const [category] = await TableCategory.findOrCreate({
+          where: { name: categoryData.name, tenantId },
+          defaults: { ...categoryData, id: undefined, tenantId }
+        });
+        categoryNameToId.set(categoryData.name, category.id);
       }
 
-      const existingColumns = table.columns || [];
-      const existingColumnNames = existingColumns.map(c => c.name);
-      const newColumnNames = newColumns.map(c => c.name);
-
-      // 找出要删除的列
-      const columnsToDelete = existingColumns.filter(c => !newColumnNames.includes(c.name));
-      for (const col of columnsToDelete) {
-        await SchemaService.dropColumn(tableName, col.name, tenantId);
-        await col.destroy();
+      // 2. 导入表 (仅定义)
+      const createdTables = [];
+      for (const tableData of tablesToImport) {
+        const { columns, actions, category, ...tableInfo } = tableData;
+        const categoryId = category ? categoryNameToId.get(category.name) : null;
+        
+        const newTable = await DynamicTable.create({
+          ...tableInfo,
+          id: undefined,
+          tenantId,
+          categoryId,
+        });
+        createdTables.push({ ...tableData, newTable });
       }
+      
+      const tableNameToIdMap = new Map<string, number>();
+      createdTables.forEach(({ newTable }) => {
+        tableNameToIdMap.set(newTable.name, newTable.id);
+        if (newTable.alias_name) {
+          tableNameToIdMap.set(newTable.alias_name, newTable.id);
+        }
+      });
 
-      // 找出要新增和修改的列
-      for (const newCol of newColumns) {
-        const existingCol = existingColumns.find(c => c.name === newCol.name);
-        if (existingCol) {
-          // 修改列
-          if (existingCol.dataType !== newCol.dataType) {
-            await existingCol.update({ dataType: newCol.dataType });
-            await SchemaService.changeColumn(tableName, newCol.name, existingCol, tenantId);
+      // 3. 导入表字段和表动作
+      for (const { newTable, columns, actions } of createdTables) {
+        const tableId = newTable.id;
+
+        if (columns && Array.isArray(columns)) {
+          for (let column of columns) {
+            if (column.relatedToTableName) {
+              const relatedTableId = tableNameToIdMap.get(column.relatedToTableName);
+              if (relatedTableId) {
+                column.relatedToTableId = relatedTableId;
+              } else {
+                const existingTable = await CacheService.getTableByName(column.relatedToTableName) || await CacheService.getTableByAliasName(column.relatedToTableName);
+                if (existingTable) {
+                  column.relatedToTableId = existingTable.id;
+                } else {
+                  logger.error(`Import Warning: Could not find related table '${column.relatedToTableName}' for column '${column.name}' in table '${newTable.name}'.`);
+                }
+              }
+            }
+            await DynamicColumn.create({
+              ...column,
+              id: undefined,
+              tableId,
+              tenantId,
+            });
           }
-        } else {
-          // 新增列
-          const column = await DynamicColumn.create({ ...newCol, tableId: table.id });
-          await SchemaService.addColumnFromDefinition(column.id);
+        }
+
+        if (actions && Array.isArray(actions)) {
+          for (const action of actions) {
+            await TableAction.create({
+              ...action,
+              id: undefined,
+              tableId,
+              tenantId,
+            });
+          }
         }
       }
 
-      return ok({ message: 'Table merged successfully' });
+      // 4. 物理化所有新建的表并初始化缓存
+      for (const { newTable } of createdTables) {
+        // afterCreate钩子在添加自定义列/操作之前调用reloadTable，因此缓存已过时。
+        // syncTable内部使用CacheService.getTableById。
+        // 为确保syncTable获取完整的表定义，我们必须首先重新加载缓存。
+        await CacheService.reloadTable(newTable.name);
+        // `syncTable`将处理数据库模式同步和最终的缓存重新加载。
+        await syncTable({ids: null, id: newTable.id, user: req.user });
+      }
+
+      return ok(null);
     } catch (error) {
-      logError(error);
+      logger.error(error);
       return fail(error.message);
     }
   }
-
-  @Post("/columns")
-  async addColumn(req, res) {
-    try {
-        const { name, dataType, tableId } = await req.json();
-        
-        // 1. 创建列定义
-        const column = await DynamicColumn.create({ name, dataType, tableId });
-        
-        // 2. 在物理表中添加列
-        await SchemaService.addColumnFromDefinition(column.id);
-
-        return ok(column);
-    } catch (error) {
-        logError(error);
-        return fail(error.message);
-    }
-  }
-
-  @Delete('/tables/:tableName/columns/:columnName')
-  async deleteColumn(req, res) {
-    try {
-      const { tenantId } = req.user;
-      const { tableName, columnName } = req.params;
-
-      const table = await DynamicTable.findOne({ where: { name: tableName, tenantId } });
-      if (!table) {
-        return fail('Table not found in your tenant', 404);
-      }
-
-      const column = await DynamicColumn.findOne({ where: { name: columnName, tableId: table.id } });
-      if (!column) {
-        return fail('Column not found', 404);
-      }
-
-      await SchemaService.dropColumn(tableName, columnName, tenantId);
-      await column.destroy();
-
-      return ok({ message: 'Column deleted successfully' });
-    } catch (error) {
-      logError(error);
-      return fail(error.message);
-    }
-  }
-} 
+}

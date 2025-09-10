@@ -751,8 +751,8 @@ export const systemTables = [
         required: false,
         description: "界面配置",
         relatedToTableId: undefined,
-
         ui: {
+          mask: "0011000000",
           component: "MetaInput",
           componentProps: {},
         },
