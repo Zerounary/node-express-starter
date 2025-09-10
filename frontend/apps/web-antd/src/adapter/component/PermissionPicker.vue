@@ -180,7 +180,7 @@ const handleCancel = () => {
 const openModal = () => {
   Promise.all([getRolePerms({
     roleId: props.row.id
-  }), execute("tableCategories", "getMenus")])
+  }), execute("table_categories", "getMenus")])
   .then(([currentValue, res]) => {
     modelValue.value = currentValue || []
     tables.value = res;

@@ -95,6 +95,12 @@ const [Grid, gridApi] = useVbenVxeGrid({
     },
   } as VxeTableGridOptions<SystemTableApi.SystemTable>,
   gridEvents: {
+    checkboxAll({checked}) {
+      if(checked) {
+        let rows = gridApi.grid.getFullData();
+        selectionIds.value = rows.map(e => e.id)
+      }
+    },
     checkboxChange({checked, row}) {
       if(checked) {
         selectionIds.value.push(row.id);

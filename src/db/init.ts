@@ -694,6 +694,13 @@ export const systemTables = [
     alias_name: "table_categories",
     categoryId: categoryIdOf("开发平台"),
     defaultSort: 'orderno-asc',
+    actions: [
+      {
+        type: 'list',
+        name: '导出配置',
+        resource: 'exportTableConfig',
+      },
+    ],
     columns: defaultColumns([
       {
         name: "name",
@@ -849,7 +856,6 @@ export const systemTables = [
     defaultSort: 'orderno-asc',
     categoryId: categoryIdOf("开发平台"),
     hideMenu: true,
-
     columns: defaultColumns([
       {
         name: "tableId",

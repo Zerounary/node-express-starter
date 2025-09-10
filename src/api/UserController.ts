@@ -4,7 +4,7 @@ import User from "../db/models/User";
 import AuthService from "../services/AuthService";
 import { z } from 'zod';
 import { logError } from "../logger";
-import { getMenus } from "@/hooks/tableCategories";
+import { getMenus } from "@/hooks/table_categories";
 
 const userSchema = z.object({
   username: z.string().min(3),
