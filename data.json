@@ -13,10 +13,11 @@
       "createdBy": null,
       "updatedBy": null,
       "isActive": true,
-      "createdAt": "2025-09-11T03:22:41.000Z",
-      "updatedAt": "2025-09-11T03:31:57.000Z",
+      "createdAt": "2025-09-11T07:50:55.000Z",
+      "updatedAt": "2025-09-11T07:50:55.000Z",
       "columns": [
         {
+          "relatedToTableName": null,
           "id": 40,
           "tenantId": 1,
           "name": "createdAt",
@@ -38,10 +39,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": "users",
           "id": 39,
           "tenantId": 1,
           "name": "createdBy",
@@ -66,10 +69,15 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": {
+            "id": 3,
+            "name": "users"
+          }
         },
         {
+          "relatedToTableName": null,
           "id": 34,
           "tenantId": 1,
           "name": "id",
@@ -91,10 +99,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 43,
           "tenantId": 1,
           "name": "isActive",
@@ -130,10 +140,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 38,
           "tenantId": 1,
           "name": "logDivider",
@@ -154,10 +166,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 37,
           "tenantId": 1,
           "name": "password",
@@ -179,10 +193,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 36,
           "tenantId": 1,
           "name": "realName",
@@ -204,10 +220,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 42,
           "tenantId": 1,
           "name": "updatedAt",
@@ -229,10 +247,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": "users",
           "id": 41,
           "tenantId": 1,
           "name": "updatedBy",
@@ -257,10 +277,15 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": {
+            "id": 3,
+            "name": "users"
+          }
         },
         {
+          "relatedToTableName": null,
           "id": 35,
           "tenantId": 1,
           "name": "username",
@@ -282,8 +307,9 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         }
       ],
       "actions": []
@@ -301,10 +327,11 @@
       "createdBy": null,
       "updatedBy": null,
       "isActive": true,
-      "createdAt": "2025-09-11T03:22:41.000Z",
-      "updatedAt": "2025-09-11T03:31:57.000Z",
+      "createdAt": "2025-09-11T07:50:55.000Z",
+      "updatedAt": "2025-09-11T07:50:55.000Z",
       "columns": [
         {
+          "relatedToTableName": null,
           "id": 50,
           "tenantId": 1,
           "name": "createdAt",
@@ -326,10 +353,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": "users",
           "id": 49,
           "tenantId": 1,
           "name": "createdBy",
@@ -354,10 +383,15 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": {
+            "id": 3,
+            "name": "users"
+          }
         },
         {
+          "relatedToTableName": null,
           "id": 46,
           "tenantId": 1,
           "name": "description",
@@ -379,10 +413,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 44,
           "tenantId": 1,
           "name": "id",
@@ -404,10 +440,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 53,
           "tenantId": 1,
           "name": "isActive",
@@ -443,10 +481,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 48,
           "tenantId": 1,
           "name": "logDivider",
@@ -467,10 +507,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 45,
           "tenantId": 1,
           "name": "name",
@@ -492,10 +534,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 47,
           "tenantId": 1,
           "name": "perms",
@@ -518,10 +562,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 52,
           "tenantId": 1,
           "name": "updatedAt",
@@ -543,10 +589,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": "users",
           "id": 51,
           "tenantId": 1,
           "name": "updatedBy",
@@ -571,8 +619,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": {
+            "id": 3,
+            "name": "users"
+          }
         }
       ],
       "actions": []
@@ -590,10 +642,11 @@
       "createdBy": null,
       "updatedBy": null,
       "isActive": true,
-      "createdAt": "2025-09-11T03:22:41.000Z",
-      "updatedAt": "2025-09-11T03:31:57.000Z",
+      "createdAt": "2025-09-11T07:50:55.000Z",
+      "updatedAt": "2025-09-11T07:50:55.000Z",
       "columns": [
         {
+          "relatedToTableName": null,
           "id": 59,
           "tenantId": 1,
           "name": "createdAt",
@@ -615,10 +668,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": "users",
           "id": 58,
           "tenantId": 1,
           "name": "createdBy",
@@ -643,10 +698,15 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": {
+            "id": 3,
+            "name": "users"
+          }
         },
         {
+          "relatedToTableName": null,
           "id": 54,
           "tenantId": 1,
           "name": "id",
@@ -668,10 +728,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 62,
           "tenantId": 1,
           "name": "isActive",
@@ -707,10 +769,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 57,
           "tenantId": 1,
           "name": "logDivider",
@@ -731,10 +795,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": "roles",
           "id": 56,
           "tenantId": 1,
           "name": "roleId",
@@ -760,10 +826,15 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": {
+            "id": 4,
+            "name": "roles"
+          }
         },
         {
+          "relatedToTableName": null,
           "id": 61,
           "tenantId": 1,
           "name": "updatedAt",
@@ -785,10 +856,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": "users",
           "id": 60,
           "tenantId": 1,
           "name": "updatedBy",
@@ -813,10 +886,15 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": {
+            "id": 3,
+            "name": "users"
+          }
         },
         {
+          "relatedToTableName": "users",
           "id": 55,
           "tenantId": 1,
           "name": "userId",
@@ -842,8 +920,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": {
+            "id": 3,
+            "name": "users"
+          }
         }
       ],
       "actions": []
@@ -861,10 +943,11 @@
       "createdBy": null,
       "updatedBy": null,
       "isActive": true,
-      "createdAt": "2025-09-11T03:22:41.000Z",
-      "updatedAt": "2025-09-11T03:31:57.000Z",
+      "createdAt": "2025-09-11T07:50:55.000Z",
+      "updatedAt": "2025-09-11T07:50:55.000Z",
       "columns": [
         {
+          "relatedToTableName": null,
           "id": 4,
           "tenantId": 1,
           "name": "alias_name",
@@ -892,10 +975,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": "table_categories",
           "id": 5,
           "tenantId": 1,
           "name": "categoryId",
@@ -921,10 +1006,15 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": {
+            "id": 6,
+            "name": "table_categories"
+          }
         },
         {
+          "relatedToTableName": null,
           "id": 12,
           "tenantId": 1,
           "name": "createdAt",
@@ -946,10 +1036,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": "users",
           "id": 11,
           "tenantId": 1,
           "name": "createdBy",
@@ -974,10 +1066,15 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": {
+            "id": 3,
+            "name": "users"
+          }
         },
         {
+          "relatedToTableName": null,
           "id": 7,
           "tenantId": 1,
           "name": "defaultSort",
@@ -1002,10 +1099,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 3,
           "tenantId": 1,
           "name": "description",
@@ -1027,10 +1126,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 6,
           "tenantId": 1,
           "name": "hideMenu",
@@ -1052,10 +1153,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 1,
           "tenantId": 1,
           "name": "id",
@@ -1077,10 +1180,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 15,
           "tenantId": 1,
           "name": "isActive",
@@ -1116,10 +1221,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": "table_categories",
           "id": 9,
           "tenantId": 1,
           "name": "items",
@@ -1161,10 +1268,15 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": {
+            "id": 6,
+            "name": "table_categories"
+          }
         },
         {
+          "relatedToTableName": null,
           "id": 10,
           "tenantId": 1,
           "name": "logDivider",
@@ -1185,10 +1297,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 2,
           "tenantId": 1,
           "name": "name",
@@ -1216,10 +1330,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 8,
           "tenantId": 1,
           "name": "orderno",
@@ -1241,10 +1357,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 14,
           "tenantId": 1,
           "name": "updatedAt",
@@ -1266,10 +1384,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": "users",
           "id": 13,
           "tenantId": 1,
           "name": "updatedBy",
@@ -1294,8 +1414,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": {
+            "id": 3,
+            "name": "users"
+          }
         }
       ],
       "actions": [
@@ -1311,8 +1435,8 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z"
         },
         {
           "id": 2,
@@ -1326,8 +1450,8 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z"
         },
         {
           "id": 3,
@@ -1341,8 +1465,8 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z"
         }
       ]
     },
@@ -1359,10 +1483,11 @@
       "createdBy": null,
       "updatedBy": null,
       "isActive": true,
-      "createdAt": "2025-09-11T03:22:41.000Z",
-      "updatedAt": "2025-09-11T03:31:57.000Z",
+      "createdAt": "2025-09-11T07:50:55.000Z",
+      "updatedAt": "2025-09-11T07:50:55.000Z",
       "columns": [
         {
+          "relatedToTableName": null,
           "id": 23,
           "tenantId": 1,
           "name": "ak",
@@ -1384,10 +1509,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 30,
           "tenantId": 1,
           "name": "createdAt",
@@ -1409,10 +1536,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": "users",
           "id": 29,
           "tenantId": 1,
           "name": "createdBy",
@@ -1437,10 +1566,15 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": {
+            "id": 3,
+            "name": "users"
+          }
         },
         {
+          "relatedToTableName": null,
           "id": 19,
           "tenantId": 1,
           "name": "dataType",
@@ -1462,10 +1596,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 18,
           "tenantId": 1,
           "name": "description",
@@ -1487,10 +1623,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 24,
           "tenantId": 1,
           "name": "dk",
@@ -1512,10 +1650,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 16,
           "tenantId": 1,
           "name": "id",
@@ -1537,10 +1677,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 33,
           "tenantId": 1,
           "name": "isActive",
@@ -1576,10 +1718,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 28,
           "tenantId": 1,
           "name": "logDivider",
@@ -1600,10 +1744,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 17,
           "tenantId": 1,
           "name": "name",
@@ -1631,10 +1777,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 27,
           "tenantId": 1,
           "name": "orderno",
@@ -1656,10 +1804,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": "dynamic_tables",
           "id": 21,
           "tenantId": 1,
           "name": "relatedToTableId",
@@ -1691,10 +1841,15 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": {
+            "id": 1,
+            "name": "dynamic_tables"
+          }
         },
         {
+          "relatedToTableName": null,
           "id": 22,
           "tenantId": 1,
           "name": "required",
@@ -1716,10 +1871,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 25,
           "tenantId": 1,
           "name": "sortable",
@@ -1741,10 +1898,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": "dynamic_tables",
           "id": 20,
           "tenantId": 1,
           "name": "tableId",
@@ -1770,10 +1929,15 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": {
+            "id": 1,
+            "name": "dynamic_tables"
+          }
         },
         {
+          "relatedToTableName": null,
           "id": 26,
           "tenantId": 1,
           "name": "ui",
@@ -1796,10 +1960,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 32,
           "tenantId": 1,
           "name": "updatedAt",
@@ -1821,10 +1987,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": "users",
           "id": 31,
           "tenantId": 1,
           "name": "updatedBy",
@@ -1849,8 +2017,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": {
+            "id": 3,
+            "name": "users"
+          }
         }
       ],
       "actions": []
@@ -1868,11 +2040,12 @@
       "createdBy": null,
       "updatedBy": null,
       "isActive": true,
-      "createdAt": "2025-09-11T03:22:41.000Z",
-      "updatedAt": "2025-09-11T03:31:57.000Z",
+      "createdAt": "2025-09-11T07:50:55.000Z",
+      "updatedAt": "2025-09-11T07:50:55.000Z",
       "columns": [
         {
-          "id": 74,
+          "relatedToTableName": null,
+          "id": 75,
           "tenantId": 1,
           "name": "createdAt",
           "description": "创建时间",
@@ -1893,11 +2066,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 73,
+          "relatedToTableName": "users",
+          "id": 74,
           "tenantId": 1,
           "name": "createdBy",
           "description": "创建人",
@@ -1921,11 +2096,16 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": {
+            "id": 3,
+            "name": "users"
+          }
         },
         {
-          "id": 65,
+          "relatedToTableName": null,
+          "id": 66,
           "tenantId": 1,
           "name": "description",
           "description": "描述",
@@ -1942,14 +2122,16 @@
             "filterOp": "like",
             "component": "Input"
           },
-          "orderno": 20,
+          "orderno": 30,
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
+          "relatedToTableName": null,
           "id": 63,
           "tenantId": 1,
           "name": "id",
@@ -1971,11 +2153,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 77,
+          "relatedToTableName": null,
+          "id": 78,
           "tenantId": 1,
           "name": "isActive",
           "description": "可用",
@@ -2010,11 +2194,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 72,
+          "relatedToTableName": null,
+          "id": 73,
           "tenantId": 1,
           "name": "logDivider",
           "description": "日志信息",
@@ -2034,11 +2220,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 67,
+          "relatedToTableName": null,
+          "id": 68,
           "tenantId": 1,
           "name": "meta",
           "description": "界面配置",
@@ -2056,15 +2244,17 @@
             "component": "MetaInput",
             "componentProps": {}
           },
-          "orderno": 40,
+          "orderno": 50,
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 64,
+          "relatedToTableName": null,
+          "id": 65,
           "tenantId": 1,
           "name": "name",
           "description": "名称",
@@ -2081,15 +2271,17 @@
             "filterOp": "like",
             "component": "Input"
           },
-          "orderno": 10,
+          "orderno": 20,
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 71,
+          "relatedToTableName": null,
+          "id": 72,
           "tenantId": 1,
           "name": "orderno",
           "description": "序号",
@@ -2106,15 +2298,17 @@
             "filterOp": "eq",
             "component": "InputNumber"
           },
-          "orderno": 80,
+          "orderno": 90,
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 66,
+          "relatedToTableName": "table_categories",
+          "id": 67,
           "tenantId": 1,
           "name": "parentId",
           "description": "父类别",
@@ -2135,15 +2329,20 @@
               "table": "table_categories"
             }
           },
-          "orderno": 30,
+          "orderno": 40,
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": {
+            "id": 6,
+            "name": "table_categories"
+          }
         },
         {
-          "id": 68,
+          "relatedToTableName": null,
+          "id": 69,
           "tenantId": 1,
           "name": "path",
           "description": "路径",
@@ -2160,15 +2359,17 @@
             "filterOp": "like",
             "component": "Input"
           },
-          "orderno": 50,
+          "orderno": 60,
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 70,
+          "relatedToTableName": null,
+          "id": 71,
           "tenantId": 1,
           "name": "redirect",
           "description": "重定向",
@@ -2185,15 +2386,68 @@
             "filterOp": "like",
             "component": "Input"
           },
-          "orderno": 70,
+          "orderno": 80,
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 76,
+          "relatedToTableName": null,
+          "id": 64,
+          "tenantId": 1,
+          "name": "type",
+          "description": "类型",
+          "dataType": "ENUM",
+          "required": true,
+          "ak": false,
+          "dk": false,
+          "sortable": true,
+          "tableId": 6,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "width": 200,
+            "filterOp": "eq",
+            "component": "Select",
+            "componentProps": {
+              "options": [
+                {
+                  "label": "目录",
+                  "value": "catelog"
+                },
+                {
+                  "label": "菜单",
+                  "value": "menu"
+                },
+                {
+                  "label": "嵌入式页面",
+                  "value": "embedded"
+                },
+                {
+                  "label": "外链",
+                  "value": "link"
+                },
+                {
+                  "label": "按钮",
+                  "value": "button"
+                }
+              ]
+            }
+          },
+          "orderno": 10,
+          "createdBy": null,
+          "updatedBy": null,
+          "isActive": true,
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
+        },
+        {
+          "relatedToTableName": null,
+          "id": 77,
           "tenantId": 1,
           "name": "updatedAt",
           "description": "更新时间",
@@ -2214,11 +2468,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 75,
+          "relatedToTableName": "users",
+          "id": 76,
           "tenantId": 1,
           "name": "updatedBy",
           "description": "修改人",
@@ -2242,11 +2498,16 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": {
+            "id": 3,
+            "name": "users"
+          }
         },
         {
-          "id": 69,
+          "relatedToTableName": null,
+          "id": 70,
           "tenantId": 1,
           "name": "url",
           "description": "路由",
@@ -2263,12 +2524,13 @@
             "filterOp": "like",
             "component": "Input"
           },
-          "orderno": 60,
+          "orderno": 70,
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z",
+          "relatedToTable": null
         }
       ],
       "actions": [
@@ -2284,8 +2546,8 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z"
         }
       ]
     },
@@ -2302,11 +2564,12 @@
       "createdBy": null,
       "updatedBy": null,
       "isActive": true,
-      "createdAt": "2025-09-11T03:22:41.000Z",
-      "updatedAt": "2025-09-11T03:31:57.000Z",
+      "createdAt": "2025-09-11T07:50:55.000Z",
+      "updatedAt": "2025-09-11T07:50:55.000Z",
       "columns": [
         {
-          "id": 83,
+          "relatedToTableName": null,
+          "id": 84,
           "tenantId": 1,
           "name": "createdAt",
           "description": "创建时间",
@@ -2327,11 +2590,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 82,
+          "relatedToTableName": "users",
+          "id": 83,
           "tenantId": 1,
           "name": "createdBy",
           "description": "创建人",
@@ -2355,11 +2620,16 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": {
+            "id": 3,
+            "name": "users"
+          }
         },
         {
-          "id": 80,
+          "relatedToTableName": null,
+          "id": 81,
           "tenantId": 1,
           "name": "description",
           "description": "描述",
@@ -2380,11 +2650,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 78,
+          "relatedToTableName": null,
+          "id": 79,
           "tenantId": 1,
           "name": "id",
           "description": "ID",
@@ -2405,11 +2677,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 86,
+          "relatedToTableName": null,
+          "id": 87,
           "tenantId": 1,
           "name": "isActive",
           "description": "可用",
@@ -2444,11 +2718,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 81,
+          "relatedToTableName": null,
+          "id": 82,
           "tenantId": 1,
           "name": "logDivider",
           "description": "日志信息",
@@ -2468,11 +2744,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 79,
+          "relatedToTableName": null,
+          "id": 80,
           "tenantId": 1,
           "name": "name",
           "description": "名称",
@@ -2493,11 +2771,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:57.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 85,
+          "relatedToTableName": null,
+          "id": 86,
           "tenantId": 1,
           "name": "updatedAt",
           "description": "更新时间",
@@ -2518,11 +2798,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 84,
+          "relatedToTableName": "users",
+          "id": 85,
           "tenantId": 1,
           "name": "updatedBy",
           "description": "修改人",
@@ -2546,8 +2828,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": {
+            "id": 3,
+            "name": "users"
+          }
         }
       ],
       "actions": []
@@ -2565,11 +2851,12 @@
       "createdBy": null,
       "updatedBy": null,
       "isActive": true,
-      "createdAt": "2025-09-11T03:22:41.000Z",
-      "updatedAt": "2025-09-11T03:31:57.000Z",
+      "createdAt": "2025-09-11T07:50:55.000Z",
+      "updatedAt": "2025-09-11T07:50:55.000Z",
       "columns": [
         {
-          "id": 92,
+          "relatedToTableName": null,
+          "id": 93,
           "tenantId": 1,
           "name": "btnUI",
           "description": "按钮配置",
@@ -2591,11 +2878,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 96,
+          "relatedToTableName": null,
+          "id": 97,
           "tenantId": 1,
           "name": "createdAt",
           "description": "创建时间",
@@ -2616,11 +2905,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 95,
+          "relatedToTableName": "users",
+          "id": 96,
           "tenantId": 1,
           "name": "createdBy",
           "description": "创建人",
@@ -2644,11 +2935,16 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": {
+            "id": 3,
+            "name": "users"
+          }
         },
         {
-          "id": 87,
+          "relatedToTableName": null,
+          "id": 88,
           "tenantId": 1,
           "name": "id",
           "description": "ID",
@@ -2669,11 +2965,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 99,
+          "relatedToTableName": null,
+          "id": 100,
           "tenantId": 1,
           "name": "isActive",
           "description": "可用",
@@ -2708,11 +3006,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 94,
+          "relatedToTableName": null,
+          "id": 95,
           "tenantId": 1,
           "name": "logDivider",
           "description": "日志信息",
@@ -2732,11 +3032,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 90,
+          "relatedToTableName": null,
+          "id": 91,
           "tenantId": 1,
           "name": "name",
           "description": "名称",
@@ -2757,11 +3059,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 93,
+          "relatedToTableName": null,
+          "id": 94,
           "tenantId": 1,
           "name": "orderno",
           "description": "序号",
@@ -2782,11 +3086,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 91,
+          "relatedToTableName": null,
+          "id": 92,
           "tenantId": 1,
           "name": "resource",
           "description": "接口名称",
@@ -2807,11 +3113,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 88,
+          "relatedToTableName": "dynamic_tables",
+          "id": 89,
           "tenantId": 1,
           "name": "tableId",
           "description": "所属表",
@@ -2836,11 +3144,16 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": {
+            "id": 1,
+            "name": "dynamic_tables"
+          }
         },
         {
-          "id": 89,
+          "relatedToTableName": null,
+          "id": 90,
           "tenantId": 1,
           "name": "type",
           "description": "类型",
@@ -2877,11 +3190,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 98,
+          "relatedToTableName": null,
+          "id": 99,
           "tenantId": 1,
           "name": "updatedAt",
           "description": "更新时间",
@@ -2902,11 +3217,13 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": null
         },
         {
-          "id": 97,
+          "relatedToTableName": "users",
+          "id": 98,
           "tenantId": 1,
           "name": "updatedBy",
           "description": "修改人",
@@ -2930,8 +3247,12 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:31:58.000Z"
+          "createdAt": "2025-09-11T07:50:56.000Z",
+          "updatedAt": "2025-09-11T07:50:56.000Z",
+          "relatedToTable": {
+            "id": 3,
+            "name": "users"
+          }
         }
       ],
       "actions": []
@@ -2953,10 +3274,10 @@
       "redirect": null,
       "orderno": null,
       "createdBy": null,
-      "updatedBy": null,
+      "updatedBy": 1,
       "isActive": true,
-      "createdAt": "2025-09-11T03:22:41.000Z",
-      "updatedAt": "2025-09-11T03:22:41.000Z",
+      "createdAt": "2025-09-11T07:50:55.000Z",
+      "updatedAt": "2025-09-11T07:51:49.000Z",
       "children": [
         {
           "id": 4,
@@ -2975,8 +3296,8 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:22:41.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z"
         },
         {
           "id": 5,
@@ -2995,8 +3316,8 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:22:41.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z"
         },
         {
           "id": 6,
@@ -3015,8 +3336,8 @@
           "createdBy": null,
           "updatedBy": null,
           "isActive": true,
-          "createdAt": "2025-09-11T03:22:41.000Z",
-          "updatedAt": "2025-09-11T03:22:41.000Z"
+          "createdAt": "2025-09-11T07:50:55.000Z",
+          "updatedAt": "2025-09-11T07:50:55.000Z"
         }
       ]
     },
@@ -3037,8 +3358,8 @@
       "createdBy": null,
       "updatedBy": null,
       "isActive": true,
-      "createdAt": "2025-09-11T03:22:41.000Z",
-      "updatedAt": "2025-09-11T03:22:41.000Z"
+      "createdAt": "2025-09-11T07:50:55.000Z",
+      "updatedAt": "2025-09-11T07:50:55.000Z"
     },
     {
       "id": 3,
@@ -3057,8 +3378,8 @@
       "createdBy": null,
       "updatedBy": null,
       "isActive": true,
-      "createdAt": "2025-09-11T03:22:41.000Z",
-      "updatedAt": "2025-09-11T03:22:41.000Z"
+      "createdAt": "2025-09-11T07:50:55.000Z",
+      "updatedAt": "2025-09-11T07:50:55.000Z"
     }
   ]
 }

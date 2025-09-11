@@ -1,6 +1,6 @@
 import { ColumnDataTypes } from "@/utils";
 import { DynamicColumn, DynamicTable, TableAction, TableCategory } from "./models";
-import { Permission, Role } from "./models/Role";
+import { Permission, Role, UserRoles } from "./models/Role";
 import Tenant from "./models/Tenant";
 import User from "./models/User";
 
@@ -703,6 +703,45 @@ export const systemTables = [
     ],
     columns: defaultColumns([
       {
+        name: "type",
+        dataType: ColumnDataTypes.ENUM,
+        required: true,
+        description: "类型",
+        ak: false,
+        dk: false,
+        relatedToTableId: undefined,
+
+        ui: {
+          mask: "1111111111",
+          width: 200,
+          component: "Select",
+          componentProps: {
+            options: [
+              {
+                label: '目录',
+                value: 'catelog'
+              },
+              {
+                label: '菜单',
+                value: 'menu'
+              },
+              {
+                label: '嵌入式页面',
+                value: 'embedded'
+              },
+              {
+                label: '外链',
+                value: 'link'
+              },
+              {
+                label: '按钮',
+                value: 'button'
+              },
+            ]
+          }
+        },
+      },
+      {
         name: "name",
         dataType: ColumnDataTypes.STRING,
         required: true,
@@ -1055,7 +1094,10 @@ export const initTenantUser = async (userConfig) => {
   });
 
   // 关联角色
-  await user.addRole(adminRole);
+  // await user.addRole(adminRole);
+  const [userRole] = await UserRoles.findOrCreate({
+    where: { userId: user.id, tenantId: tenant.id, roleId: adminRole.id },
+  })
 };
 
 function tableIdOf(name = "") {

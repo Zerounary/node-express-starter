@@ -5,7 +5,6 @@ const NO_AUTH = process.env.NODE_ENV === 'development';
 const ALLOWED_PATHS = [
   '/api/demo/*',
   '/api/auth/login',
-  '/api/auth/logout',
   '/api/auth/register',
 ];
 

@@ -1,11 +1,14 @@
-import { DynamicTable, DynamicColumn, TableAction } from '../db/models';
-import { logError, logInfo } from '../logger';
-import DynamicDataService from './DynamicDataService';
+import { DynamicTable, DynamicColumn, TableAction } from "../db/models";
+import { logError, logInfo } from "../logger";
+import DynamicDataService from "./DynamicDataService";
 
-export type TableWithColumns = DynamicTable & { columns: DynamicColumn[]; actions: TableAction[] };
+export type TableWithColumns = DynamicTable & {
+  columns: DynamicColumn[];
+  actions: TableAction[];
+};
 
 function deepFreeze<T>(obj: T, seen = new WeakSet<object>()): T {
-  if (obj && typeof obj === 'object') {
+  if (obj && typeof obj === "object") {
     const o = obj as unknown as object;
     if (seen.has(o)) return obj;
     seen.add(o);
@@ -19,7 +22,7 @@ function deepFreeze<T>(obj: T, seen = new WeakSet<object>()): T {
 
 class CacheService {
   // 全局开关：默认开启，设置 CACHE_ENABLED=false 可关闭
-  private enabled = process.env.CACHE_ENABLED !== 'false';
+  private enabled = process.env.CACHE_ENABLED !== "false";
 
   // 原子快照，避免多 Map 更新时的中间态
   private tables: {
@@ -56,17 +59,17 @@ class CacheService {
     this.tables = { byName: new Map(), byAlias: new Map(), byId: new Map() };
     this.userPermissionsCache.clear();
     this.userDataScopesCache.clear();
-    logInfo('CacheService cleared all caches.');
+    logInfo("CacheService cleared all caches.");
   }
 
   public async initialize() {
-    logInfo('Initializing schema cache...');
+    logInfo("Initializing schema cache...");
     if (!this.enabled) {
-      logInfo('Cache disabled, skip preloading schema cache.');
+      logInfo("Cache disabled, skip preloading schema cache.");
       return;
     }
     await this.loadAllTables();
-    logInfo('Schema cache initialized.');
+    logInfo("Schema cache initialized.");
   }
 
   public async loadAllTables() {
@@ -74,8 +77,18 @@ class CacheService {
     try {
       const tables = await DynamicTable.findAll({
         include: [
-          { model: DynamicColumn, as: 'columns' },
-          { model: TableAction, as: 'actions' },
+          {
+            model: DynamicColumn,
+            as: "columns",
+            include: [
+              {
+                model: DynamicTable,
+                as: "relatedToTable",
+                attributes: ["id", "name"],
+              },
+            ],
+          },
+          { model: TableAction, as: "actions" },
         ],
       });
 
@@ -84,7 +97,9 @@ class CacheService {
       const byId = new Map<number, TableWithColumns>();
 
       for (const table of tables) {
-        const tableData = table.get({ plain: true }) as unknown as TableWithColumns;
+        const tableData = table.get({
+          plain: true,
+        }) as unknown as TableWithColumns;
         const frozen = deepFreeze(tableData);
         // @ts-ignore name/alias_name/id 由模型定义
         byName.set((frozen as any).name, frozen);
@@ -96,7 +111,7 @@ class CacheService {
 
       // 原子替换快照
       this.tables = { byName, byAlias, byId };
-      logInfo('All dynamic tables and columns have been cached.');
+      logInfo("All dynamic tables and columns have been cached.");
     } catch (error) {
       logError(error);
       throw error;
@@ -126,8 +141,8 @@ class CacheService {
         const table = await DynamicTable.findOne({
           where: { name: tableName },
           include: [
-            { model: DynamicColumn, as: 'columns' },
-            { model: TableAction, as: 'actions' },
+            { model: DynamicColumn, as: "columns" },
+            { model: TableAction, as: "actions" },
           ],
         });
 
@@ -148,7 +163,9 @@ class CacheService {
           return;
         }
 
-        const tableData = table.get({ plain: true }) as unknown as TableWithColumns;
+        const tableData = table.get({
+          plain: true,
+        }) as unknown as TableWithColumns;
         const frozen = deepFreeze(tableData) as any;
 
         const old = byName.get(tableName) as any;
@@ -171,7 +188,9 @@ class CacheService {
     });
   }
 
-  public async getTableByName(name: string): Promise<TableWithColumns | undefined> {
+  public async getTableByName(
+    name: string
+  ): Promise<TableWithColumns | undefined> {
     if (this.enabled) {
       return this.tables.byName.get(name);
     }
@@ -179,23 +198,27 @@ class CacheService {
     const table = await DynamicTable.findOne({
       where: { name },
       include: [
-        { model: DynamicColumn, as: 'columns' },
-        { model: TableAction, as: 'actions' },
+        { model: DynamicColumn, as: "columns" },
+        { model: TableAction, as: "actions" },
       ],
     });
     return table ? (table.get({ plain: true }) as TableWithColumns) : undefined;
   }
 
-  public async getTableByAliasName(aliasName: string): Promise<TableWithColumns | undefined> {
+  public async getTableByAliasName(
+    aliasName: string
+  ): Promise<TableWithColumns | undefined> {
     if (this.enabled) {
       return this.tables.byAlias.get(aliasName);
     }
-    logInfo(`Cache disabled, fetching table by alias name '${aliasName}' from DB.`);
+    logInfo(
+      `Cache disabled, fetching table by alias name '${aliasName}' from DB.`
+    );
     const table = await DynamicTable.findOne({
       where: { alias_name: aliasName },
       include: [
-        { model: DynamicColumn, as: 'columns' },
-        { model: TableAction, as: 'actions' },
+        { model: DynamicColumn, as: "columns" },
+        { model: TableAction, as: "actions" },
       ],
     });
     return table ? (table.get({ plain: true }) as TableWithColumns) : undefined;
@@ -209,15 +232,17 @@ class CacheService {
     const table = await DynamicTable.findOne({
       where: { id },
       include: [
-        { model: DynamicColumn, as: 'columns' },
-        { model: TableAction, as: 'actions' },
+        { model: DynamicColumn, as: "columns" },
+        { model: TableAction, as: "actions" },
       ],
     });
     return table ? (table.get({ plain: true }) as TableWithColumns) : undefined;
   }
 
   // --- User Permission Cache Methods ---
-  public async getPermissions(userId: number): Promise<Set<string> | undefined> {
+  public async getPermissions(
+    userId: number
+  ): Promise<Set<string> | undefined> {
     if (this.enabled) {
       const val = this.userPermissionsCache.get(userId);
       return val ? new Set(val) : undefined; // 返回副本，避免外部修改内部 Set
@@ -226,7 +251,9 @@ class CacheService {
     logInfo(`Cache disabled, fetching permissions for user ${userId} from DB.`);
     try {
       // Dynamic import to prevent circular dependencies
-      const { default: permissionService } = await import('./PermissionService');
+      const { default: permissionService } = await import(
+        "./PermissionService"
+      );
       // Assuming PermissionService has a method to compute permissions without caching
       return await permissionService.computeUserPermissions(userId);
     } catch (error) {
@@ -243,16 +270,21 @@ class CacheService {
   }
 
   // --- User Data Scope Cache Methods ---
-  public async getDataScope(userId: number, resource: string): Promise<any | undefined> {
+  public async getDataScope(
+    userId: number,
+    resource: string
+  ): Promise<any | undefined> {
     if (this.enabled) {
       const key = `${userId}:${resource}`;
       return this.userDataScopesCache.get(key);
     }
 
-    logInfo(`Cache disabled, fetching data scope for user ${userId} on resource ${resource} from DB.`);
+    logInfo(
+      `Cache disabled, fetching data scope for user ${userId} on resource ${resource} from DB.`
+    );
     try {
       // Dynamic import to prevent circular dependencies
-      const { default: dataScopeService } = await import('./DataScopeService');
+      const { default: dataScopeService } = await import("./DataScopeService");
       // Assuming DataScopeService has a method to compute scope without caching
       return await dataScopeService.computeDataScope(userId, resource);
     } catch (error) {
@@ -265,7 +297,8 @@ class CacheService {
     if (!this.enabled) return;
     const key = `${userId}:${resource}`;
     // 存入冻结对象，降低误改风险
-    const val = typeof scope === 'object' && scope !== null ? deepFreeze(scope) : scope;
+    const val =
+      typeof scope === "object" && scope !== null ? deepFreeze(scope) : scope;
     this.userDataScopesCache.set(key, val);
     logInfo(`Data scope cached for user ${userId} on resource ${resource}`);
   }

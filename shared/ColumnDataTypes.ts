@@ -7,6 +7,7 @@ export const ColumnDataTypes = {
   QTY: 'QTY',
   AMT: 'AMT',
   STRING: 'STRING',
+  ENUM: 'ENUM',
   TEXT: 'TEXT',
   JSON: 'JSON',
   REGION: 'JSON',

@@ -1,6 +1,6 @@
 import { Model, DataTypes, BelongsToGetAssociationMixin } from 'sequelize';
 import sequelize from '../sequelize';
-import type DynamicTable from './DynamicTable';
+import DynamicTable from './DynamicTable';
 import Tenant from './Tenant';
 import { commontFields } from './common';
 
@@ -23,6 +23,9 @@ class DynamicColumn extends Model {
 
   public getTable!: BelongsToGetAssociationMixin<DynamicTable>;
   public table?: DynamicTable;
+
+  public getRelatedTable!: BelongsToGetAssociationMixin<DynamicTable>;
+  public relatedToTable?: DynamicTable;
 }
 
 DynamicColumn.init({
@@ -85,6 +88,19 @@ DynamicColumn.init({
       key: 'id',
     },
   },
+  relatedToTableName: {
+    type: DataTypes.VIRTUAL,
+    get(this: DynamicColumn) {
+      // 优先从关联模型读取
+      const related = this.getDataValue('relatedToTable') as DynamicTable | undefined;
+      if (related && (related as any).name) {
+        return (related as any).name as string;
+      }
+      // 其次使用 afterFind 已设置的 dataValue
+      const v = this.getDataValue('relatedToTableName');
+      return v ?? null;
+    },
+  },
   ui: {
     type: DataTypes.JSON,
     allowNull: true,
@@ -106,4 +122,9 @@ DynamicColumn.init({
   timestamps: true,
 });
 
-export default DynamicColumn; 
+DynamicColumn.belongsTo(DynamicTable, {
+  foreignKey: 'relatedToTableId',
+  as: 'relatedToTable',
+});
+
+export default DynamicColumn;
