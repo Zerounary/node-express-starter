@@ -2,6 +2,7 @@ import { tableInitColumns } from "@/db/init";
 import { DynamicColumn } from "@/db/models";
 import CacheService from "@/services/CacheService";
 import DynamicDataService from "@/services/DynamicDataService";
+import { AppError } from "@/utils";
 
 export async function beforeCreate(data) {
   data.alias_name = data.alias_name || data.name;
@@ -96,7 +97,7 @@ export async function getPageConfig({ tableName }) {
 export async function getTableConfig(tableName) {
   const table = await CacheService.getTableByAliasName(tableName);
   if (!table) {
-    throw new Error("Table not found");
+    throw new AppError("Table not found", 404);
   }
   return getTableConfigById(table.id);
 }
@@ -104,7 +105,7 @@ export async function getTableConfig(tableName) {
 export async function getTableConfigById(tableId: number) {
   const table = await CacheService.getTableById(tableId);
   if (!table) {
-    throw new Error("Table not found");
+    throw new AppError("Table not found", 404);
   }
   const columns = [...table.columns].sort((a, b) => a.orderno - b.orderno);
 

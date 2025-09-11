@@ -96,8 +96,13 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   client.addResponseInterceptor(
     errorMessageResponseInterceptor((msg: string, error) => {
       console.log('msg:', msg)
-      if (error?.response?.status === 403) {
+      let code = error?.response?.data?.code || 200;
+      if (error?.response?.status === 403 || code == 403) {
         router.push({ name: 'FallbackForbidden' });
+        return;
+      }
+      if (error?.response?.status === 404 || code == 404) {
+        router.push({ name: 'FallbackNotFound' });
         return;
       }
       // 这里可以根据业务进行定制,你可以拿到 error 内的信息进行定制化处理，根据不同的 code 做不同的提示，而不是直接使用 message.error 提示 msg

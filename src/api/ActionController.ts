@@ -31,7 +31,7 @@ export default class DynamicController {
       return ok(result);
     } catch (error) {
       logError(error);
-      return fail(error.message, 400); // Use 400 for business logic errors
+      return fail(error.message, error?.code); // Use 400 for business logic errors
     }
   }
 }
