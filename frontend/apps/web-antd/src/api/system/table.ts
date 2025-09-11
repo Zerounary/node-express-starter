@@ -4,7 +4,7 @@ import type { Recordable } from '@vben/types';
 import { alert } from '@vben/common-ui';
 
 import { useSystem } from '#/store/system';
-import { execute, getKeywordList, getPage, search } from './crud';
+import { execute, getKeywordList, getPage, post, search } from './crud';
 import { debounce } from '#/utils';
 import type { TableConfig } from '#/adapter/component/types';
 
@@ -107,6 +107,11 @@ export async function deleteTable(id: string) {
 export async function getPageConfig(table: string) {
  let tableConfig = await execute("table", `getPageConfig`, { tableName: table});
  return new TableConfigBuilder(tableConfig);
+}
+
+export async function importSystemConfig(data: string) {
+  let res = await post('/schemas/import', data);
+  return res;
 }
 
 const debouncedKeywordSearch = debounce(async (table: string, keyword: string, filters: any = {}) => {
