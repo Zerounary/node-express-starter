@@ -27,19 +27,28 @@ export default class SchemaController {
       }
 
       // 1. 导入表类别
-      const categoryNameToId = new Map<string, number>();
-      const allCategories = tablesToImport.map(t => t.category).filter(Boolean);
-      const uniqueCategories = [...new Map(allCategories.map(item => [item['name'], item])).values()];
+      const oldCategoryIdToNewId = new Map<number, number>();
+      const rootCategories = body.categories || [];
 
-      for (const categoryData of uniqueCategories) {
+      // 使用迭代方式按层级导入，因为 body.categories 已经是树状结构
+      const importQueue = rootCategories.map(c => ({ ...c, newParentId: null }));
+      while (importQueue.length > 0) {
+        const categoryData = importQueue.shift();
+        if (!categoryData) continue;
+
         try {
           if (!categoryData.name) continue;
           const [category] = await TableCategory.findOrCreate({
-            where: { name: categoryData.name, tenantId },
-            defaults: { ...categoryData, id: undefined, tenantId }
+            where: { name: categoryData.name, parentId: categoryData.newParentId, tenantId },
+            defaults: { ...categoryData, id: undefined, parentId: categoryData.newParentId, tenantId }
           });
-          categoryNameToId.set(categoryData.name, category.id);
+          oldCategoryIdToNewId.set(categoryData.id, category.id);
           results.categories.success.push({ name: categoryData.name });
+
+          if (categoryData.children && categoryData.children.length > 0) {
+            const childrenToQueue = categoryData.children.map(child => ({ ...child, newParentId: category.id }));
+            importQueue.push(...childrenToQueue);
+          }
         } catch (error) {
           logger.error(error);
           results.categories.failed.push({ name: categoryData.name, reason: error.message });
@@ -47,11 +56,13 @@ export default class SchemaController {
       }
 
       // 2. 导入表 (仅定义)
+      const oldTableIdToNewId = new Map<number, number>();
+      const oldTableIdToName = new Map<number, string>();
       const createdTables = [];
       for (const tableData of tablesToImport) {
         try {
-          const { columns, actions, category, ...tableInfo } = tableData;
-          const categoryId = category ? categoryNameToId.get(category.name) : null;
+          const { columns, actions, categoryId: oldCategoryId, ...tableInfo } = tableData;
+          const categoryId = oldCategoryId ? oldCategoryIdToNewId.get(oldCategoryId) : null;
           
           const newTable = await DynamicTable.create({
             ...tableInfo,
@@ -59,6 +70,8 @@ export default class SchemaController {
             tenantId,
             categoryId,
           });
+          oldTableIdToNewId.set(tableData.id, newTable.id);
+          oldTableIdToName.set(tableData.id, tableData.name);
           createdTables.push({ ...tableData, newTable });
           results.tables.success.push({ name: tableData.name });
         } catch (error) {

@@ -13,6 +13,7 @@ class DynamicColumn extends Model {
   public updated!: string;
   public description!: string;
   public relatedToTableId?: number | null;
+  public relatedToTableName?: string | null;
   public ui?: any | null;
   public ak?: boolean| null;
   public dk?: boolean| null;

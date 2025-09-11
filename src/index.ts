@@ -75,12 +75,12 @@ async function bootstrap() {
         // 初始化系统管理用户
         await initAdminUser();
         // 初始化表类别
-        await initTableCategories();
+        // await initTableCategories();
         // 初始化系统结构数据
-        await initSystemData();
+        // await initSystemData();
 
         // 初始化动态表
-        await initDynamicTables();
+        // await initDynamicTables();
 
         // 初始化缓存
         console.log('Initializing cache...');
