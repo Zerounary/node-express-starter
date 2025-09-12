@@ -305,8 +305,6 @@ export const systemTables = [
         description: "描述",
         relatedToTableId: undefined,
 
-        ak: true,
-        dk: true,
         ui: {
           mask: "1111111111",
           width: 200,
@@ -319,6 +317,8 @@ export const systemTables = [
         required: false,
         description: "表别名",
         relatedToTableId: undefined,
+        ak: true,
+        dk: true,
 
         ui: {
           mask: "1111111111",

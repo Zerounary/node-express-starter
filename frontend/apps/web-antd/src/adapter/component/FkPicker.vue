@@ -2,7 +2,7 @@
   <div class="w-full">
     <div v-if="!disabled" class="flex w-full">
       <Select
-        class="flex-grow"
+        class="w-32 flex-grow "
         v-model:value="selectValue"
         :open="searchOpen"
         label-in-value
@@ -285,6 +285,7 @@ const search = async (keyword: string) => {
         if (currentOption) newOptions.unshift(currentOption);
       }
       selections.value = newOptions;
+      console.log('🚀 ~ search ~ newOptions:', newOptions)
     }
   } catch (error) {
     console.error('Search failed:', error);
@@ -300,6 +301,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
     fieldMappingTime: [['createTime', ['startTime', 'endTime']]],
     schema: [],
     submitOnChange: false,
+    commonConfig: {
+      labelWidth: 60
+    }
   },
   gridOptions: {
     checkboxConfig: { highlight: true },
