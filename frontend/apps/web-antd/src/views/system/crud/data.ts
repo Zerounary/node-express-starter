@@ -39,7 +39,13 @@ export function useFormUpdateSchema(table, { formApi, data }): VbenFormSchema[] 
 const columnRulesInit = (col) => {
   // 如果col.rules不是数组，直接返回
   if(!Array.isArray(col.rules)) return col;
-  let rules = buildZodSchemaFromRules(col.rules, col.defaultValue);
+  let colRules = [...col.rules];
+  if(!col.required) {
+    colRules.push({
+      type: 'optional'
+    })
+  }
+  let rules = buildZodSchemaFromRules(colRules, col.defaultValue);
   return  {
     ...col,
     rules,

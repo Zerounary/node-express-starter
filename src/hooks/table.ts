@@ -139,6 +139,7 @@ export async function getTableConfigById(tableId: number) {
         label: col.description,
         ak: col.ak,
         dk: col.dk,
+        required: col.required,
         sortable: col.sortable,
         dataType: col.dataType,
         relatedToTableId: col.relatedToTableId,

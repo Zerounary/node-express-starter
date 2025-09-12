@@ -52,7 +52,7 @@ TableCategory.init({
   meta: {
     type: DataTypes.JSON,
     allowNull: true,
-    defaultValue: {}
+    defaultValue: '{}'
   },
   path: {
     type: new DataTypes.STRING(255),
