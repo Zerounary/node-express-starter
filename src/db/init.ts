@@ -536,6 +536,12 @@ export const systemTables = [
         },
       },
       {
+        name: "defaultValue",
+        dataType: ColumnDataTypes.STRING,
+        required: false,
+        description: "默认值",
+      },
+      {
         name: "ui",
         dataType: ColumnDataTypes.JSON,
         required: false,
@@ -790,8 +796,9 @@ export const systemTables = [
         required: false,
         description: "界面配置",
         relatedToTableId: undefined,
+        defaultValue: '{}',
         ui: {
-          mask: "0011000000",
+          mask: "0111000000",
           component: "MetaInput",
           componentProps: {},
         },

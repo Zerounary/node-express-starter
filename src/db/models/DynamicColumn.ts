@@ -12,6 +12,8 @@ class DynamicColumn extends Model {
   public created!: string;
   public updated!: string;
   public description!: string;
+  public defaultValue!: string;
+
   public relatedToTableId?: number | null;
   public relatedToTableName?: string | null;
   public ui?: any | null;
@@ -65,6 +67,10 @@ DynamicColumn.init({
   },
   dk: {
     type: DataTypes.BOOLEAN,
+    allowNull: true,
+  },
+  defaultValue: {
+    type: new DataTypes.STRING(256),
     allowNull: true,
   },
   sortable: {

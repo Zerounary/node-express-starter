@@ -9,14 +9,12 @@ import { checkPermission } from "../router/middlewares/permissionMiddleware";
 import WorkflowService from "../services/WorkflowService";
 import Papa from "papaparse";
 import sequelize from "../db/sequelize";
-import { getTableConfig } from "@/hooks/table";
 import { ColumnDataTypes } from "@/utils";
+import CacheService from "@/services/CacheService";
+import { getDefaultValue } from "@/utils/parse";
 
 @Controller("/data/:tableName")
 export default class DynamicController {
-  // 用于优化性能的请求级表元数据缓存
-  private tableMetaCache = new Map<string, any>();
-
   /**
    * 优化后的函数，用于高效地填充关联数据。
    * - 通过批量预加载减少数据库查询。
@@ -76,18 +74,14 @@ export default class DynamicController {
       const tableName = def.alias_name || def.name;
 
       const promise = (async () => {
-        const cacheKey = `tableConfig:${tableName}`;
-        let tableConfig = this.tableMetaCache.get(cacheKey);
-        if (!tableConfig) {
-          tableConfig = await getTableConfig(tableName);
-          this.tableMetaCache.set(cacheKey, tableConfig);
-        }
+        let tableConfig = await CacheService.getTableByAliasName(tableName);
+
         if (!tableConfig) return;
 
         const dk = tableConfig.columns.find((col) => col.dk === true);
         const attributes: any[] = ["id"];
-        if (dk && dk.fieldName !== "id") {
-          attributes.push([dk.fieldName, "name"]);
+        if (dk && dk.name !== "id") {
+          attributes.push([dk.name, "name"]);
         }
 
         const model = await DynamicDataService.getModelForTable(
@@ -211,8 +205,8 @@ export default class DynamicController {
     // sorts 格式： field1-ASC,field2-DESC
     if (!sorts) {
       sorts = defaultSorts;
-      if(!sorts) return [];
-    };
+      if (!sorts) return [];
+    }
     const order: any[] = [];
     const sortItems = Array.isArray(sorts) ? sorts : sorts.split(",");
     for (const sortItem of sortItems) {
@@ -235,7 +229,7 @@ export default class DynamicController {
       const where = await this.getParsedWhere(req, filters);
 
       // 获取表配置
-      const tableConfig = await getTableConfig(tableName);
+      const tableConfig = await CacheService.getTableByAliasName(tableName);
       const order = this.getParsedSorts(sorts, tableConfig?.defaultSort);
       if (!tableConfig) {
         return fail("表配置未找到", 404);
@@ -272,7 +266,7 @@ export default class DynamicController {
       const where = await this.getParsedWhere(req, filters);
 
       // 获取表配置
-      const tableConfig = await getTableConfig(tableName);
+      const tableConfig = await CacheService.getTableByAliasName(tableName);
       const order = this.getParsedSorts(sorts, tableConfig?.defaultSort);
       if (!tableConfig) {
         return fail("表配置未找到", 404);
@@ -331,7 +325,7 @@ export default class DynamicController {
       const nPageSize = parseInt(pageSize, 10);
 
       // 获取表配置，查找ak和dk字段
-      const tableConfig = await getTableConfig(tableName);
+      const tableConfig = await CacheService.getTableByAliasName(tableName);
 
       if (!tableConfig) {
         return fail("表配置未找到", 404);
@@ -341,8 +335,8 @@ export default class DynamicController {
       const akColumn = tableConfig.columns.find((col) => col.ak === true);
       const dkColumn = tableConfig.columns.find((col) => col.dk === true);
 
-      const ak = akColumn ? akColumn.fieldName : "name"; // 默认使用name字段
-      const dk = dkColumn ? dkColumn.fieldName : ak; // 如果没有dk字段，使用ak字段
+      const ak = akColumn ? akColumn.name : "name"; // 默认使用name字段
+      const dk = dkColumn ? dkColumn.name : ak; // 如果没有dk字段，使用ak字段
 
       // 构建查询条件
       const where: any = { tenantId: req.user.tenantId };
@@ -402,7 +396,7 @@ export default class DynamicController {
       const { tableName, id } = req.params;
 
       // 获取表配置
-      const tableConfig = await getTableConfig(tableName);
+      const tableConfig = await CacheService.getTableByAliasName(tableName);
       if (!tableConfig) {
         return fail("表配置未找到", 404);
       }
@@ -461,6 +455,16 @@ export default class DynamicController {
       );
 
       let result = await sequelize.transaction(async (t) => {
+        // 对于mask = 01的新增字段，新增时把他们的默认值带上
+        let tableConfig = await CacheService.getTableByAliasName(tableName);
+        tableConfig.columns
+          .filter((e) => {
+            return e.ui?.mask?.startsWith("01");
+          })
+          .forEach((col) => {
+            body[col.name] = getDefaultValue(col);
+          });
+
         const instance = await Model.create(body);
 
         // afterCreate hook
