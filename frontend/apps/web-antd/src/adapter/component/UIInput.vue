@@ -24,6 +24,8 @@
               <a-input-number
                 v-model:value="model.width"
                 :min="0"
+                :parser="(val) => (val ? Number(val) : 0)"
+                :formatter="(val) => (val === undefined || val === null ? '' : String(val))"
                 style="width: 100%"
               />
             </a-form-item>
@@ -62,7 +64,7 @@
 
             <!-- Generic componentProps for other components -->
             <a-form-item
-              v-if="model.component !== 'Items'"
+              v-if="!['Items', 'Select'].includes(model.component)"
               label="组件属性 (JSON)"
             >
               <a-textarea
@@ -72,6 +74,36 @@
               />
               <div class="mt-1 text-xs text-gray-500">请输入合法的JSON格式</div>
             </a-form-item>
+
+            <!-- Specific UI for 'Select' component options -->
+            <div
+              v-if="model.component === 'Select'"
+              class="md:col-span-2 lg:col-span-3"
+            >
+              <h3 class="mb-2 font-semibold text-gray-800">选项</h3>
+              <div
+                v-for="(opt, idx) in selectOptions"
+                :key="idx"
+                class="mb-3 rounded-md border bg-gray-50 p-3"
+              >
+                <div class="mb-2 flex items-center justify-between">
+                  <h4 class="font-medium">选项 {{ idx + 1 }}</h4>
+                  <a-button type="link" danger @click="removeOption(idx)">移除</a-button>
+                </div>
+                <div class="grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2">
+                  <a-form-item label="标签(label)" required>
+                    <a-input v-model:value="opt.label" />
+                  </a-form-item>
+                  <a-form-item label="值(value)" required>
+                    <a-input v-model:value="opt.value" />
+                  </a-form-item>
+                </div>
+              </div>
+              <a-button type="dashed" class="w-full" @click="addOption">
+                <PlusOutlined /> 添加选项
+              </a-button>
+            </div>
+
             <!-- Specific UI for 'Items' component tabs -->
             <div
               v-if="model.component === 'Items'"
@@ -321,6 +353,8 @@ interface ZodRule {
 interface ColumnUI {
   mask?: string;
   width?: number;
+  /** 额外样式类（模板已使用） */
+  wrapperClass?: string;
   component:
     | 'Input'
     | 'InputNumber'
@@ -337,6 +371,8 @@ interface ColumnUI {
     | 'MetaInput'
     | 'Items';
   disabled?: boolean;
+  /** 是否隐藏 label（模板已使用） */
+  hideLabel?: boolean;
   filterOp?: 'like' | 'eq' | 'neq' | 'gt' | 'lt' | 'gte' | 'lte' | 'in';
   componentProps?: {
     table?: string;
@@ -389,6 +425,7 @@ if (!model.value.rules) {
 const componentTypes = [
   { value: 'Input', label: '输入框' },
   { value: 'InputNumber', label: '数字输入框' },
+  { value: 'Select', label: '选择器' },
   { value: 'InputPassword', label: '密码框' },
   { value: 'DatePicker', label: '日期选择器' },
   { value: 'FkPicker', label: '外键选择器' },
@@ -413,6 +450,40 @@ const filterOps = [
   { value: 'lte', label: '小于等于' },
   { value: 'in', label: '在...中' },
 ];
+
+/** Select options 维护 - 结构保持 { options: [{label,value}] } */
+type SelectOption = { label: string; value: any };
+const selectOptions = computed<SelectOption[]>({
+  get() {
+    if (model.value.component === 'Select') {
+      if (!model.value.componentProps) model.value.componentProps = {};
+      const props = model.value.componentProps!;
+      if (!Array.isArray(props.options)) {
+        props.options = [];
+      }
+      return (props.options || []) as SelectOption[];
+    }
+    return [];
+  },
+  set(newOptions) {
+    if (model.value.component === 'Select') {
+      if (!model.value.componentProps) model.value.componentProps = {};
+      const props = model.value.componentProps!;
+      props.options = Array.isArray(newOptions) ? newOptions : [];
+    }
+  },
+});
+
+function addOption() {
+  const list = [...selectOptions.value];
+  list.push({ label: `选项${list.length + 1}`, value: '' });
+  selectOptions.value = list;
+}
+function removeOption(index: number) {
+  const list = [...selectOptions.value];
+  list.splice(index, 1);
+  selectOptions.value = list;
+}
 
 // Computed property to manage tabs for the 'Items' component
 const tabs = computed<TabProp[]>({
