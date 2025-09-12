@@ -136,13 +136,13 @@ watch(
       />
     </template>
     <template #notification>
+      <SystemImportBtn v-if="userStore?.userInfo?.tenantId == 1" />
       <Notification
         :dot="showDot"
         :notifications="notifications"
         @clear="handleNoticeClear"
         @make-all="handleMakeAll"
       />
-      <SystemImportBtn v-if="userStore?.userInfo?.tenantId == 1" />
     </template>
     <template #extra>
       <AuthenticationLoginExpiredModal

@@ -1,7 +1,12 @@
 <template>
   <div class="import-icon-btn">
     <a-tooltip placement="bottom" :title="'导入系统配置'">
-      <a-button type="text" shape="circle" @click="openModal" :loading="submitLoading">
+      <a-button
+        type="text"
+        shape="circle"
+        @click="openModal"
+        :loading="submitLoading"
+      >
         <template #icon>
           <UploadOutlined />
         </template>
@@ -12,7 +17,7 @@
       v-model:open="modalOpen"
       title="导入系统配置"
       :mask-closable="false"
-      :ok-text="'开始导入'"
+      :ok-text="okText"
       :cancel-text="'关闭'"
       :confirm-loading="submitLoading"
       @ok="onConfirmImport"
@@ -20,6 +25,7 @@
       @afterClose="onModalAfterClose"
     >
       <div
+        v-if="!importResult"
         class="drop-area"
         :class="{ 'is-dragover': isDragover }"
         @dragover.prevent="onDragOver"
@@ -29,7 +35,9 @@
         <div class="drop-inner">
           <p class="title">拖拽文件到此处</p>
           <p class="desc">或点击下方按钮选择文件</p>
-          <a-button @click="onPickFile" :disabled="submitLoading">选择文件</a-button>
+          <a-button @click="onPickFile" :disabled="submitLoading"
+            >选择文件</a-button
+          >
           <input
             ref="fileInput"
             type="file"
@@ -38,9 +46,11 @@
             @change="onFileChange"
           />
           <p v-if="fileName" class="file-name">已选择：{{ fileName }}</p>
-          <p v-if="error" class="error">{{ error }}</p>
-          <p v-if="success" class="success">{{ success }}</p>
         </div>
+      </div>
+      <div v-else>
+        <p v-if="error" class="error">{{ error }}</p>
+        <p v-if="success" class="success">{{ success }}</p>
       </div>
 
       <div v-if="importResult" class="result-wrap">
@@ -49,13 +59,23 @@
           <div class="result-card">
             <div class="result-title">类别</div>
             <div class="result-line success">
-              成功：{{ importResult.categories.success.length }} / {{ importTotals.categories }}
+              成功：{{ importResult.categories.success.length }} /
+              {{ importTotals.categories }}
             </div>
-            <div class="result-line failed" v-if="importResult.categories.failed.length">
+            <div
+              class="result-line failed"
+              v-if="importResult.categories.failed.length"
+            >
               失败：{{ importResult.categories.failed.length }}
             </div>
-            <ul v-if="importResult.categories.failed.length" class="failed-list">
-              <li v-for="(it, idx) in importResult.categories.failed" :key="'c-'+idx">
+            <ul
+              v-if="importResult.categories.failed.length"
+              class="failed-list"
+            >
+              <li
+                v-for="(it, idx) in importResult.categories.failed"
+                :key="'c-' + idx"
+              >
                 {{ it.name }} - {{ it.reason }}
               </li>
             </ul>
@@ -64,13 +84,20 @@
           <div class="result-card">
             <div class="result-title">表</div>
             <div class="result-line success">
-              成功：{{ importResult.tables.success.length }} / {{ importTotals.tables }}
+              成功：{{ importResult.tables.success.length }} /
+              {{ importTotals.tables }}
             </div>
-            <div class="result-line failed" v-if="importResult.tables.failed.length">
+            <div
+              class="result-line failed"
+              v-if="importResult.tables.failed.length"
+            >
               失败：{{ importResult.tables.failed.length }}
             </div>
             <ul v-if="importResult.tables.failed.length" class="failed-list">
-              <li v-for="(it, idx) in importResult.tables.failed" :key="'t-'+idx">
+              <li
+                v-for="(it, idx) in importResult.tables.failed"
+                :key="'t-' + idx"
+              >
                 {{ it.name }} - {{ it.reason }}
               </li>
             </ul>
@@ -79,13 +106,20 @@
           <div class="result-card">
             <div class="result-title">字段</div>
             <div class="result-line success">
-              成功：{{ importResult.columns.success.length }} / {{ importTotals.columns }}
+              成功：{{ importResult.columns.success.length }} /
+              {{ importTotals.columns }}
             </div>
-            <div class="result-line failed" v-if="importResult.columns.failed.length">
+            <div
+              class="result-line failed"
+              v-if="importResult.columns.failed.length"
+            >
               失败：{{ importResult.columns.failed.length }}
             </div>
             <ul v-if="importResult.columns.failed.length" class="failed-list">
-              <li v-for="(it, idx) in importResult.columns.failed" :key="'col-'+idx">
+              <li
+                v-for="(it, idx) in importResult.columns.failed"
+                :key="'col-' + idx"
+              >
                 {{ it.tableName }}.{{ it.columnName }} - {{ it.reason }}
               </li>
             </ul>
@@ -94,13 +128,20 @@
           <div class="result-card">
             <div class="result-title">动作</div>
             <div class="result-line success">
-              成功：{{ importResult.actions.success.length }} / {{ importTotals.actions }}
+              成功：{{ importResult.actions.success.length }} /
+              {{ importTotals.actions }}
             </div>
-            <div class="result-line failed" v-if="importResult.actions.failed.length">
+            <div
+              class="result-line failed"
+              v-if="importResult.actions.failed.length"
+            >
               失败：{{ importResult.actions.failed.length }}
             </div>
             <ul v-if="importResult.actions.failed.length" class="failed-list">
-              <li v-for="(it, idx) in importResult.actions.failed" :key="'a-'+idx">
+              <li
+                v-for="(it, idx) in importResult.actions.failed"
+                :key="'a-' + idx"
+              >
                 {{ it.tableName }}.{{ it.actionName }} - {{ it.reason }}
               </li>
             </ul>
@@ -109,30 +150,44 @@
           <div class="result-card">
             <div class="result-title">同步</div>
             <div class="result-line success">
-              成功：{{ importResult.sync.success.length }} / {{ importTotals.sync }}
+              成功：{{ importResult.sync.success.length }} /
+              {{ importTotals.sync }}
             </div>
-            <div class="result-line failed" v-if="importResult.sync.failed.length">
+            <div
+              class="result-line failed"
+              v-if="importResult.sync.failed.length"
+            >
               失败：{{ importResult.sync.failed.length }}
             </div>
             <ul v-if="importResult.sync.failed.length" class="failed-list">
-              <li v-for="(it, idx) in importResult.sync.failed" :key="'s-'+idx">
+              <li
+                v-for="(it, idx) in importResult.sync.failed"
+                :key="'s-' + idx"
+              >
                 {{ it.name }} - {{ it.reason }}
               </li>
             </ul>
           </div>
         </div>
-        <div class="tip">提示：导入完成后可检查失败原因，确认无误后手动关闭弹窗。</div>
+        <div class="tip">
+          提示：导入完成后可检查失败原因，确认无误后手动关闭弹窗。
+        </div>
       </div>
     </a-modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { importSystemConfig } from '#/api/system/table';
 
 // 手动按需导入 Ant Design Vue 组件与图标
-import { Button as AButton, Modal as AModal, Tooltip as ATooltip, message } from 'ant-design-vue';
+import {
+  Button as AButton,
+  Modal as AModal,
+  Tooltip as ATooltip,
+  message,
+} from 'ant-design-vue';
 import { UploadOutlined } from '@ant-design/icons-vue';
 
 // 局部注册（适用于 <script setup>）
@@ -161,6 +216,10 @@ const importTotals = ref({
   actions: 0,
   sync: 0,
 });
+
+const okText = computed(() => {
+  return importResult.value ? '重新导入' : '开始导入'
+})
 
 function openModal() {
   resetState();
@@ -232,6 +291,10 @@ function readFileAsText(file: File): Promise<string> {
 }
 
 async function onConfirmImport() {
+  if(importResult.value) {
+    importResult.value = null;
+    return;
+  }
   if (!fileRef.value) {
     error.value = '请先选择文件';
     return;
@@ -260,11 +323,21 @@ async function handleImport(file: File) {
 
     importResult.value = result;
     importTotals.value = {
-      categories: (result.categories?.success?.length || 0) + (result.categories?.failed?.length || 0),
-      tables: (result.tables?.success?.length || 0) + (result.tables?.failed?.length || 0),
-      columns: (result.columns?.success?.length || 0) + (result.columns?.failed?.length || 0),
-      actions: (result.actions?.success?.length || 0) + (result.actions?.failed?.length || 0),
-      sync: (result.sync?.success?.length || 0) + (result.sync?.failed?.length || 0),
+      categories:
+        (result.categories?.success?.length || 0) +
+        (result.categories?.failed?.length || 0),
+      tables:
+        (result.tables?.success?.length || 0) +
+        (result.tables?.failed?.length || 0),
+      columns:
+        (result.columns?.success?.length || 0) +
+        (result.columns?.failed?.length || 0),
+      actions:
+        (result.actions?.success?.length || 0) +
+        (result.actions?.failed?.length || 0),
+      sync:
+        (result.sync?.success?.length || 0) +
+        (result.sync?.failed?.length || 0),
     };
 
     success.value = `已导入：${file.name}`;
