@@ -9,6 +9,7 @@ class TableCategory extends Model {
   public description!: string | null;
   public parentId!: number | null;
   public path!: string;
+  public meta!: object;
   public created!: string;
   public updated!: string;
 }
@@ -51,8 +52,7 @@ TableCategory.init({
   },
   meta: {
     type: DataTypes.JSON,
-    allowNull: true,
-    defaultValue: '{}'
+    allowNull: false,
   },
   path: {
     type: new DataTypes.STRING(255),
