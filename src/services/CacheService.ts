@@ -133,6 +133,17 @@ class CacheService {
     return next;
   }
 
+  public async reloadTableByIds(tableIds: number[]) {
+    for(let tableId of tableIds ) {
+      await this.reloadTableById(tableId);
+    }
+  }
+
+  public async reloadTableById(tableId: number) {
+    let table = await this.getTableById(tableId);
+    await this.reloadTable(table.name);
+  }
+
   // Expects physical table name
   public async reloadTable(tableName: string) {
     if (!this.enabled) return;

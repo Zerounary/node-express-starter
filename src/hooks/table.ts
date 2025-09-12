@@ -64,6 +64,7 @@ export async function exportTableConfig({ids, id: tableId, user, res}) {
 
 export async function syncTable({ ids, id: tableId, user }) {
   if (tableId) {
+    await CacheService.reloadTableById(tableId)
     const table = await CacheService.getTableById(tableId);
     const Model = await DynamicDataService.getModelForTable(
       table.name,
@@ -75,6 +76,7 @@ export async function syncTable({ ids, id: tableId, user }) {
     if (ids.length === 0) {
       throw new Error("请至少选择一个数据表");
     }
+    await CacheService.reloadTableByIds(ids)
     for (const id of ids) {
       const table = await CacheService.getTableById(id);
       const Model = await DynamicDataService.getModelForTable(
