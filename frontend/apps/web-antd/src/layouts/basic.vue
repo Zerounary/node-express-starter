@@ -20,6 +20,7 @@ import { openWindow } from '@vben/utils';
 import { $t } from '#/locales';
 import { useAuthStore } from '#/store';
 import LoginForm from '#/views/_core/authentication/login.vue';
+import SystemImportBtn from '#/adapter/component/SystemImportBtn.vue';
 
 const notifications = ref<NotificationItem[]>([
   {
@@ -141,6 +142,7 @@ watch(
         @clear="handleNoticeClear"
         @make-all="handleMakeAll"
       />
+      <SystemImportBtn v-if="userStore?.userInfo?.tenantId == 1" />
     </template>
     <template #extra>
       <AuthenticationLoginExpiredModal
