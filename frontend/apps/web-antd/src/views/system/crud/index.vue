@@ -54,6 +54,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     fieldMappingTime: [['createTime', ['startTime', 'endTime']]],
     schema: gridFormSchema,
     submitOnChange: false,
+    submitOnEnter: true,
   },
   gridOptions: {
     checkboxConfig: {
