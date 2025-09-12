@@ -10,6 +10,7 @@ class TableAction extends Model {
   public type!: string;
   public name!: string;
   public resource!: string;
+  public description?: string;
   public orderno?: number | null;
 }
 
@@ -47,6 +48,10 @@ TableAction.init({
     type: DataTypes.STRING,
     allowNull: false,
   },
+  description: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   btnUI: {
     type: DataTypes.JSON,
     allowNull: true,
@@ -69,6 +74,6 @@ TableAction.init({
 });
 
 DynamicTable.hasMany(TableAction, { foreignKey: 'tableId', as: 'actions' });
-TableAction.belongsTo(DynamicTable, { foreignKey: 'tableId' });
+TableAction.belongsTo(DynamicTable, { foreignKey: 'tableId', as: 'table' });
 
 export { TableAction };

@@ -207,7 +207,7 @@ export const tableCategories = [
   {
     name: "分析页",
     description: "",
-    type: "menu",
+    type: "embedded",
     parentId: "概览",
     meta: {
       icon: "lucide:area-chart",
@@ -217,7 +217,7 @@ export const tableCategories = [
   {
     name: "工作台",
     description: "",
-    type: "menu",
+    type: "embedded",
     parentId: "概览",
     meta: {
       icon: "carbon:workspace",
@@ -227,7 +227,7 @@ export const tableCategories = [
   {
     name: "组件页",
     description: "",
-    type: "menu",
+    type: "embedded",
     parentId: "概览",
     meta: {
       icon: "uiw:component",
@@ -955,6 +955,19 @@ export const systemTables = [
 
         ak: true,
         dk: true,
+        ui: {
+          mask: "1111111111",
+          width: 200,
+          component: "Input",
+        },
+      },
+      {
+        name: "description",
+        dataType: ColumnDataTypes.STRING,
+        required: true,
+        description: "描述说明",
+        relatedToTableId: undefined,
+
         ui: {
           mask: "1111111111",
           width: 200,
