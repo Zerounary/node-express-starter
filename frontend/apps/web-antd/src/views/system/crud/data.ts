@@ -40,12 +40,13 @@ const columnRulesInit = (col) => {
   // 如果col.rules不是数组，直接返回
   if(!Array.isArray(col.rules)) return col;
   let colRules = [...col.rules];
-  if(!col.required) {
+  if(!col.required && colRules.length) {
     colRules.push({
       type: 'optional'
     })
   }
   let rules = buildZodSchemaFromRules(colRules, col.defaultValue);
+  console.log("🚀 ~ columnRulesInit ~ rules:", col.fieldName, rules)
   return  {
     ...col,
     rules,
