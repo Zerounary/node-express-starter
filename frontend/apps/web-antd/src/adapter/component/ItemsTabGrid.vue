@@ -38,6 +38,11 @@ const props = defineProps({
   },
 });
 
+const dragable = computed(() => {
+  let hasOrderno = props.tableConfig.columns?.find(e => e.fieldName == 'orderno')
+  return !!hasOrderno
+})
+
 const selectionIds = ref<number[]>([]);
 
 const filteredTableConfig = computed(() => {
@@ -113,7 +118,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
         },
       },
     },
-    rowConfig: { keyField: 'id', isHover: true, drag: true },
+    rowConfig: { keyField: 'id', isHover: true, drag: dragable.value },
     rowDragConfig: {
       trigger: 'row'
     },
@@ -128,28 +133,44 @@ const [Grid, gridApi] = useVbenVxeGrid({
   } as VxeTableGridOptions<SystemTableApi.SystemTable>,
   gridEvents: {
     async rowDragend(e) {
-      const {dragPos, _index, oldRow, newRow} = e
-      if(_index.newIndex != _index.oldIndex) {
-        if(newRow.orderno) {
-          let orderno = newRow.orderno || ((_index.newIndex + 1) * 10);
-          if(newRow.orderno == oldRow.orderno) {
-            orderno = (_index.newIndex + 1) * 10
-          }
-          await update(props.tableConfig.table, oldRow.id, {
-            orderno
-          });
-        }
-        if(oldRow.orderno) {
-          let orderno = oldRow.orderno || ((_index.oldIndex + 1) * 10);
-          if(newRow.orderno == oldRow.orderno) {
-            orderno = (_index.oldIndex + 1) * 10
-          }
-          await update(props.tableConfig.table, newRow.id, {
-            orderno 
-          })
-        }
-        gridApi.query();
+      if(!dragable.value) return
+      const { _index } = e || {};
+      // 未发生位置变化，直接返回
+      if (!_index || _index.newIndex === _index.oldIndex) {
+        return;
       }
+
+      // 1) 获取当前页拖拽后的数据顺序
+      let rows: any[] = JSON.parse(JSON.stringify(gridApi.grid.getFullData()));
+      console.log("rows:", rows)
+
+      if (!Array.isArray(rows) || rows.length === 0) {
+        return;
+      }
+
+      // 2) 生成新的 orderno（按当前显示顺序，步长为 10）
+      const newOrderMap = new Map<number | string, number>();
+      for (let i = 0; i < rows.length; i++) {
+        const id = rows[i]?.id;
+        if (id == null) continue;
+        newOrderMap.set(id, (i + 1) * 10);
+      }
+
+      // 3) 仅更新 orderno 发生变化的记录
+      const tableName = props.tableConfig.table;
+      const changed = rows.filter(
+        (r) => r?.id != null && r.orderno !== newOrderMap.get(r.id),
+      );
+
+      if (changed.length > 0) {
+        await Promise.all(
+          changed.map((r) =>
+            update(tableName, r.id, { orderno: newOrderMap.get(r.id)! }),
+          ),
+        );
+      }
+      
+      gridApi.query();
     },
     checkboxChange({ checked, row }) {
       if (checked) {
