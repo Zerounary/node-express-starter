@@ -15,7 +15,7 @@ import { Plus } from '@vben/icons';
 
 import { useVbenDrawer } from '@vben/common-ui';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { getPage, remove } from '#/api/system/crud';
+import { getPage, remove, update } from '#/api/system/crud';
 import { $t } from '#/locales';
 
 import { useColumns, useGridFormSchema } from '#/views/system/crud/data';
@@ -113,7 +113,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
         },
       },
     },
-    rowConfig: { keyField: 'id' },
+    rowConfig: { keyField: 'id', isHover: true, drag: true },
+    rowDragConfig: {
+      trigger: 'row'
+    },
     sortConfig: { remote: true },
     toolbarConfig: {
       custom: true,
@@ -124,12 +127,36 @@ const [Grid, gridApi] = useVbenVxeGrid({
     },
   } as VxeTableGridOptions<SystemTableApi.SystemTable>,
   gridEvents: {
-    checkboxChange({checked, row}) {
-      if(checked) {
+    async rowDragend(e) {
+      const {dragPos, _index, oldRow, newRow} = e
+      if(_index.newIndex != _index.oldIndex) {
+        if(newRow.orderno) {
+          let orderno = newRow.orderno || ((_index.newIndex + 1) * 10);
+          if(newRow.orderno == oldRow.orderno) {
+            orderno = (_index.newIndex + 1) * 10
+          }
+          await update(props.tableConfig.table, oldRow.id, {
+            orderno
+          });
+        }
+        if(oldRow.orderno) {
+          let orderno = oldRow.orderno || ((_index.oldIndex + 1) * 10);
+          if(newRow.orderno == oldRow.orderno) {
+            orderno = (_index.oldIndex + 1) * 10
+          }
+          await update(props.tableConfig.table, newRow.id, {
+            orderno 
+          })
+        }
+        gridApi.query();
+      }
+    },
+    checkboxChange({ checked, row }) {
+      if (checked) {
         selectionIds.value.push(row.id);
       } else {
-        const index = selectionIds.value.findIndex(id => id === row.id);
-        if(index > -1) {
+        const index = selectionIds.value.findIndex((id) => id === row.id);
+        if (index > -1) {
           selectionIds.value.splice(index, 1);
         }
       }
