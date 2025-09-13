@@ -45,7 +45,7 @@ export default class DynamicController {
       }
       const idSet = idsByTableId.get(column.relatedToTableId)!;
       for (const item of data) {
-        const fkId = item[column.fieldName];
+        const fkId = item[column.name];
         if (fkId != null) {
           idSet.add(fkId);
         }
@@ -128,7 +128,7 @@ export default class DynamicController {
 
     for (const item of result) {
       for (const column of fkColumns) {
-        const fkId = item[column.fieldName];
+        const fkId = item[column.name];
         if (fkId == null) continue;
 
         const tableName = tableNameMap.get(column.relatedToTableId);
@@ -137,7 +137,7 @@ export default class DynamicController {
         const tableData = relatedDataMap.get(tableName);
         if (tableData && tableData.has(fkId)) {
           // 在这里，我们用获取到的对象替换了原来的ID
-          item[`${column.fieldName}Name`] = tableData.get(fkId);
+          item[`${column.name}Name`] = tableData.get(fkId);
         }
       }
     }
