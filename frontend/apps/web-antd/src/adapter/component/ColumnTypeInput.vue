@@ -10,7 +10,7 @@
     >
       <a-select-option
         v-for="opt in options"
-        :key="opt.value"
+        :key="opt.label"
         :value="opt.value"
       >
         {{ opt.label }}
@@ -36,16 +36,16 @@ withDefaults(
 );
 
 // 下拉选项
-const options = Object.values(ColumnDataTypes).map((v) => ({ label: v, value: v }));
+const options = Object.entries(ColumnDataTypes).map(([k,v]) => ({ label: k, value: v }));
 
 // v-model 双向绑定（选中的类型值）
 const model = defineModel<string | undefined>();
 
 // 搜索过滤：按 label/value/key 全文匹配
 const filterOption = (input: string, option?: any) => {
-  const label = (option?.label ?? option?.children ?? '').toString();
-  const value = (option?.value ?? '').toString();
-  const key = (option?.key ?? '').toString();
+  const label = (option?.label || '').toString();
+  const value = (option?.value || '').toString();
+  const key = (option?.key || '').toString();
   const haystack = `${label} ${value} ${key}`.toLowerCase();
   return haystack.includes(input.toLowerCase());
 };
