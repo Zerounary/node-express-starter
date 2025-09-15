@@ -92,10 +92,16 @@
                 </div>
                 <div class="grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2">
                   <a-form-item label="标签(label)" required>
-                    <a-input v-model:value="opt.label" />
+                    <a-input
+                      :ref="(el) => (optionValueInputs[idx] = el)"
+                      v-model:value="opt.label"
+                    />
                   </a-form-item>
                   <a-form-item label="值(value)" required>
-                    <a-input v-model:value="opt.value" />
+                    <a-input
+                      v-model:value="opt.value"
+                      @press-enter="addOption"
+                    />
                   </a-form-item>
                 </div>
               </div>
@@ -323,7 +329,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineModel, onMounted } from 'vue';
+import {
+  computed,
+  defineModel,
+  onMounted,
+  ref,
+  nextTick,
+  onBeforeUpdate,
+} from 'vue';
 import {
   Button as AButton,
   Form as AForm,
@@ -413,6 +426,11 @@ const model = defineModel<ColumnUI>({
     defaultValue: undefined,
   }),
 });
+
+const optionValueInputs = ref<any[]>([]);
+onBeforeUpdate(() => {
+  optionValueInputs.value = [];
+});
 // 确保渲染前存在 dependencies，兼容历史数据（可能缺少该字段）
 if (!model.value.dependencies || typeof model.value.dependencies !== 'object') {
   model.value.dependencies = {};
@@ -474,10 +492,15 @@ const selectOptions = computed<SelectOption[]>({
   },
 });
 
-function addOption() {
+async function addOption() {
   const list = [...selectOptions.value];
-  list.push({ label: `选项${list.length + 1}`, value: '' });
+  list.push({ label: '', value: '' });
   selectOptions.value = list;
+  await nextTick();
+  const lastInput = optionValueInputs.value.at(-1);
+  if (lastInput) {
+    lastInput.focus();
+  }
 }
 function removeOption(index: number) {
   const list = [...selectOptions.value];
