@@ -460,6 +460,7 @@ const componentTypes = ref<SelectProps['options']>([
     options: [
       { value: 'Select', label: '下拉选择器' },
       { value: 'FkPicker', label: '外键选择器' },
+      { value: 'Checkbox', label: '复选框' },
       { value: 'RadioGroup', label: '单选按钮组' },
     ],
   },
