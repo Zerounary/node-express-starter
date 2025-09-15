@@ -31,6 +31,9 @@ import Divider from './Divider.vue';
 import ActionButtonGroup from './ActionButtonGroup.vue';
 
 // 所有使用 vben 组件的需异步使用。
+const MediaPicker = defineAsyncComponent(
+  () => import('./MediaPicker.vue'),
+);
 const FkPicker = defineAsyncComponent(
   () => import('./FkPicker.vue'),
 );
@@ -127,6 +130,7 @@ export type ComponentType =
   | 'ApiTreeSelect'
   | 'PermissionPicker'
   | 'FkPicker'
+  | 'MediaPicker'
   | 'RichText'
   | 'Text'
   | 'QRCode'
@@ -193,6 +197,7 @@ async function initComponentAdapter() {
       },
     ),
     FkPicker,
+    MediaPicker,
     Text,
     MetaInput,
     QRCode,
