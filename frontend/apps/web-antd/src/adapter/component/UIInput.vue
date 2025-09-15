@@ -25,7 +25,10 @@
                 v-model:value="model.width"
                 :min="0"
                 :parser="(val) => (val ? Number(val) : 0)"
-                :formatter="(val) => (val === undefined || val === null ? '' : String(val))"
+                :formatter="
+                  (val) =>
+                    val === undefined || val === null ? '' : String(val)
+                "
                 style="width: 100%"
               />
             </a-form-item>
@@ -51,14 +54,7 @@
               </a-select>
             </a-form-item>
             <a-form-item label="UI组件">
-              <a-select v-model:value="model.component" style="width: 100%">
-                <a-select-option
-                  v-for="comp in componentTypes"
-                  :key="comp.value"
-                  :value="comp.value"
-                >
-                  {{ comp.label }}
-                </a-select-option>
+              <a-select v-model:value="model.component" :options="componentTypes" style="width: 100%">
               </a-select>
             </a-form-item>
 
@@ -88,7 +84,9 @@
               >
                 <div class="mb-2 flex items-center justify-between">
                   <h4 class="font-medium">选项 {{ idx + 1 }}</h4>
-                  <a-button type="link" danger @click="removeOption(idx)">移除</a-button>
+                  <a-button type="link" danger @click="removeOption(idx)"
+                    >移除</a-button
+                  >
                 </div>
                 <div class="grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2">
                   <a-form-item label="标签(label)" required>
@@ -350,6 +348,7 @@ import {
   TabPane as ATabPane,
   Tabs as ATabs,
   Textarea as ATextarea,
+  type SelectProps,
 } from 'ant-design-vue';
 import FkPicker from './FkPicker.vue';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue';
@@ -440,23 +439,50 @@ if (!model.value.rules) {
   model.value.rules = [];
 }
 
-const componentTypes = [
-  { value: 'Input', label: '输入框' },
-  { value: 'InputNumber', label: '数字输入框' },
-  { value: 'Select', label: '选择器' },
-  { value: 'InputPassword', label: '密码框' },
-  { value: 'DatePicker', label: '日期选择器' },
-  { value: 'FkPicker', label: '外键选择器' },
-  { value: 'RadioGroup', label: '单选按钮组' },
-  { value: 'UIInput', label: 'UI配置输入' },
-  { value: 'Divider', label: '分隔' },
-  { value: 'MediaPicker', label: '媒体选择器' },
-  { value: 'IconPicker', label: '图标选择器' },
-  { value: 'ColumnTypeInput', label: '字段类型选择器' },
-  { value: 'PermissionPicker', label: '权限选择器' },
-  { value: 'MetaInput', label: '元数据输入' },
-  { value: 'Items', label: '子项列表' },
-];
+const componentTypes = ref<SelectProps['options']>([
+  {
+    label: '文本',
+    options: [
+      { value: 'Input', label: '单行文本框' },
+      { value: 'InputPassword', label: '密码框' },
+    ],
+  },
+  {
+    label: '数字',
+    options: [{ value: 'InputNumber', label: '数字输入框' }],
+  },
+  {
+    label: '时间',
+    options: [{ value: 'DatePicker', label: '日期选择器' }],
+  },
+  {
+    label: '选择',
+    options: [
+      { value: 'Select', label: '下拉选择器' },
+      { value: 'FkPicker', label: '外键选择器' },
+      { value: 'RadioGroup', label: '单选按钮组' },
+    ],
+  },
+  {
+    label: '媒体',
+    options: [
+      { value: 'MediaPicker', label: '媒体选择器' },
+      { value: 'IconPicker', label: '图标选择器' },
+    ],
+  },
+  {
+    label: '子表',
+    options: [{ value: 'Items', label: '子项列表' }],
+  },
+  {
+    label: '其他',
+    options: [{ value: 'Divider', label: '分隔' }],
+  },
+  //   { value: 'UIInput', label: 'UI配置输入' },
+  //   { value: 'ColumnTypeInput', label: '字段类型选择器' },
+  //   { value: 'PermissionPicker', label: '权限选择器' },
+  //   { value: 'MetaInput', label: '元数据输入' },
+]) ;
 
 const filterOps = [
   { value: 'like', label: '包含' },
