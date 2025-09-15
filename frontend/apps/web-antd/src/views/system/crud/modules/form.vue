@@ -59,9 +59,21 @@ const [Drawer, drawerApi] = useVbenDrawer({
       ? update(tableName.value, id.value, data)
       : create(tableName.value, data)
     )
-      .then(() => {
-        emits('success');
-        drawerApi.close();
+      .then(res => {
+        if(res?.id) {
+          formData.value = res;
+          id.value = res.id;
+          formApi.resetForm();
+          formApi.setState({
+            schema: useFormUpdateSchema(props.table, { formApi, data: res }),
+          });
+          formApi.setValues(res);
+          emits('success');
+          drawerApi.unlock();
+        } else {
+          emits('success');
+          drawerApi.close();
+        }
       })
       .catch(() => {
         drawerApi.unlock();

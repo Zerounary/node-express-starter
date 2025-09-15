@@ -5,11 +5,12 @@ import { logError } from "@/logger";
 import { ok } from "@/router/api";
 import { fail } from "assert";
 import CacheService from "../CacheService";
+import DynamicDataService from "../DynamicDataService";
 
 export const getPhysicalTableName = async (
   aliasName: string,
   tenantId: number
- ): Promise<string> => {
+): Promise<string> => {
   let t = await CacheService.getTableByAliasName(aliasName);
   return t ? t.name : aliasName;
 };
@@ -30,7 +31,11 @@ export async function initDynamicTables() {
     for (const table of tables) {
       if (!allTables.includes(table.name)) {
         console.log(`Table "${table.name}" not found, creating...`);
-        await SchemaService.createTableFromDefinition(table.id);
+        const Model = await DynamicDataService.getModelForTable(
+          table.name,
+          1,
+        );
+        await Model.sync({ alter: true });
         console.log(`Table "${table.name}" created.`);
       }
     }

@@ -1,10 +1,37 @@
+import CacheService from "@/services/CacheService";
+import { ColumnDataTypes } from "@/utils";
+
 export async function beforeCreate(data) {
   console.log("beforeCreate hook for demo table", data);
-  data.ui = {
-    mask: "1111111111",
-    width: 200,
-    component: "Input",
-  };
+  if( data.dataType == ColumnDataTypes.ID  &&  data.relatedToTableId) {
+    let refTable = await CacheService.getTableById(data.relatedToTableId)
+    data.ui = {
+      mask: "1111111111",
+      width: 200,
+      component: "FkPicker",
+      componentProps: {
+        table: refTable.alias_name
+      }
+    }
+  } else if(data.dataType == ColumnDataTypes.ENUM) {
+    data.ui = {
+      mask: "1111111111",
+      width: 200,
+      component: "Select",
+    };
+  } else if(data.dataType == ColumnDataTypes.DATE) {
+    data.ui = {
+      mask: "1111111111",
+      width: 200,
+      component: "DatePicker",
+    };
+  } else {
+    data.ui = {
+      mask: "1111111111",
+      width: 200,
+      component: "Input",
+    };
+  }
 }
 
 export async function afterCreate(instance) {
