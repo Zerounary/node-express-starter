@@ -153,9 +153,9 @@ export const defaultColumns = (columns = []) => {
       required: false,
       description: "可用",
       relatedToTableId: undefined,
-
+      defaultValue: true,
       ui: {
-        mask: "0010101001",
+        mask: "0111101001",
         width: 200,
         component: "RadioGroup",
         componentProps: {
