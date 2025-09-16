@@ -1,6 +1,6 @@
 import { Op } from "sequelize";
 import { logError } from "../logger";
-import { ColumnDataTypes } from "@/utils";
+import { ColumnDataTypes, isCreatable } from "@/utils";
 import CacheService from "@/services/CacheService";
 import DataScopeService from "./DataScopeService";
 import DynamicDataService from "./DynamicDataService";
@@ -414,25 +414,25 @@ class DynamicService {
 
     return await sequelize.transaction(async (t) => {
       let tableConfig = await CacheService.getTableByAliasName(tableName);
+      let row: any = {};
       tableConfig.columns
-        .filter((e) => e.ui?.mask?.startsWith("01"))
+        .filter((e) => isCreatable(e.ui?.mask))
         .forEach((col) => {
-          body[col.name] = getDefaultValue(col);
+          const fieldName = col.name;
+          if (body.hasOwnPropery(fieldName)) {
+            body[fieldName] = body[fieldName];
+          } else {
+            body[fieldName] = getDefaultValue(col);
+          }
         });
 
-      const instance = await Model.create(body, { transaction: t });
+      const instance = await Model.create(row, { transaction: t });
       await HookService.executeHook(tableName, "afterCreate", instance, req);
       return instance;
     });
   }
 
-  async update(
-    tableName: string,
-    id: number,
-    body: any,
-    user: any,
-    req?: any
-  ) {
+  async update(tableName: string, id: number, body: any, user: any, req?: any) {
     const { tenantId } = user;
 
     const modifiedBody = await HookService.executeHook(
@@ -446,10 +446,25 @@ class DynamicService {
       body = modifiedBody;
     }
 
-    const Model = await DynamicDataService.getModelForTable(tableName, tenantId);
+    const Model = await DynamicDataService.getModelForTable(
+      tableName,
+      tenantId
+    );
 
     return await sequelize.transaction(async (t) => {
-      const [affectedCount] = await Model.update(body, {
+      let tableConfig = await CacheService.getTableByAliasName(tableName);
+      let row: any = {};
+      tableConfig.columns
+        .filter((e) => isCreatable(e.ui?.mask))
+        .forEach((col) => {
+          const fieldName = col.name;
+          if (body.hasOwnPropery(fieldName)) {
+            body[fieldName] = body[fieldName];
+          } else {
+            body[fieldName] = getDefaultValue(col);
+          }
+        });
+      const [affectedCount] = await Model.update(row, {
         where: { id, tenantId },
         transaction: t,
       });
@@ -468,7 +483,10 @@ class DynamicService {
 
     await HookService.executeHook(tableName, "beforeDelete", id, req);
 
-    const Model = await DynamicDataService.getModelForTable(tableName, tenantId);
+    const Model = await DynamicDataService.getModelForTable(
+      tableName,
+      tenantId
+    );
     const affectedCount = await Model.destroy({ where: { id, tenantId } });
 
     if (affectedCount === 0) {
@@ -508,7 +526,10 @@ class DynamicService {
       return { success: true, count: 0 };
     }
 
-    const Model = await DynamicDataService.getModelForTable(tableName, tenantId);
+    const Model = await DynamicDataService.getModelForTable(
+      tableName,
+      tenantId
+    );
 
     const transaction = await sequelize.transaction();
     try {

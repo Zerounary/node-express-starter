@@ -157,16 +157,7 @@ export const defaultColumns = (columns = []) => {
       ui: {
         mask: "0111101001",
         width: 200,
-        component: "RadioGroup",
-        componentProps: {
-          buttonStyle: "solid",
-          options: [
-            { label: "是", value: true },
-            { label: "否", value: false },
-          ],
-          optionType: "button",
-        },
-        disabled: true,
+        component: "CheckBox",
       },
       orderno: 1500,
     },

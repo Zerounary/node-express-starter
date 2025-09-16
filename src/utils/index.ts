@@ -51,9 +51,18 @@ class AppError extends Error {
     this.data = data
   }
 }
+
+const isCreatable = (mask: string) => {
+  return mask?.charAt(1) == '1'
+}
+const isUpdatable = (mask: string) => {
+  return mask?.charAt(3) == '1'
+}
 export {
   get_app_name,
   ColumnDataTypes,
   listToTree,
+  isCreatable,
+  isUpdatable,
   AppError,
 }
