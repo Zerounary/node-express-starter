@@ -81,21 +81,23 @@ export const get_doubao_image_req = (data) => {
 
 export const get_doubao_text_req = (data = []) => {
   return openai.chat.completions.create({
+    model: 'doubao-seed-1-6-250615',
+    // @ts-expect-error 
+    thinking: {type: 'disabled'},
     messages: [
       { role: 'system', content: '你是豆包，是由字节跳动开发的 AI 人工智能助手' },
       ...data,
     ],
-    model: 'ep-20250218142946-gzqkp',
   })
 };
 
 export const get_doubao_text_stream_req = (data = []) => {
   return openai.chat.completions.create({
+    model: 'doubao-seed-1-6-250615',
     messages: [
       { role: 'system', content: '你是豆包，是由字节跳动开发的 AI 人工智能助手' },
       ...data,
     ],
-    model: 'ep-20250218142946-gzqkp',
     stream: true,
   })
 };
