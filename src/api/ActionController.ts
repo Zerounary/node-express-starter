@@ -3,6 +3,7 @@ import { fail, ok } from "@/router/api";
 import { checkPermission } from "@/router/middlewares/permissionMiddleware";
 import HookService from "@/services/HookService";
 import WorkflowService from "@/services/WorkflowService";
+import { AppError } from "@/utils";
 import { Controller, Post } from "@/utils/routeDecorators";
 
 @Controller("/action/:tableName")
@@ -13,6 +14,11 @@ export default class DynamicController {
     try {
       const { tableName, actionName } = req.params;
       const { id }  = req.query;
+
+      if(!await HookService.hasHooks(tableName, actionName)) {
+        throw new AppError(`[${tableName}:${actionName}] 动作接口不存在`);
+      }
+
       let body = await req.json();
 
       // afterUpdate hook
