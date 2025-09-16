@@ -169,7 +169,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
           ),
         );
       }
-      
+
       gridApi.query();
     },
     checkboxChange({ checked, row }) {
@@ -276,6 +276,8 @@ onMounted(() => {
             :table="tableConfig.table"
             :actions="tableConfig.actions"
             :params="{
+              parentId,
+              parentKey,
               ids: selectionIds,
             }"
           />
