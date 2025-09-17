@@ -31,6 +31,8 @@ const Textof = (val, dataType) => {
       return dayjs(val).format('YYYY-MM-DD HH:mm:ss');
     case ColumnDataTypes.BOOLEAN:
       return val ? '是' : '否';
+    case ColumnDataTypes.ENUM:
+       return props.schema?.componentProps?.options?.find(opt => opt.value == val)?.label
     default:
       return val;
   }
