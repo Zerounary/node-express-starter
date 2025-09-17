@@ -150,7 +150,7 @@ export default class DynamicController {
         return ok([]);
       }
 
-      res.header("Content-Type", "text/csv");
+      res.header("Content-Type", "text/csv;charset=utf-8");
       res.header(
         "Content-Disposition",
         `attachment; filename=${tableName}.csv`

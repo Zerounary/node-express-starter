@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Recordable } from '@vben/types';
-import { AccessControl, getTableAccessCodes } from '@vben/access';
+import { AccessControl, getTableAccessCodes, useAccess } from '@vben/access';
 import type {
   OnActionClickParams,
   VxeTableGridOptions,
@@ -17,7 +17,7 @@ import { DeleteOutlined } from '@ant-design/icons-vue';
 import { Button, message, Modal, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { getPage, remove } from '#/api/system/crud';
+import { exportData, getPage, remove } from '#/api/system/crud';
 import { $t } from '#/locales';
 import { useSystem } from '#/store/system';
 
@@ -28,6 +28,7 @@ import ActionButtonGroup from '#/adapter/component/ActionButtonGroup.vue';
 
 const route = useRoute();
 const system = useSystem();
+const access = useAccess();
 const selectionIds = ref<number[]>([]);
 const { setTabTitle } = useTabs();
 const tableName = route.params.table;
@@ -66,9 +67,29 @@ const [Grid, gridApi] = useVbenVxeGrid({
       { type: 'seq', width: 40 },
       ...useColumns(table, onActionClick),
     ],
+    printConfig: {
+      beforePrintMethod: ({html, options}) => {
+        console.log('html, options', html, options)
+        return '<h1>good</h1>'
+      }
+    },
     columnConfig: {
       width: 'auto',
       minWidth: 'auto',
+    },
+    importConfig: {
+      remote: true,
+      importMethod: (params) => {
+        console.log('🚀 ~ params:', params)
+      }
+    },
+    exportConfig: {
+      remote: true,
+      exportMethod: async ({ options }) => {
+          console.log('🚀 ~ options:', options)
+          let formValues = await gridApi.formApi.getValues()
+          await exportData(table.table, {...formValues} )
+      }
     },
     height: 'auto',
     showHeader: true,
@@ -96,7 +117,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
     },
     toolbarConfig: {
       custom: true,
-      export: false,
+      print: true,
+      import: access.hasAccessByTable(table.table, 'import'),
+      export: access.hasAccessByTable(table.table, 'export'),
       refresh: { code: 'query' },
       search: true,
       zoom: true,
@@ -233,6 +256,9 @@ const onActionFinished = (state: string) => {
     selectionIds.value = []
   }
 }
+
+const onExport = async () => {
+}
 </script>
 <template>
   <Page auto-content-height>
@@ -269,6 +295,9 @@ const onActionFinished = (state: string) => {
             @on-finish="onActionFinished"
           />
         </space>
+      </template>
+      <template #toolbar-tools>
+
       </template>
     </Grid>
   </Page>
