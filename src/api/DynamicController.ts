@@ -114,17 +114,24 @@ export default class DynamicController {
     }
   }
 
-  @Delete("/:id", [checkPermission("data::tableName:delete")])
+  @Delete("/:ids", [checkPermission("data::tableName:delete")])
   async remove(req, res) {
     try {
-      const { tableName, id } = req.params;
-      const result = await DynamicService.remove(
-        tableName,
-        Number(id),
-        req.user,
-        req
-      );
-      return ok(result);
+      const { tableName, ids } = req.params;
+      let idArray = ids?.split(',') || []
+      let count = 0;
+      for(let id of idArray) {
+        const result = await DynamicService.remove(
+          tableName,
+          Number(id),
+          req.user,
+          req
+        );
+        count += result?.affectedCount;
+      }
+      return ok({
+        affectedCount: count
+      });
     } catch (error) {
       logError(error);
       const statusCode = error.message.includes("not found") ? 404 : 500;

@@ -12,7 +12,7 @@ import { computed, onMounted, defineProps, toRaw, ref } from 'vue';
 import { AccessControl, getTableAccessCodes } from '@vben/access';
 import { Space, Button, message, Modal } from 'ant-design-vue';
 import { Plus } from '@vben/icons';
-
+import { DeleteOutlined } from '@ant-design/icons-vue';
 import { useVbenDrawer } from '@vben/common-ui';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { getPage, remove, update } from '#/api/system/crud';
@@ -172,6 +172,14 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
       gridApi.query();
     },
+    checkboxAll({ checked }) {
+      if (checked) {
+        let rows = gridApi.grid.getFullData();
+        selectionIds.value = rows.map((e) => e.id);
+      } else {
+        selectionIds.value = []
+      }
+    },
     checkboxChange({ checked, row }) {
       if (checked) {
         selectionIds.value.push(row.id);
@@ -241,6 +249,39 @@ async function onDelete(row: SystemTableApi.SystemTable) {
   });
 }
 
+function onDeleteBySelect() {
+  if (selectionIds.value?.length) {
+    const hideLoading = message.loading({
+      content: $t('ui.actionMessage.deleting', [
+        `${selectionIds.value.length}项明细`,
+      ]),
+      duration: 0,
+      key: 'action_process_msg',
+    });
+    remove(props.tableConfig.table, selectionIds.value.join(','))
+      .then(() => {
+        message.success({
+          content: $t('ui.actionMessage.deleteSuccess'),
+          key: 'action_process_msg',
+        });
+        onRefresh();
+      })
+      .catch(() => {
+        hideLoading();
+      });
+  } else {
+    message.warning({
+      content: '请先选择明细',
+      key: 'action_process_msg',
+    });
+  }
+}
+
+function onRefresh() {
+  selectionIds.value = []
+  gridApi.query();
+}
+
 function onActionClick(e: OnActionClickParams<SystemTableApi.SystemTable>) {
   switch (e.code) {
     case 'delete':
@@ -255,6 +296,12 @@ function onActionClick(e: OnActionClickParams<SystemTableApi.SystemTable>) {
 onMounted(() => {
   gridApi.query();
 });
+
+const onActionFinished = (state: string) => {
+  if(state == 'success') {
+    selectionIds.value = []
+  }
+}
 </script>
 
 <template>
@@ -271,6 +318,15 @@ onMounted(() => {
               <Plus class="size-5" />{{ $t('ui.actionTitle.create', []) }}
             </Button>
           </AccessControl>
+          <AccessControl
+            :codes="getTableAccessCodes(filteredTableConfig.table, 'delete')"
+            type="code"
+          >
+            <Button v-show="selectionIds.length" danger @click="onDeleteBySelect">
+              <DeleteOutlined />
+              {{ $t('ui.actionTitle.delete', []) }}
+            </Button>
+          </AccessControl>
           <ActionButtonGroup
             type="item"
             :table="tableConfig.table"
@@ -281,6 +337,7 @@ onMounted(() => {
               parentKey,
               ids: selectionIds,
             }"
+            @on-finish="onActionFinished"
           />
         </space>
       </template>

@@ -13,6 +13,7 @@ import { Page, useVbenDrawer } from '@vben/common-ui';
 import { useTabs } from '@vben/hooks';
 import { Plus } from '@vben/icons';
 
+import { DeleteOutlined } from '@ant-design/icons-vue';
 import { Button, message, Modal, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
@@ -61,9 +62,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
       highlight: true,
     },
     columns: [
-      {type: 'checkbox', width: 40},
-      {type: 'seq', width: 40},
-      ...useColumns(table, onActionClick)
+      { type: 'checkbox', width: 40 },
+      { type: 'seq', width: 40 },
+      ...useColumns(table, onActionClick),
     ],
     columnConfig: {
       width: 'auto',
@@ -102,18 +103,20 @@ const [Grid, gridApi] = useVbenVxeGrid({
     },
   } as VxeTableGridOptions<SystemTableApi.SystemTable>,
   gridEvents: {
-    checkboxAll({checked}) {
-      if(checked) {
+    checkboxAll({ checked }) {
+      if (checked) {
         let rows = gridApi.grid.getFullData();
-        selectionIds.value = rows.map(e => e.id)
+        selectionIds.value = rows.map((e) => e.id);
+      } else {
+        selectionIds.value = []
       }
     },
-    checkboxChange({checked, row}) {
-      if(checked) {
+    checkboxChange({ checked, row }) {
+      if (checked) {
         selectionIds.value.push(row.id);
       } else {
-        const index = selectionIds.value.findIndex(id => id === row.id);
-        if(index > -1) {
+        const index = selectionIds.value.findIndex((id) => id === row.id);
+        if (index > -1) {
           selectionIds.value.splice(index, 1);
         }
       }
@@ -160,7 +163,6 @@ function confirm(content: string, title: string) {
   });
 }
 
-
 function onCreate() {
   formDrawerApi.setData({}).open();
 }
@@ -189,13 +191,48 @@ function onDelete(row: SystemTableApi.SystemTable) {
     });
 }
 
+function onDeleteBySelect() {
+  if (selectionIds.value?.length) {
+    const hideLoading = message.loading({
+      content: $t('ui.actionMessage.deleting', [
+        `${selectionIds.value.length}项明细`,
+      ]),
+      duration: 0,
+      key: 'action_process_msg',
+    });
+    remove(table.table, selectionIds.value.join(','))
+      .then(() => {
+        message.success({
+          content: $t('ui.actionMessage.deleteSuccess'),
+          key: 'action_process_msg',
+        });
+        onRefresh();
+      })
+      .catch(() => {
+        hideLoading();
+      });
+  } else {
+    message.warning({
+      content: '请先选择明细',
+      key: 'action_process_msg',
+    });
+  }
+}
+
 function onRefresh() {
+  selectionIds.value = []
   gridApi.query();
 }
 
 onMounted(() => {
   gridApi.query();
 });
+
+const onActionFinished = (state: string) => {
+  if(state == 'success') {
+    selectionIds.value = []
+  }
+}
 </script>
 <template>
   <Page auto-content-height>
@@ -212,6 +249,16 @@ onMounted(() => {
               {{ $t('ui.actionTitle.create', []) }}
             </Button>
           </AccessControl>
+          <AccessControl
+            :codes="getTableAccessCodes(tableName, 'delete')"
+            type="code"
+          >
+            <Button v-show="selectionIds.length" danger @click="onDeleteBySelect">
+              <DeleteOutlined />
+              {{ $t('ui.actionTitle.delete', []) }}
+            </Button>
+          </AccessControl>
+
           <ActionButtonGroup
             type="list"
             :table="tableName"
@@ -219,6 +266,7 @@ onMounted(() => {
             :params="{
               ids: selectionIds,
             }"
+            @on-finish="onActionFinished"
           />
         </space>
       </template>

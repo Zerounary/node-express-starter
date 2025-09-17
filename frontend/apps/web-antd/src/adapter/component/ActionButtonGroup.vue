@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed, ref } from 'vue';
+import { defineProps, computed, ref, defineEmits } from 'vue';
 import { Space, Button, message, Dropdown } from 'ant-design-vue';
 import { execute } from '#/api/system/crud';
 import { downloadJson } from '#/utils';
@@ -51,6 +51,7 @@ const props = defineProps<{
 }>();
 
 const isLoading = ref({})
+const emit = defineEmits(['onFinish'])
 
 const actionsFiltered = computed(() => {
   return props.actions.filter(e => e.type === props.type);
@@ -78,9 +79,12 @@ const executeAction = async (action: TableActionItem) => {
     if (res?.msg || res?.message) {
       message.success(res?.msg || res?.message || res?.error);
     }
+
     console.log('Action executed:', res);
+    emit('onFinish', 'success')
   } catch (error) {
     console.error('Error executing action:', error);
+    emit('onFinish', 'error')
   } finally {
     isLoading.value[action.resource] = false;
   }
