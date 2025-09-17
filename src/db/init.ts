@@ -76,7 +76,7 @@ export const defaultColumns = (columns = []) => {
 
       ui: {
         mask: "0010000000",
-        width: 200,
+        
         component: "Divider",
       },
       orderno: 1000,
@@ -90,7 +90,7 @@ export const defaultColumns = (columns = []) => {
 
       ui: {
         mask: "0010101001",
-        width: 200,
+        
         component: "FkPicker",
         componentProps: {
           table: "users",
@@ -108,7 +108,7 @@ export const defaultColumns = (columns = []) => {
 
       ui: {
         mask: "0010101001",
-        width: 200,
+        
         component: "DatePicker",
         disabled: true,
       },
@@ -123,7 +123,7 @@ export const defaultColumns = (columns = []) => {
 
       ui: {
         mask: "0010101001",
-        width: 200,
+        
         component: "FkPicker",
         componentProps: {
           table: "users",
@@ -141,7 +141,7 @@ export const defaultColumns = (columns = []) => {
 
       ui: {
         mask: "0010101001",
-        width: 200,
+        
         component: "DatePicker",
         disabled: true,
       },
@@ -156,7 +156,7 @@ export const defaultColumns = (columns = []) => {
       defaultValue: true,
       ui: {
         mask: "0111101001",
-        width: 200,
+        
         component: "CheckBox",
       },
       orderno: 1500,
@@ -282,7 +282,7 @@ export const systemTables = [
         relatedToTableId: undefined,
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Input",
           rules: [
             { type: 'identifier', message: '只能是字母、数字、下划线，且开头必须是字母或下划线'}
@@ -298,7 +298,7 @@ export const systemTables = [
 
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Input",
         },
       },
@@ -313,7 +313,7 @@ export const systemTables = [
 
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Input",
           rules: [
             { type: 'identifier', message: '只能是字母、数字、下划线，且开头必须是字母或下划线'}
@@ -353,7 +353,7 @@ export const systemTables = [
         relatedToTableId: undefined,
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Input",
           componentProps: {
             placeholder: "格式：[fileName]-[asc|desc],多个逗号分隔",
@@ -421,7 +421,7 @@ export const systemTables = [
         dk: true,
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Input",
           rules: [
             { type: 'identifier', message: '只能是字母、数字、下划线，且开头必须是字母或下划线'}
@@ -573,7 +573,7 @@ export const systemTables = [
         dk: true,
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Input",
         },
       },
@@ -595,7 +595,7 @@ export const systemTables = [
 
         ui: {
           mask: "1111001111",
-          width: 200,
+          
           component: "InputPassword",
         },
       },
@@ -618,7 +618,7 @@ export const systemTables = [
         dk: true,
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Input",
         },
       },
@@ -640,7 +640,7 @@ export const systemTables = [
 
         ui: {
           mask: "0011000000",
-          width: 200,
+          
           component: "PermissionPicker",
           componentProps: {},
         },
@@ -710,7 +710,7 @@ export const systemTables = [
 
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Select",
           componentProps: {
             options: [
@@ -749,7 +749,7 @@ export const systemTables = [
 
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Input",
         },
       },
@@ -762,7 +762,7 @@ export const systemTables = [
 
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Input",
         },
       },
@@ -805,7 +805,7 @@ export const systemTables = [
         dk: true,
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Input",
         },
       },
@@ -820,7 +820,7 @@ export const systemTables = [
         dk: true,
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Input",
         },
       },
@@ -835,7 +835,7 @@ export const systemTables = [
         dk: true,
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Input",
         },
       },
@@ -865,7 +865,7 @@ export const systemTables = [
 
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Input",
         },
       },
@@ -880,7 +880,7 @@ export const systemTables = [
         dk: true,
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Input",
         },
       },
@@ -920,7 +920,7 @@ export const systemTables = [
         dk: true,
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Select",
           componentProps: {
             options: [
@@ -940,7 +940,7 @@ export const systemTables = [
 
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Input",
         },
       },
@@ -955,7 +955,7 @@ export const systemTables = [
         dk: true,
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Input",
         },
       },
@@ -968,7 +968,7 @@ export const systemTables = [
 
         ui: {
           mask: "1111111111",
-          width: 200,
+          
           component: "Input",
         },
       },

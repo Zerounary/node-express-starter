@@ -30,6 +30,7 @@
 import { defineProps, computed, ref } from 'vue';
 import { Space, Button, message, Dropdown } from 'ant-design-vue';
 import { execute } from '#/api/system/crud';
+import { downloadJson } from '#/utils';
 
 const MAX_BUTTONS = 3;
 
@@ -46,6 +47,7 @@ const props = defineProps<{
   type: 'table' | 'form' | 'row' | 'custom';
   params: object;
   actions: TableActionItem[];
+  gridApi: any;
 }>();
 
 const isLoading = ref({})
@@ -61,6 +63,18 @@ const executeAction = async (action: TableActionItem) => {
   try {
     isLoading.value[action.resource] = true;
     const res = await execute(props.table, action.resource, props.params);
+    if(res.action) {
+      switch(res.action) {
+        case 'download':
+        let data = res.data;
+        downloadJson(data)
+        break;
+        case 'refresh':
+          props.gridApi?.query();
+        break;
+      }
+    }
+
     if (res?.msg || res?.message) {
       message.success(res?.msg || res?.message || res?.error);
     }

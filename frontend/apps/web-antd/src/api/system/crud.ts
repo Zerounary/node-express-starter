@@ -1,5 +1,4 @@
 import { requestClient } from '#/api/request';
-import { downloadJson } from '#/utils';
 
 async function get(url: string, params = {}) {
   return requestClient.get<Array<any>>(url, {
@@ -85,15 +84,6 @@ async function remove(table: string, id: string) {
  */
 async function execute(table: string, actionName: string, params = {}) {
   let res = await requestClient.post(`/action/${table}/${actionName}`, params);
-  if(res.action) {
-    switch(res.action) {
-      case 'download':
-      let data = res.data;
-      downloadJson(data)
-      break;
-    }
-  }
-
   return res
 }
 

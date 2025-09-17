@@ -275,6 +275,7 @@ onMounted(() => {
             type="item"
             :table="tableConfig.table"
             :actions="tableConfig.actions"
+            :gridApi="gridApi"
             :params="{
               parentId,
               parentKey,

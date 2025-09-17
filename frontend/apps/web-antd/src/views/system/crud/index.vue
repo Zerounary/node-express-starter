@@ -65,7 +65,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
       {type: 'seq', width: 40},
       ...useColumns(table, onActionClick)
     ],
+    columnConfig: {
+      width: 'auto',
+      minWidth: 'auto',
+    },
     height: 'auto',
+    showHeader: true,
+    border: true,
     keepSource: true,
     stripe: true,
     proxyConfig: {

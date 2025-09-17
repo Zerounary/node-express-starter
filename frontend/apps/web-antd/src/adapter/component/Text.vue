@@ -32,12 +32,18 @@ const Textof = (val, dataType) => {
     case ColumnDataTypes.BOOLEAN:
       return val ? '是' : '否';
     case ColumnDataTypes.ENUM:
-       return props.schema?.componentProps?.options?.find(opt => opt.value == val)?.label
+      return props.schema?.componentProps?.options?.find(
+        (opt) => opt.value == val,
+      )?.label;
     default:
       return val;
   }
 };
 
+const isTextStart = computed(() => {
+  const dataType = props.schema?.dataType;
+  return [ColumnDataTypes.STRING].includes(dataType);
+});
 const text = computed(() => {
   const dataType = props.schema?.dataType;
   return Textof(modelValue.value, dataType);

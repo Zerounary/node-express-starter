@@ -1,7 +1,13 @@
 import { AI } from "@/ai";
+import DynamicService from "@/services/DynamicService";
 import { importTableData } from "@/utils/importData";
 
 export async function ai_gen({ id, tableName, user, parentId, parentKey }) {
+
+  let bank = await DynamicService.findOne("question_bank", parentId, user)
+
+  let bank_name = bank.name;
+  
   let aiRsp = await AI([
     {
       role: "user",
@@ -18,7 +24,7 @@ export async function ai_gen({ id, tableName, user, parentId, parentKey }) {
   },
 
 
-参考这个格式，出一套垃圾分类的题目，3道。最后结果以JSON数组形式返回`,
+参考这个格式，出一套【${bank_name}】的题目，1道。最后结果以JSON数组形式返回`,
     },
   ]);
 
@@ -30,5 +36,6 @@ export async function ai_gen({ id, tableName, user, parentId, parentKey }) {
   }
   return {
     msg: "生成成功",
+    action: "refresh"
   };
 }
