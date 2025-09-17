@@ -2,10 +2,10 @@ import { AI } from "@/ai";
 import { importTableData } from "@/utils/importData";
 
 export async function ai_gen({ id, tableName, user, parentId, parentKey }) {
-    let aiRsp = await AI([
+  let aiRsp = await AI([
     {
-        role: "user",
-        content: `{
+      role: "user",
+      content: `{
     "name": "中共十八大提出，我国到2020年的奋斗目标是【  】",
     "question_option": [
       { "orderno": 1, "option_text": "实现\"四个现代化\"" },
@@ -20,15 +20,15 @@ export async function ai_gen({ id, tableName, user, parentId, parentKey }) {
 
 参考这个格式，出一套垃圾分类的题目，3道。最后结果以JSON数组形式返回`,
     },
-    ]);
+  ]);
 
-    if(aiRsp.choices.length > 0) {
-        let first = aiRsp.choices[0];
-        console.log(first.message.content)
-        let rstJson = JSON.parse(first.message.content);
-        await importTableData(tableName, rstJson, user, parentId, parentKey)
-    }
-    return {
-        msg: '生成成功'
-    }
+  if (aiRsp.choices.length > 0) {
+    let first = aiRsp.choices[0];
+    console.log(first.message.content);
+    let rstJson = JSON.parse(first.message.content);
+    await importTableData(tableName, rstJson, user, parentId, parentKey);
+  }
+  return {
+    msg: "生成成功",
+  };
 }

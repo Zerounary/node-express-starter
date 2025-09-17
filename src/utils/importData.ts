@@ -8,14 +8,6 @@ export async function importTableData(
   parentId?: number,
   parentKey?: string
 ) {
-  // { name: "a", items: [ { name: "",  } ] }
-  console.log(
-    "tableName",
-    tableAliasName,
-    parentKey,
-    parentId,
-    JSON.stringify(data)
-  );
   if (data.length > 0) {
     let table = await CacheService.getTableByAliasName(tableAliasName);
     const tabs = table.columns.find((e) => e.ui?.component == "Items")?.ui
