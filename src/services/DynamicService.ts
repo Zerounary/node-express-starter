@@ -395,18 +395,6 @@ class DynamicService {
   }
 
   async create(tableName: string, body: any, user: any, req?: any) {
-    body.tenantId = user.tenantId;
-
-    const modifiedBody = await HookService.executeHook(
-      tableName,
-      "beforeCreate",
-      body,
-      req
-    );
-    if (modifiedBody) {
-      body = modifiedBody;
-    }
-
     const Model = await DynamicDataService.getModelForTable(
       tableName,
       user.tenantId
@@ -414,17 +402,27 @@ class DynamicService {
 
     return await sequelize.transaction(async (t) => {
       let tableConfig = await CacheService.getTableByAliasName(tableName);
-      let row: any = {};
+      let row: any = { tenantId: user.tenantId };
       tableConfig.columns
         .filter((e) => isCreatable(e.ui?.mask))
         .forEach((col) => {
           const fieldName = col.name;
-          if (body.hasOwnPropery(fieldName)) {
-            body[fieldName] = body[fieldName];
+          if (Object.prototype.hasOwnProperty.call(body, fieldName)) {
+            row[fieldName] = body[fieldName];
           } else {
-            body[fieldName] = getDefaultValue(col);
+            row[fieldName] = getDefaultValue(col);
           }
         });
+
+      const modifiedBody = await HookService.executeHook(
+        tableName,
+        "beforeCreate",
+        row,
+        req
+      );
+      if (modifiedBody) {
+        row = modifiedBody;
+      }
 
       const instance = await Model.create(row, { transaction: t });
       await HookService.executeHook(tableName, "afterCreate", instance, req);
@@ -434,17 +432,6 @@ class DynamicService {
 
   async update(tableName: string, id: number, body: any, user: any, req?: any) {
     const { tenantId } = user;
-
-    const modifiedBody = await HookService.executeHook(
-      tableName,
-      "beforeUpdate",
-      id,
-      body,
-      req
-    );
-    if (modifiedBody) {
-      body = modifiedBody;
-    }
 
     const Model = await DynamicDataService.getModelForTable(
       tableName,
@@ -458,12 +445,23 @@ class DynamicService {
         .filter((e) => isCreatable(e.ui?.mask))
         .forEach((col) => {
           const fieldName = col.name;
-          if (body.hasOwnPropery(fieldName)) {
-            body[fieldName] = body[fieldName];
+          if (Object.prototype.hasOwnProperty.call(body, fieldName)) {
+            row[fieldName] = body[fieldName];
           } else {
-            body[fieldName] = getDefaultValue(col);
+            row[fieldName] = getDefaultValue(col);
           }
         });
+      const modifiedBody = await HookService.executeHook(
+        tableName,
+        "beforeUpdate",
+        id,
+        row,
+        req
+      );
+      if (modifiedBody) {
+        row = modifiedBody;
+      }
+
       const [affectedCount] = await Model.update(row, {
         where: { id, tenantId },
         transaction: t,

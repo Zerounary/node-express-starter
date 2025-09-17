@@ -4,6 +4,7 @@ export async function beforeCreate(data, req) {
   data.updatedBy = currentUser;
   data.createdAt = new Date();
   data.updatedAt = new Date();
+  data.isActive = true;
   // sequelize的create方法会自动处理createdAt和updatedAt, 这里无需手动设置
   return data;
 }
