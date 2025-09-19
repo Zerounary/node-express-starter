@@ -122,3 +122,75 @@ export const requestClient = createRequestClient(apiURL, {
 });
 
 export const baseRequestClient = new RequestClient({ baseURL: apiURL });
+
+/**
+ * 通用下载方法：保留响应头，从 Content-Disposition 解析文件名并触发下载
+ */
+export async function download(
+  url: string,
+  options: {
+    method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+    params?: Record<string, any>;
+    data?: any;
+    headers?: Record<string, string>;
+    filename?: string; // 可选：显式指定文件名
+  } = {},
+) {
+  const { method = 'GET', params, data, headers = {}, filename } = options;
+
+  // 手动设置鉴权和语言头（baseRequestClient 没有拦截器）
+  const accessStore = useAccessStore();
+  const authHeader = accessStore.accessToken ? `Bearer ${accessStore.accessToken}` : undefined;
+  const lang = preferences.app.locale;
+
+  const response: any = await baseRequestClient.request(url, {
+    method,
+    params,
+    data,
+    headers: {
+      ...(authHeader ? { Authorization: authHeader } : {}),
+      'Accept-Language': lang,
+      ...headers,
+    },
+    responseType: 'blob',
+    responseReturn: 'response',
+  });
+
+  // 解析 Content-Disposition 获取文件名
+  const disposition =
+    response?.headers?.['content-disposition'] ||
+    response?.headers?.get?.('content-disposition') ||
+    '';
+  let inferred = filename || 'download';
+  const m =
+    /filename\*?=(?:UTF-8''|")?([^";]+)"?/i.exec(disposition) ||
+    /filename="?([^"]+)"?/i.exec(disposition);
+  if (m && m[1]) {
+    try {
+      inferred = decodeURIComponent(m[1]);
+    } catch {
+      inferred = m[1];
+    }
+  }
+
+  // 处理数据为 Blob
+  const raw = response?.data ?? response?.body ?? response;
+  const blob = raw instanceof Blob ? raw : new Blob([raw]);
+
+  // 触发浏览器下载
+  const urlObject = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.style.display = 'none';
+  a.href = urlObject;
+  a.download = inferred;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(urlObject);
+
+  return true;
+}
+
+// 兼容保持：将下载方法挂到 requestClient.download
+// 这样现有代码中调用 requestClient.download 也能生效
+(requestClient as any).download = download;

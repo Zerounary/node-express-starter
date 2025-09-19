@@ -93,10 +93,7 @@ async function execute(table: string, actionName: string, params = {}) {
  * @param params 查询参数
  */
 async function exportData(table: string, params) {
-  return requestClient.download(`/data/${table}/export`, {
-    params,
-    responseType: 'blob',
-  });
+  return (requestClient as any).download(`/data/${table}/export`, { params });
 }
 
 /**
