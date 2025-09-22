@@ -523,6 +523,8 @@ class DynamicService {
     options: { mode?: "insertTop" | "insertBottom" } = { mode: "insertTop" }
   ) {
     const { tenantId } = user;
+    // 移除末尾的换行符
+    csvBody = csvBody.replace(/[\r\n]+$/g, "");
     const { data } = Papa.parse(csvBody, { header: true });
 
     if (!data || data.length === 0) {
@@ -543,7 +545,7 @@ class DynamicService {
         continue;
       }
     }
-    return { success: errors.length === 0, count: recordsToCreate.length, errors };
+    return { msg: '操作成功', success: errors.length === 0, count: recordsToCreate.length, errors };
   }
 }
 
