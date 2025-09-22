@@ -143,17 +143,17 @@ export default class DynamicController {
   async exportData(req, res) {
     try {
       const { tableName } = req.params;
-      const { ...filters } = req.query;
+      const { filename, ...filters } = req.query;
       const csv = await DynamicService.exportData(tableName, req.user, filters);
 
       if (!csv) {
         return ok([]);
       }
-
+      let csv_filename = filename || tableName
       res.header("Content-Type", "text/csv;charset=utf-8");
       res.header(
         "Content-Disposition",
-        `attachment; filename=${tableName}.csv`
+        `attachment; filename=${csv_filename}.csv`
       );
       return res.send(csv);
     } catch (error) {

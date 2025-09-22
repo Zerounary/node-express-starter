@@ -68,10 +68,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
       ...useColumns(table, onActionClick),
     ],
     printConfig: {
-      beforePrintMethod: ({html, options}) => {
-        console.log('html, options', html, options)
-        return '<h1>good</h1>'
-      }
+      beforePrintMethod: ({ html, options }) => {
+        console.log('html, options', html, options);
+        return '<h1>good</h1>';
+      },
     },
     columnConfig: {
       width: 'auto',
@@ -80,16 +80,23 @@ const [Grid, gridApi] = useVbenVxeGrid({
     importConfig: {
       remote: true,
       importMethod: (params) => {
-        console.log('🚀 ~ params:', params)
-      }
+        console.log('🚀 ~ params:', params);
+      },
     },
     exportConfig: {
+      type: 'csv',
+      types: ['csv'],
+      mode: 'all',
+      modes: ['all'],
       remote: true,
       exportMethod: async ({ options }) => {
-          console.log('🚀 ~ options:', options)
-          let formValues = await gridApi.formApi.getValues()
-          await exportData(table.table, {...formValues} )
-      }
+        console.log('🚀 ~ options:', options);
+        let formValues = await gridApi.formApi.getValues();
+        await exportData(table.table, {
+          filename: options.filename,
+          ...formValues,
+        });
+      },
     },
     height: 'auto',
     showHeader: true,
@@ -131,7 +138,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
         let rows = gridApi.grid.getFullData();
         selectionIds.value = rows.map((e) => e.id);
       } else {
-        selectionIds.value = []
+        selectionIds.value = [];
       }
     },
     checkboxChange({ checked, row }) {
@@ -243,7 +250,7 @@ function onDeleteBySelect() {
 }
 
 function onRefresh() {
-  selectionIds.value = []
+  selectionIds.value = [];
   gridApi.query();
 }
 
@@ -252,13 +259,12 @@ onMounted(() => {
 });
 
 const onActionFinished = (state: string) => {
-  if(state == 'success') {
-    selectionIds.value = []
+  if (state == 'success') {
+    selectionIds.value = [];
   }
-}
+};
 
-const onExport = async () => {
-}
+const onExport = async () => {};
 </script>
 <template>
   <Page auto-content-height>
@@ -279,7 +285,11 @@ const onExport = async () => {
             :codes="getTableAccessCodes(tableName, 'delete')"
             type="code"
           >
-            <Button v-show="selectionIds.length" danger @click="onDeleteBySelect">
+            <Button
+              v-show="selectionIds.length"
+              danger
+              @click="onDeleteBySelect"
+            >
               <DeleteOutlined />
               {{ $t('ui.actionTitle.delete', []) }}
             </Button>
@@ -296,9 +306,7 @@ const onExport = async () => {
           />
         </space>
       </template>
-      <template #toolbar-tools>
-
-      </template>
+      <template #toolbar-tools> </template>
     </Grid>
   </Page>
 </template>
