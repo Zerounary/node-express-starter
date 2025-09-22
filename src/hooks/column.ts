@@ -28,7 +28,7 @@ export async function beforeCreate(data) {
   } else {
     data.ui = {
       mask: "1111111111",
-      
+      filterOp: 'llike',
       component: "Input",
     };
   }

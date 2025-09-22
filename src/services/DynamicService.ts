@@ -1,6 +1,6 @@
 import { Op } from "sequelize";
 import { logError } from "../logger";
-import { ColumnDataTypes, isCreatable } from "@/utils";
+import { ColumnDataTypes, isCreatable, isUpdatable } from "@/utils";
 import CacheService from "@/services/CacheService";
 import DataScopeService from "./DataScopeService";
 import DynamicDataService from "./DynamicDataService";
@@ -157,6 +157,8 @@ class DynamicService {
       in: Op.in,
       notIn: Op.notIn,
       like: Op.like,
+      llike: Op.like,
+      rlike: Op.like,
       iLike: Op.iLike,
     };
 
@@ -171,6 +173,12 @@ class DynamicService {
         if (field && op && operatorMap[op]) {
           if (op === "like") {
             value = `%${value}%`;
+          }
+          if (op === "llike") {
+            value = `${value}%`;
+          }
+          if (op === "rlike") {
+            value = `%${value}`;
           }
           if (op === "in" || op === "notIn") {
             value = value.split(",");
@@ -441,16 +449,18 @@ class DynamicService {
     return await sequelize.transaction(async (t) => {
       let tableConfig = await CacheService.getTableByAliasName(tableName);
       let row: any = {};
-      tableConfig.columns
-        .filter((e) => isCreatable(e.ui?.mask))
-        .forEach((col) => {
-          const fieldName = col.name;
-          if (Object.prototype.hasOwnProperty.call(body, fieldName)) {
-            row[fieldName] = body[fieldName];
-          } else {
-            row[fieldName] = getDefaultValue(col);
-          }
-        });
+      const updatableColumns = new Set(
+        tableConfig.columns
+          .filter((c) => isCreatable(c.ui?.mask))
+          .map((c) => c.name)
+      );
+
+      for (const fieldName of Object.keys(body)) {
+        if (updatableColumns.has(fieldName)) {
+          row[fieldName] = body[fieldName];
+        }
+      }
+
       const modifiedBody = await HookService.executeHook(
         tableName,
         "beforeUpdate",

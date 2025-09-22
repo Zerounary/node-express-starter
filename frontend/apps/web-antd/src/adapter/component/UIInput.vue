@@ -487,6 +487,8 @@ const componentTypes = ref<SelectProps['options']>([
 
 const filterOps = [
   { value: 'like', label: '包含' },
+  { value: 'llike', label: '左包含' },
+  { value: 'rlike', label: '右包含' },
   { value: 'eq', label: '等于' },
   { value: 'neq', label: '不等于' },
   { value: 'gt', label: '大于' },
