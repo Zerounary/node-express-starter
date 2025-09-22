@@ -22,7 +22,15 @@ import { refreshTokenApi } from './core';
 
 const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
 
-function createRequestClient(baseURL: string, options?: RequestClientOptions) {
+function formatToken(token: null | string) {
+  return token ? `Bearer ${token}` : null;
+}
+
+function createRequestClient(
+  baseURL: string,
+  options?: RequestClientOptions,
+  applyResponseInterceptors = true,
+) {
   const client = new RequestClient({
     ...options,
     baseURL,
@@ -57,10 +65,6 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
     return newToken;
   }
 
-  function formatToken(token: null | string) {
-    return token ? `Bearer ${token}` : null;
-  }
-
   // 请求头处理
   client.addRequestInterceptor({
     fulfilled: async (config) => {
@@ -72,56 +76,62 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
     },
   });
 
-  // 处理返回的响应数据格式
-  client.addResponseInterceptor(
-    defaultResponseInterceptor({
-      codeField: 'code',
-      dataField: 'data',
-      successCode: 0,
-    }),
-  );
+  if (applyResponseInterceptors) {
+    // 处理返回的响应数据格式
+    client.addResponseInterceptor(
+      defaultResponseInterceptor({
+        codeField: 'code',
+        dataField: 'data',
+        successCode: 0,
+      }),
+    );
 
-  // token过期的处理
-  client.addResponseInterceptor(
-    authenticateResponseInterceptor({
-      client,
-      doReAuthenticate,
-      doRefreshToken,
-      enableRefreshToken: preferences.app.enableRefreshToken,
-      formatToken,
-    }),
-  );
+    // token过期的处理
+    client.addResponseInterceptor(
+      authenticateResponseInterceptor({
+        client,
+        doReAuthenticate,
+        doRefreshToken,
+        enableRefreshToken: preferences.app.enableRefreshToken,
+        formatToken,
+      }),
+    );
 
-  // 通用的错误处理,如果没有进入上面的错误处理逻辑，就会进入这里
-  client.addResponseInterceptor(
-    errorMessageResponseInterceptor((msg: string, error) => {
-      console.log('msg:', msg)
-      let code = error?.response?.data?.code || 200;
-      if (error?.response?.status === 403 || code == 403) {
-        router.push({ name: 'FallbackForbidden' });
-        return;
-      }
-      if (error?.response?.status === 404 || code == 404) {
-        router.push({ name: 'FallbackNotFound' });
-        return;
-      }
-      // 这里可以根据业务进行定制,你可以拿到 error 内的信息进行定制化处理，根据不同的 code 做不同的提示，而不是直接使用 message.error 提示 msg
-      // 当前mock接口返回的错误字段是 error 或者 message
-      const responseData = error?.response?.data ?? {};
-      const errorMessage = responseData?.error ?? responseData?.message ?? '';
-      // 如果没有错误信息，则会根据状态码进行提示
-      message.error(errorMessage || msg);
-    }),
-  );
+    // 通用的错误处理,如果没有进入上面的错误处理逻辑，就会进入这里
+    client.addResponseInterceptor(
+      errorMessageResponseInterceptor((msg: string, error) => {
+        console.log('msg:', msg);
+        let code = error?.response?.data?.code || 200;
+        if (error?.response?.status === 403 || code == 403) {
+          router.push({ name: 'FallbackForbidden' });
+          return;
+        }
+        if (error?.response?.status === 404 || code == 404) {
+          router.push({ name: 'FallbackNotFound' });
+          return;
+        }
+        // 这里可以根据业务进行定制,你可以拿到 error 内的信息进行定制化处理，根据不同的 code 做不同的提示，而不是直接使用 message.error 提示 msg
+        // 当前mock接口返回的错误字段是 error 或者 message
+        const responseData = error?.response?.data ?? {};
+        const errorMessage = responseData?.error ?? responseData?.message ?? '';
+        // 如果没有错误信息，则会根据状态码进行提示
+        message.error(errorMessage || msg);
+      }),
+    );
+  }
 
   return client;
 }
 
-export const requestClient = createRequestClient(apiURL, {
-  responseReturn: 'data',
-});
+export const requestClient = createRequestClient(
+  apiURL,
+  {
+    responseReturn: 'data',
+  },
+  true,
+);
 
-export const baseRequestClient = new RequestClient({ baseURL: apiURL });
+export const baseRequestClient = createRequestClient(apiURL, {}, false);
 
 /**
  * 通用下载方法：保留响应头，从 Content-Disposition 解析文件名并触发下载
@@ -138,20 +148,11 @@ export async function download(
 ) {
   const { method = 'GET', params, data, headers = {}, filename } = options;
 
-  // 手动设置鉴权和语言头（baseRequestClient 没有拦截器）
-  const accessStore = useAccessStore();
-  const authHeader = accessStore.accessToken ? `Bearer ${accessStore.accessToken}` : undefined;
-  const lang = preferences.app.locale;
-
   const response: any = await baseRequestClient.request(url, {
     method,
     params,
     data,
-    headers: {
-      ...(authHeader ? { Authorization: authHeader } : {}),
-      'Accept-Language': lang,
-      ...headers,
-    },
+    headers,
     responseType: 'blob',
     responseReturn: 'response',
   });

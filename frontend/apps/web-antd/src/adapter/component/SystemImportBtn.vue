@@ -189,6 +189,7 @@ import {
   message,
 } from 'ant-design-vue';
 import { UploadOutlined } from '@ant-design/icons-vue';
+import { readFileAsText } from '#/utils';
 
 // 局部注册（适用于 <script setup>）
 const components = {
@@ -279,15 +280,6 @@ function setFile(file: File) {
   success.value = '';
   fileRef.value = file || null;
   fileName.value = file?.name || '';
-}
-
-function readFileAsText(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error('读取文件失败'));
-    reader.onload = () => resolve(String(reader.result ?? ''));
-    reader.readAsText(file, 'utf-8');
-  });
 }
 
 async function onConfirmImport() {

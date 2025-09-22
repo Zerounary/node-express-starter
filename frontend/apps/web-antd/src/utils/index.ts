@@ -88,9 +88,20 @@ function downloadJson(jsonData, fileName = 'data.json', space = 2) {
     }
 }
 
+function readFileAsText(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('读取文件失败'));
+    reader.onload = () => resolve(String(reader.result ?? ''));
+    reader.readAsText(file, 'utf-8');
+  });
+}
+
+
 export {
   debounce,
   applyDependencies,
   ColumnDataTypes,
+  readFileAsText,
   downloadJson
 }

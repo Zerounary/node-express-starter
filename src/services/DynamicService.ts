@@ -513,10 +513,15 @@ class DynamicService {
       return "";
     }
 
-    return Papa.unparse(data);
+    return "\uFEFF" + Papa.unparse(data);
   }
 
-  async importData(tableName: string, csvBody: string, user: any) {
+  async importData(
+    tableName: string,
+    csvBody: string,
+    user: any,
+    options: { mode?: "insertTop" | "insertBottom" } = { mode: "insertTop" }
+  ) {
     const { tenantId } = user;
     const { data } = Papa.parse(csvBody, { header: true });
 
@@ -524,21 +529,21 @@ class DynamicService {
       return { success: true, count: 0 };
     }
 
-    const Model = await DynamicDataService.getModelForTable(
-      tableName,
-      tenantId
-    );
-
-    const transaction = await sequelize.transaction();
-    try {
-      const recordsToCreate = data.map((row: any) => ({ ...row, tenantId }));
-      await Model.bulkCreate(recordsToCreate, { transaction, validate: true });
-      await transaction.commit();
-      return { success: true, count: data.length };
-    } catch (error) {
-      await transaction.rollback();
-      throw error;
+    let errors = [];
+    const recordsToCreate = data.map((row: any) => ({ ...row, tenantId }));
+    for (let i = 0 ; i < recordsToCreate.length; i++) {
+      let record = recordsToCreate[i];
+      try {
+        await this.create(tableName, record, user);
+      } catch (err) {
+        errors.push({
+          row: i + 1,
+          error: err instanceof Error ? err.message : String(err),
+        })
+        continue;
+      }
     }
+    return { success: errors.length === 0, count: recordsToCreate.length, errors };
   }
 }
 

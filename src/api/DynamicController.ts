@@ -166,11 +166,15 @@ export default class DynamicController {
   async importData(req, res) {
     try {
       const { tableName } = req.params;
+      const { mode } = req.query;
       const csvBody = await req.text();
       const result = await DynamicService.importData(
         tableName,
         csvBody,
-        req.user
+        req.user,
+        {
+          mode
+        }
       );
       return ok(result);
     } catch (error) {

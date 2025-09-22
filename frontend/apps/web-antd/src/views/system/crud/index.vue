@@ -17,7 +17,7 @@ import { DeleteOutlined } from '@ant-design/icons-vue';
 import { Button, message, Modal, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { exportData, getPage, remove } from '#/api/system/crud';
+import { exportData, getPage, importData, remove } from '#/api/system/crud';
 import { $t } from '#/locales';
 import { useSystem } from '#/store/system';
 
@@ -25,6 +25,7 @@ import { useColumns, useGridFormSchema } from './data';
 import Form from './modules/form.vue';
 import { onMounted, ref } from 'vue';
 import ActionButtonGroup from '#/adapter/component/ActionButtonGroup.vue';
+import { readFileAsText } from '#/utils';
 
 const route = useRoute();
 const system = useSystem();
@@ -78,9 +79,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
       minWidth: 'auto',
     },
     importConfig: {
+      types: ['csv'],
       remote: true,
-      importMethod: (params) => {
-        console.log('🚀 ~ params:', params);
+      importMethod: async ({ file, options }) => {
+        console.log('🚀 ~ params:', options);
+        await importData(table.table, file, {
+          mode: options.mode || 'insertTop',
+        });
       },
     },
     exportConfig: {
