@@ -14,7 +14,7 @@
       "updatedBy": 1,
       "isActive": true,
       "createdAt": "2025-09-15T02:31:12.000Z",
-      "updatedAt": "2025-09-17T02:46:38.000Z",
+      "updatedAt": "2025-09-23T02:36:41.000Z",
       "columns": [
         {
           "relatedToTableName": null,
@@ -32,7 +32,6 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "DatePicker"
           },
@@ -41,7 +40,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T02:31:12.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -59,7 +58,6 @@
           "relatedToTableId": 3,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "FkPicker",
             "componentProps": {
@@ -71,7 +69,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T02:31:12.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -89,7 +87,7 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "1111111111",
-
+            "filterOp": "like",
             "component": "Input"
           },
           "orderno": 30,
@@ -97,7 +95,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T03:12:10.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-23T02:36:35.000Z"
         },
         {
           "relatedToTableName": null,
@@ -124,7 +122,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T02:31:12.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -142,7 +140,6 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "RadioGroup",
             "componentProps": {
@@ -165,7 +162,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T02:31:12.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -184,7 +181,6 @@
           "ui": {
             "mask": "0011000000",
             "rules": [],
-
             "component": "Items",
             "dependencies": {},
             "componentProps": {
@@ -204,7 +200,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:32:08.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -222,7 +218,6 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0010000000",
-
             "component": "Divider"
           },
           "orderno": 50,
@@ -230,7 +225,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T02:31:12.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -248,7 +243,7 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "1111111111",
-
+            "filterOp": "like",
             "component": "Input"
           },
           "orderno": 20,
@@ -256,7 +251,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T03:11:50.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-23T02:35:38.000Z"
         },
         {
           "relatedToTableName": null,
@@ -274,7 +269,6 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "DatePicker"
           },
@@ -283,7 +277,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T02:31:12.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -301,7 +295,6 @@
           "relatedToTableId": 3,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "FkPicker",
             "componentProps": {
@@ -313,7 +306,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T02:31:12.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         }
       ],
       "actions": []
@@ -332,7 +325,7 @@
       "updatedBy": 1,
       "isActive": true,
       "createdAt": "2025-09-15T03:14:44.000Z",
-      "updatedAt": "2025-09-17T02:46:38.000Z",
+      "updatedAt": "2025-09-17T03:22:41.000Z",
       "columns": [
         {
           "relatedToTableName": null,
@@ -350,15 +343,15 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "1111111111",
-
+            "filterOp": "like",
             "component": "Input"
           },
-          "orderno": 50,
+          "orderno": 60,
           "createdBy": 1,
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:13:35.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-23T02:37:56.000Z"
         },
         {
           "relatedToTableName": null,
@@ -376,15 +369,15 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0011000000",
-
+            "filterOp": "like",
             "component": "MediaPicker"
           },
-          "orderno": 100,
+          "orderno": 110,
           "createdBy": 1,
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:12:05.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-23T02:38:27.000Z"
         },
         {
           "relatedToTableName": null,
@@ -402,15 +395,15 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0011000000",
-
+            "filterOp": "like",
             "component": "MediaPicker"
           },
-          "orderno": 90,
+          "orderno": 100,
           "createdBy": 1,
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:11:43.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-23T02:38:20.000Z"
         },
         {
           "relatedToTableName": null,
@@ -428,16 +421,15 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "DatePicker"
           },
-          "orderno": 140,
+          "orderno": 150,
           "createdBy": null,
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T03:14:44.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-22T09:14:46.000Z"
         },
         {
           "relatedToTableName": null,
@@ -455,19 +447,18 @@
           "relatedToTableId": 3,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "FkPicker",
             "componentProps": {
               "table": "users"
             }
           },
-          "orderno": 130,
+          "orderno": 140,
           "createdBy": null,
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T03:14:44.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-22T09:14:46.000Z"
         },
         {
           "relatedToTableName": null,
@@ -485,15 +476,15 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "1111111111",
-
+            "filterOp": "like",
             "component": "Input"
           },
-          "orderno": 60,
+          "orderno": 70,
           "createdBy": 1,
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:14:00.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-23T02:38:02.000Z"
         },
         {
           "relatedToTableName": null,
@@ -520,7 +511,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T03:14:44.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -538,7 +529,6 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "RadioGroup",
             "componentProps": {
@@ -556,12 +546,12 @@
               "buttonStyle": "solid"
             }
           },
-          "orderno": 170,
+          "orderno": 180,
           "createdBy": null,
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T03:14:44.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-22T09:14:46.000Z"
         },
         {
           "relatedToTableName": null,
@@ -579,7 +569,6 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0011000000",
-
             "component": "Items",
             "componentProps": {
               "tabs": [
@@ -593,12 +582,12 @@
               ]
             }
           },
-          "orderno": 70,
+          "orderno": 80,
           "createdBy": 1,
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:34:30.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-22T09:14:46.000Z"
         },
         {
           "relatedToTableName": null,
@@ -616,15 +605,14 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0010000000",
-
             "component": "Divider"
           },
-          "orderno": 120,
+          "orderno": 130,
           "createdBy": null,
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T03:14:44.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-22T09:14:46.000Z"
         },
         {
           "relatedToTableName": null,
@@ -642,15 +630,14 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0011000000",
-
             "component": "Divider"
           },
-          "orderno": 80,
+          "orderno": 90,
           "createdBy": 1,
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:26:05.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-22T09:14:46.000Z"
         },
         {
           "relatedToTableName": null,
@@ -668,7 +655,7 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "1111111111",
-
+            "filterOp": "like",
             "component": "Input"
           },
           "orderno": 30,
@@ -676,7 +663,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T03:50:28.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-23T02:37:35.000Z"
         },
         {
           "relatedToTableName": null,
@@ -695,7 +682,6 @@
           "ui": {
             "mask": "1111111111",
             "rules": [],
-
             "component": "FkPicker",
             "dependencies": {},
             "componentProps": {
@@ -707,7 +693,33 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T03:18:34.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
+        },
+        {
+          "relatedToTableName": null,
+          "id": 154,
+          "tenantId": 1,
+          "name": "remark",
+          "description": "备注",
+          "dataType": "STRING",
+          "required": false,
+          "ak": false,
+          "dk": false,
+          "defaultValue": "",
+          "sortable": false,
+          "tableId": 10,
+          "relatedToTableId": null,
+          "ui": {
+            "mask": "1111111111",
+            "filterOp": "like",
+            "component": "Input"
+          },
+          "orderno": 50,
+          "createdBy": 1,
+          "updatedBy": 1,
+          "isActive": true,
+          "createdAt": "2025-09-22T09:14:40.000Z",
+          "updatedAt": "2025-09-23T02:37:44.000Z"
         },
         {
           "relatedToTableName": null,
@@ -726,7 +738,6 @@
           "ui": {
             "mask": "1111111111",
             "rules": [],
-
             "component": "Select",
             "dependencies": {},
             "componentProps": {
@@ -767,7 +778,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T05:46:07.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-22T09:14:28.000Z"
         },
         {
           "relatedToTableName": null,
@@ -785,16 +796,15 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "DatePicker"
           },
-          "orderno": 160,
+          "orderno": 170,
           "createdBy": null,
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T03:14:44.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-22T09:14:46.000Z"
         },
         {
           "relatedToTableName": null,
@@ -812,19 +822,18 @@
           "relatedToTableId": 3,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "FkPicker",
             "componentProps": {
               "table": "users"
             }
           },
-          "orderno": 150,
+          "orderno": 160,
           "createdBy": null,
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T03:14:44.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-22T09:14:46.000Z"
         },
         {
           "relatedToTableName": null,
@@ -842,15 +851,15 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0011000000",
-
+            "filterOp": "like",
             "component": "MediaPicker"
           },
-          "orderno": 110,
+          "orderno": 120,
           "createdBy": 1,
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:12:25.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-23T02:38:35.000Z"
         }
       ],
       "actions": [
@@ -868,7 +877,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-17T02:48:14.000Z",
-          "updatedAt": "2025-09-17T02:48:14.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         }
       ]
     },
@@ -886,7 +895,7 @@
       "updatedBy": 1,
       "isActive": true,
       "createdAt": "2025-09-15T06:28:38.000Z",
-      "updatedAt": "2025-09-17T02:46:38.000Z",
+      "updatedAt": "2025-09-23T02:39:05.000Z",
       "columns": [
         {
           "relatedToTableName": null,
@@ -904,7 +913,7 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "1111111111",
-
+            "filterOp": "like",
             "component": "Input"
           },
           "orderno": 50,
@@ -912,7 +921,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:30:39.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-23T02:39:02.000Z"
         },
         {
           "relatedToTableName": null,
@@ -930,7 +939,6 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "DatePicker"
           },
@@ -939,7 +947,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:28:38.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -957,7 +965,6 @@
           "relatedToTableId": 3,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "FkPicker",
             "componentProps": {
@@ -969,7 +976,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:28:38.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -996,7 +1003,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:28:38.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -1014,7 +1021,6 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "RadioGroup",
             "componentProps": {
@@ -1037,7 +1043,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:28:38.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -1055,7 +1061,6 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0010000000",
-
             "component": "Divider"
           },
           "orderno": 60,
@@ -1063,7 +1068,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:28:38.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -1081,7 +1086,7 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "1111111111",
-
+            "filterOp": "like",
             "component": "Input"
           },
           "orderno": 40,
@@ -1089,7 +1094,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:30:19.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-23T02:38:53.000Z"
         },
         {
           "relatedToTableName": null,
@@ -1107,7 +1112,6 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "1111111111",
-
             "component": "Input"
           },
           "orderno": 30,
@@ -1115,7 +1119,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:29:43.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -1133,7 +1137,6 @@
           "relatedToTableId": 10,
           "ui": {
             "mask": "1111111111",
-
             "component": "FkPicker",
             "componentProps": {
               "table": "question"
@@ -1144,7 +1147,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:29:08.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -1162,7 +1165,6 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "DatePicker"
           },
@@ -1171,7 +1173,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:28:38.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -1189,7 +1191,6 @@
           "relatedToTableId": 3,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "FkPicker",
             "componentProps": {
@@ -1201,7 +1202,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T06:28:38.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         }
       ],
       "actions": []
@@ -1220,7 +1221,7 @@
       "updatedBy": 1,
       "isActive": true,
       "createdAt": "2025-09-15T08:33:54.000Z",
-      "updatedAt": "2025-09-17T02:46:38.000Z",
+      "updatedAt": "2025-09-17T03:22:41.000Z",
       "columns": [
         {
           "relatedToTableName": null,
@@ -1238,7 +1239,6 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "DatePicker"
           },
@@ -1247,7 +1247,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T08:33:54.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -1265,7 +1265,6 @@
           "relatedToTableId": 3,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "FkPicker",
             "componentProps": {
@@ -1277,7 +1276,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T08:33:54.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -1304,7 +1303,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T08:33:54.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -1322,7 +1321,6 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "RadioGroup",
             "componentProps": {
@@ -1345,7 +1343,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T08:33:54.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -1364,7 +1362,6 @@
           "ui": {
             "mask": "1111111111",
             "rules": [],
-
             "component": "Checkbox",
             "dependencies": {}
           },
@@ -1373,7 +1370,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T09:11:26.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -1391,7 +1388,6 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0010000000",
-
             "component": "Divider"
           },
           "orderno": 70,
@@ -1399,7 +1395,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T08:33:54.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -1417,7 +1413,6 @@
           "relatedToTableId": 10,
           "ui": {
             "mask": "1111111111",
-
             "component": "FkPicker",
             "componentProps": {
               "table": "question"
@@ -1428,7 +1423,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T09:08:57.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -1446,7 +1441,7 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "1111111111",
-
+            "filterOp": "like",
             "component": "Input"
           },
           "orderno": 50,
@@ -1454,7 +1449,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T09:10:47.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-23T02:39:27.000Z"
         },
         {
           "relatedToTableName": null,
@@ -1472,7 +1467,6 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "DatePicker"
           },
@@ -1481,7 +1475,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T08:33:54.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -1499,7 +1493,6 @@
           "relatedToTableId": 3,
           "ui": {
             "mask": "0010101001",
-
             "disabled": true,
             "component": "FkPicker",
             "componentProps": {
@@ -1511,7 +1504,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T08:33:54.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-17T03:22:41.000Z"
         },
         {
           "relatedToTableName": null,
@@ -1529,7 +1522,7 @@
           "relatedToTableId": null,
           "ui": {
             "mask": "1111111111",
-
+            "filterOp": "like",
             "component": "Input"
           },
           "orderno": 20,
@@ -1537,7 +1530,7 @@
           "updatedBy": 1,
           "isActive": true,
           "createdAt": "2025-09-15T08:35:48.000Z",
-          "updatedAt": "2025-09-17T02:46:38.000Z"
+          "updatedAt": "2025-09-23T02:39:15.000Z"
         }
       ],
       "actions": []
@@ -1562,7 +1555,7 @@
       "updatedBy": 1,
       "isActive": true,
       "createdAt": "2025-09-15T02:29:19.000Z",
-      "updatedAt": "2025-09-17T02:46:38.000Z"
+      "updatedAt": "2025-09-17T03:22:41.000Z"
     }
   ]
 }
