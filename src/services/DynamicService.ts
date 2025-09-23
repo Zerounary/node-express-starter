@@ -513,17 +513,79 @@ class DynamicService {
       filters
     );
 
-    const Model = await DynamicDataService.getModelForTable(
-      tableName,
-      user.tenantId
-    );
-    const data = await Model.findAll({ where, raw: true });
-
-    if (data.length === 0) {
+    let data = await this.getExportData(tableName, user, where);
+    if (!data || data.length === 0) {
       return "";
     }
 
     return "\uFEFF" + Papa.unparse(data);
+  }
+
+  async getExportData(tableName, user, where) {
+    const Model = await DynamicDataService.getModelForTable(
+      tableName,
+      user.tenantId
+    );
+    const tableConfig = await CacheService.getTableByAliasName(tableName);
+    if (!tableConfig) {
+      throw new Error("表配置未找到");
+    }
+
+    // 主表真实表名
+    const mainTableName = tableConfig.name || Model.getTableName?.();
+
+    // 收集外键列
+    const fkColumns = tableConfig.columns.filter(
+      (c: any) => c.dataType === ColumnDataTypes.ID && c.relatedToTableId
+    );
+    const attributesInclude: any[] = [];
+
+    if (fkColumns.length > 0) {
+      const allRelatedTableIds = Array.from(
+        new Set(fkColumns.map((c: any) => c.relatedToTableId))
+      );
+      const tableDefs = await DynamicTable.findAll({
+        where: { id: { [Op.in]: allRelatedTableIds } },
+      });
+      const tableDefMap = new Map(tableDefs.map((def: any) => [def.id, def]));
+
+      for (const col of fkColumns) {
+        const def = tableDefMap.get(col.relatedToTableId);
+        if (!def) continue;
+        const relatedAliasOrName = def.alias_name || def.name;
+
+        const relatedTableConfig = await CacheService.getTableByAliasName(
+          relatedAliasOrName
+        );
+        if (!relatedTableConfig) continue;
+
+        const dkCol = relatedTableConfig.columns.find(
+          (cc: any) => cc.dk === true
+        );
+        const dk = dkCol?.name || "id";
+
+        const RelatedModel = await DynamicDataService.getModelForTable(
+          relatedAliasOrName,
+          user.tenantId
+        );
+        const relatedTableName =
+          relatedTableConfig.name || RelatedModel.getTableName?.();
+
+        // 子查询：同租户 + id 匹配
+        const subquery = `(SELECT rt.${dk} FROM ${relatedTableName} AS rt WHERE rt.id = ${mainTableName}.${
+          col.name
+        } AND rt.tenantId = ${Number(user.tenantId)} LIMIT 1)`;
+
+        attributesInclude.push([sequelize.literal(subquery), `${col.name}`]);
+      }
+    }
+
+    const data = await Model.findAll({
+      where,
+      attributes: { include: attributesInclude },
+      raw: true,
+    });
+    return data || [];
   }
 
   async importData(
