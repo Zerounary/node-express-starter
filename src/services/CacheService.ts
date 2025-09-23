@@ -87,6 +87,7 @@ class CacheService {
                 attributes: ["id", "name"],
               },
             ],
+            order: [["orderno", "ASC"]],
           },
           { model: TableAction, as: "actions" },
         ],
@@ -152,7 +153,7 @@ class CacheService {
         const table = await DynamicTable.findOne({
           where: { name: tableName },
           include: [
-            { model: DynamicColumn, as: "columns" },
+            { model: DynamicColumn, as: "columns", order: [["orderno", "ASC"]] },
             { model: TableAction, as: "actions" },
           ],
         });
@@ -209,7 +210,7 @@ class CacheService {
     const table = await DynamicTable.findOne({
       where: { name },
       include: [
-        { model: DynamicColumn, as: "columns" },
+        { model: DynamicColumn, as: "columns", order: [["orderno", "ASC"]] },
         { model: TableAction, as: "actions" },
       ],
     });
@@ -242,7 +243,7 @@ class CacheService {
     const table = await DynamicTable.findOne({
       where: { alias_name: aliasName },
       include: [
-        { model: DynamicColumn, as: "columns" },
+        { model: DynamicColumn, as: "columns", order: [["orderno", "ASC"]] },
         { model: TableAction, as: "actions" },
       ],
     });
@@ -257,7 +258,7 @@ class CacheService {
     const table = await DynamicTable.findOne({
       where: { id },
       include: [
-        { model: DynamicColumn, as: "columns" },
+        { model: DynamicColumn, as: "columns", order: [["orderno", "ASC"]] },
         { model: TableAction, as: "actions" },
       ],
     });
