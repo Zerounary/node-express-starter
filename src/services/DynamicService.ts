@@ -466,6 +466,14 @@ class DynamicService {
             if (refId) {
               row[fieldName] = refId;
             }
+          } else if( col.dataType == ColumnDataTypes.ENUM ) {
+            let val = body[fieldName]
+            let option = col.ui?.componentProps?.options?.find(e => e.value == val);
+            if(!option) {
+              option = col.ui?.componentProps?.options?.find(e => e.label == val);
+            } else {
+              row[fieldName] = body[fieldName];
+            }
           } else {
             // 默认赋值
             row[fieldName] = body[fieldName];
@@ -596,6 +604,7 @@ class DynamicService {
     const fkColumns = tableConfig.columns.filter(
       (c: any) => c.dataType === ColumnDataTypes.ID && c.relatedToTableId
     );
+    const includeColumns: string[] = [];
     const attributesInclude: any[] = [];
 
     if (fkColumns.length > 0) {
@@ -635,9 +644,37 @@ class DynamicService {
         } AND rt.tenantId = ${Number(user.tenantId)} LIMIT 1)`;
 
         attributesInclude.push([sequelize.literal(subquery), `${col.name}`]);
+        includeColumns.push(col.name);
       }
     }
 
+    // 处理枚举类型字段
+    const enumColumns = tableConfig.columns.filter(
+      (c: any) => c.dataType === ColumnDataTypes.ENUM
+    );
+
+    for (const col of enumColumns) {
+      if (
+        col.ui?.componentProps?.options &&
+        Array.isArray(col.ui.componentProps.options) &&
+        col.ui.componentProps.options.length > 0
+      ) {
+        const optionsMap = new Map(
+          col.ui.componentProps.options.map((opt: any) => [opt.value, opt.label])
+        );
+        const caseQueryParts = [];
+        caseQueryParts.push(`CASE ${mainTableName}.${col.name}`);
+        for (const [value, label] of optionsMap.entries()) {
+          caseQueryParts.push(
+            `WHEN ${sequelize.escape((value as string))} THEN ${sequelize.escape((label as string))}`
+          );
+        }
+        caseQueryParts.push(`ELSE ${mainTableName}.${col.name} END`);
+
+        attributesInclude.push([sequelize.literal(caseQueryParts.join(" ")), col.name])
+        includeColumns.push(col.name);
+      }
+    }
     const data = await Model.findAll({
       where,
       attributes: { include: attributesInclude },
