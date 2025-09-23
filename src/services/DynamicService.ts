@@ -471,6 +471,9 @@ class DynamicService {
             let option = col.ui?.componentProps?.options?.find(e => e.value == val);
             if(!option) {
               option = col.ui?.componentProps?.options?.find(e => e.label == val);
+            } 
+            if(option) {
+              row[fieldName] = option.value;
             } else {
               row[fieldName] = body[fieldName];
             }
@@ -583,8 +586,29 @@ class DynamicService {
     if (!data || data.length === 0) {
       return "";
     }
+    // 替换第一行的列名为中文
+    const tableConfig = await CacheService.getTableByAliasName(tableName);
+    if (!tableConfig) {
+      throw new Error("表配置未找到");
+    }
+    const columnMap = new Map(
+      tableConfig.columns.map((col) => [col.name, col.description || col.name])
+    );
+    let csv = Papa.unparse(data, {
+      header: true,
+      newline: '\r\n',
+    } );
+    // TODO 待优化性能问题
+    const lines = csv.split("\r\n");
 
-    return "\uFEFF" + Papa.unparse(data);
+    const headerCols = lines[0].split(",");
+    const newHeaderCols = headerCols.map((col) =>
+      columnMap.get(col) ? `"${columnMap.get(col)}"` : col
+    );
+    lines[0] = newHeaderCols.join(",");
+    csv = lines.join("\r\n");
+
+    return "\uFEFF" + csv;
   }
 
   async getExportData(tableName, user, where) {
@@ -690,9 +714,19 @@ class DynamicService {
     options: { mode?: "insertTop" | "insertBottom" } = { mode: "insertTop" }
   ) {
     const { tenantId } = user;
+    const tableConfig = await CacheService.getTableByAliasName(tableName);
+    if (!tableConfig) {
+      throw new Error("表配置未找到");
+    }
     // 移除末尾的换行符
     csvBody = csvBody.replace(/[\r\n]+$/g, "");
-    const { data } = Papa.parse(csvBody, { header: true });
+    const columnMap = new Map(
+      tableConfig.columns.map((col) => [col.description, col.name])
+    );
+    const { data } = Papa.parse(csvBody, { header: true, transformHeader: h => {
+      let key = columnMap.get(h)
+      return key || h;
+    } });
 
     if (!data || data.length === 0) {
       return { success: true, count: 0 };
