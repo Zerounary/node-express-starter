@@ -111,7 +111,6 @@ const [Grid, gridApi] = useVbenVxeGrid({
     proxyConfig: {
       ajax: {
         query: async ({ page }, formValues) => {
-          console.log('loadx');
           return await getPage(table.table, {
             page: page.currentPage,
             pageSize: page.pageSize,

@@ -1,9 +1,23 @@
 import { baseRequestClient, requestClient } from '#/api/request';
 import { readFileAsText } from '#/utils';
 
+function cleanParams(params: object) {
+  if (!params) return {};
+  const newParams = {};
+  for (const key in params) {
+    if (Object.prototype.hasOwnProperty.call(params, key)) {
+      const value = params[key];
+      if (value !== null && value !== undefined && value !== '') {
+        newParams[key] = value;
+      }
+    }
+  }
+  return newParams;
+}
+
 async function get(url: string, params = {}) {
   return requestClient.get<Array<any>>(url, {
-    params,
+    params: cleanParams(params),
   });
 }
 
@@ -20,7 +34,7 @@ async function put(url: string, data) {
  */
 async function getKeywordList(table: string, params = {}) {
   return requestClient.get<Array<any>>(`/data/${table}/search`, {
-    params,
+    params: cleanParams(params),
   });
 }
 
@@ -29,7 +43,7 @@ async function getKeywordList(table: string, params = {}) {
  */
 async function getPage(table: string, params = {}) {
   return requestClient.get<Array<any>>(`/data/${table}/page`, {
-    params,
+    params: cleanParams(params),
   });
 }
 
@@ -38,7 +52,7 @@ async function getPage(table: string, params = {}) {
  */
 async function getList(table: string, params = {}) {
   return requestClient.get<Array<any>>(`/data/${table}/list`, {
-    params,
+    params: cleanParams(params),
   });
 }
 
@@ -83,7 +97,7 @@ async function remove(table: string, id: string) {
  * @returns
  */
 async function execute(table: string, actionName: string, params = {}) {
-  let res = await requestClient.post(`/action/${table}/${actionName}`, params);
+  let res = await requestClient.post(`/action/${table}/${actionName}`, cleanParams(params));
   return res;
 }
 
@@ -93,7 +107,7 @@ async function execute(table: string, actionName: string, params = {}) {
  * @param params 查询参数
  */
 async function exportData(table: string, params) {
-  return (requestClient as any).download(`/data/${table}/export`, { params });
+  return (requestClient as any).download(`/data/${table}/export`, { params: cleanParams(params) });
 }
 
 /**
@@ -123,7 +137,7 @@ async function importData(table: string, file: File, options: { mode?: 'insertTo
 
 async function search(table: string, params) {
   return requestClient.get<Array<any>>(`/data/${table}/search`, {
-    params,
+    params: cleanParams(params),
   });
 }
 
