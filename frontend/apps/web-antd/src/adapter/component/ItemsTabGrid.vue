@@ -93,6 +93,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
       { type: 'seq', width: 40 },
       ...columns.value,
     ],
+    columnConfig: {
+      width: 'auto',
+      minWidth: 'auto',
+    },
     formConfig: {
       collapsed: true,
     },
@@ -299,7 +303,7 @@ onMounted(() => {
 
 const onActionFinished = (state: string) => {
   if(state == 'success') {
-    selectionIds.value = []
+    onRefresh();
   }
 }
 </script>
@@ -318,15 +322,7 @@ const onActionFinished = (state: string) => {
               <Plus class="size-5" />{{ $t('ui.actionTitle.create', []) }}
             </Button>
           </AccessControl>
-          <AccessControl
-            :codes="getTableAccessCodes(filteredTableConfig.table, 'delete')"
-            type="code"
-          >
-            <Button v-show="selectionIds.length" danger @click="onDeleteBySelect">
-              <DeleteOutlined />
-              {{ $t('ui.actionTitle.delete', []) }}
-            </Button>
-          </AccessControl>
+
           <ActionButtonGroup
             type="item"
             :table="tableConfig.table"
@@ -340,6 +336,17 @@ const onActionFinished = (state: string) => {
             @on-finish="onActionFinished"
           />
         </space>
+      </template>
+      <template #toolbar-tools>
+        <AccessControl
+            :codes="getTableAccessCodes(filteredTableConfig.table, 'delete')"
+            type="code"
+          >
+            <Button v-show="selectionIds.length" danger @click="onDeleteBySelect">
+              <DeleteOutlined />
+              {{ $t('ui.actionTitle.delete', []) }}
+            </Button>
+          </AccessControl>
       </template>
     </Grid>
   </div>

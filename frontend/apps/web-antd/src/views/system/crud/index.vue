@@ -264,7 +264,7 @@ onMounted(() => {
 
 const onActionFinished = (state: string) => {
   if (state == 'success') {
-    selectionIds.value = [];
+    onRefresh();
   }
 };
 
@@ -285,19 +285,7 @@ const onExport = async () => {};
               {{ $t('ui.actionTitle.create', []) }}
             </Button>
           </AccessControl>
-          <AccessControl
-            :codes="getTableAccessCodes(tableName, 'delete')"
-            type="code"
-          >
-            <Button
-              v-show="selectionIds.length"
-              danger
-              @click="onDeleteBySelect"
-            >
-              <DeleteOutlined />
-              {{ $t('ui.actionTitle.delete', []) }}
-            </Button>
-          </AccessControl>
+
 
           <ActionButtonGroup
             type="list"
@@ -310,7 +298,21 @@ const onExport = async () => {};
           />
         </space>
       </template>
-      <template #toolbar-tools> </template>
+      <template #toolbar-tools>
+        <AccessControl
+            :codes="getTableAccessCodes(tableName, 'delete')"
+            type="code"
+          >
+            <Button
+              v-show="selectionIds.length"
+              danger
+              @click="onDeleteBySelect"
+            >
+              <DeleteOutlined />
+              {{ $t('ui.actionTitle.delete', []) }}
+            </Button>
+          </AccessControl>
+      </template>
     </Grid>
   </Page>
 </template>
