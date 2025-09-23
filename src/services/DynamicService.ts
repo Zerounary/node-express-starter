@@ -477,6 +477,28 @@ class DynamicService {
             } else {
               row[fieldName] = body[fieldName];
             }
+          } else if(col.dataType == ColumnDataTypes.BOOLEAN) {
+            let val = body[fieldName];
+            if(typeof val === 'string') {
+              if(val.toLowerCase() === 'true' || val === '1' || val === '是') {
+                row[fieldName] = true;
+              } else if(val.toLowerCase() === 'false' || val === '0' || val === '否') {
+                row[fieldName] = false;
+              } else {
+                row[fieldName] = val;
+              }
+            }
+          } else if([ColumnDataTypes.REGION, ColumnDataTypes.JSON].includes(col.dataType)) {
+            // JSON 类型，且传入的是字符串，则尝试转换
+            if(body[fieldName] && typeof body[fieldName] === 'string') {
+              try {
+                row[fieldName] = JSON.parse(body[fieldName]);
+              } catch(e) {
+                row[fieldName] = body[fieldName];
+              }
+            } else {
+              row[fieldName] = body[fieldName];
+            }
           } else {
             // 默认赋值
             row[fieldName] = body[fieldName];
@@ -699,6 +721,33 @@ class DynamicService {
         includeColumns.push(col.name);
       }
     }
+
+    // 处理 布尔类型字段
+    const boolColumns = tableConfig.columns.filter(
+      (c: any) => c.dataType === ColumnDataTypes.BOOLEAN
+    );
+    for (const col of boolColumns) {
+      const caseQueryParts = [];
+      caseQueryParts.push(`CASE ${mainTableName}.${col.name}`);
+      caseQueryParts.push(`WHEN true THEN '是'`);
+      caseQueryParts.push(`WHEN false THEN '否'`);
+      caseQueryParts.push(`ELSE '' END`);
+      attributesInclude.push([sequelize.literal(caseQueryParts.join(" ")), col.name])
+      includeColumns.push(col.name);
+    }
+
+    // 处理 JSON 类型字段
+    const jsonColumns = tableConfig.columns.filter(
+      (c: any) => [ColumnDataTypes.JSON, ColumnDataTypes.REGION].includes(c.dataType)
+    );
+
+    for (const col of jsonColumns) {
+      // 转成字符串
+      const jsonQuery = `COALESCE(CAST(${mainTableName}.${col.name} AS CHAR), '')`;
+      attributesInclude.push([sequelize.literal(jsonQuery), col.name])
+      includeColumns.push(col.name);
+    }
+  
     const data = await Model.findAll({
       where,
       attributes: { include: attributesInclude },
@@ -737,7 +786,9 @@ class DynamicService {
     for (let i = 0; i < recordsToCreate.length; i++) {
       let record = recordsToCreate[i];
       try {
-        await this.create(tableName, record, user);
+        await this.create(tableName, record, user, {
+          withUpdate: true,
+        });
       } catch (err) {
         errors.push({
           row: i + 1,
