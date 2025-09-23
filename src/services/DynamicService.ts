@@ -10,6 +10,11 @@ import { getDefaultValue } from "@/utils/parse";
 import Papa from "papaparse";
 import { DynamicTable } from "../db/models";
 
+export interface CreateOptions {
+  req?: any;
+  withUpdate: boolean;
+}
+
 class DynamicService {
   /**
    * 优化后的函数，用于高效地填充关联数据。
@@ -322,12 +327,7 @@ class DynamicService {
     if (!tableConfig) {
       throw new Error("表配置未找到");
     }
-
-    const akColumn = tableConfig.columns.find((col) => col.ak === true);
-    const dkColumn = tableConfig.columns.find((col) => col.dk === true);
-
-    const ak = akColumn ? akColumn.name : "name";
-    const dk = dkColumn ? dkColumn.name : ak;
+    let { ak, dk } = CacheService.getTableAkDkByName(tableName);
 
     const where: any = { tenantId: user.tenantId };
     if (keyword) {
@@ -373,6 +373,34 @@ class DynamicService {
     };
   }
 
+  async queryIdByAk(tableName: string, akValue: string, tenantId: number) {
+    const Model = await DynamicDataService.getModelForTable(
+      tableName,
+      tenantId
+    );
+    const { ak } = CacheService.getTableAkDkByName(tableName);
+    let result: any = await Model.findOne({
+      attributes: ["id"],
+      where: { [ak]: akValue, tenantId },
+      raw: true,
+    });
+    return result?.id;
+  }
+
+  async queryDkById(tableName: string, id: number, tenantId: number) {
+    const Model = await DynamicDataService.getModelForTable(
+      tableName,
+      tenantId
+    );
+    const { dk } = CacheService.getTableAkDkByName(tableName);
+    let result: any = await Model.findOne({
+      attributes: [dk],
+      where: { id, tenantId },
+      raw: true,
+    });
+    return result?.dk;
+  }
+
   async findOne(tableName: string, id: number, user: any) {
     const tableConfig = await CacheService.getTableByAliasName(tableName);
     if (!tableConfig) {
@@ -402,7 +430,7 @@ class DynamicService {
     return populatedData[0];
   }
 
-  async create(tableName: string, body: any, user: any, req?: any) {
+  async create(tableName: string, body: any, user: any, options?: any) {
     const Model = await DynamicDataService.getModelForTable(
       tableName,
       user.tenantId
@@ -410,30 +438,60 @@ class DynamicService {
 
     return await sequelize.transaction(async (t) => {
       let tableConfig = await CacheService.getTableByAliasName(tableName);
-      let row: any = { tenantId: user.tenantId };
-      tableConfig.columns
-        .filter((e) => isCreatable(e.ui?.mask))
-        .forEach((col) => {
-          const fieldName = col.name;
-          if (Object.prototype.hasOwnProperty.call(body, fieldName)) {
-            row[fieldName] = body[fieldName];
+      let row: any = {};
+      let columns = tableConfig.columns.filter(
+        (e) =>
+          isCreatable(e.ui?.mask) ||
+          (options?.withUpdate && isUpdatable(e.ui?.mask))
+      );
+      for (const col of columns) {
+        const fieldName = col.name;
+        if (Object.prototype.hasOwnProperty.call(body, fieldName)) {
+          // 如果是外键字段，并且不是数字，则查询对应的ID
+          if (
+            col.dataType === ColumnDataTypes.ID &&
+            col.relatedToTableId &&
+            body[fieldName] &&
+            isNaN(body[fieldName])
+          ) {
+            // 根据ak查询对应的ID
+            let refTableConfig = await CacheService.getTableById(
+              col.relatedToTableId
+            );
+            let refId = await this.queryIdByAk(
+              refTableConfig.name,
+              body[fieldName],
+              user.tenantId
+            );
+            if (refId) {
+              row[fieldName] = refId;
+            }
           } else {
-            row[fieldName] = getDefaultValue(col);
+            // 默认赋值
+            row[fieldName] = body[fieldName];
           }
-        });
-
+        } else {
+          row[fieldName] = getDefaultValue(col);
+        }
+      }
+      row.tenantId = user.tenantId;
       const modifiedBody = await HookService.executeHook(
         tableName,
         "beforeCreate",
         row,
-        req
+        options?.req
       );
       if (modifiedBody) {
         row = modifiedBody;
       }
 
       const instance = await Model.create(row, { transaction: t });
-      await HookService.executeHook(tableName, "afterCreate", instance, req);
+      await HookService.executeHook(
+        tableName,
+        "afterCreate",
+        instance,
+        options?.req
+      );
       return instance;
     });
   }
@@ -605,7 +663,7 @@ class DynamicService {
 
     let errors = [];
     const recordsToCreate = data.map((row: any) => ({ ...row, tenantId }));
-    for (let i = 0 ; i < recordsToCreate.length; i++) {
+    for (let i = 0; i < recordsToCreate.length; i++) {
       let record = recordsToCreate[i];
       try {
         await this.create(tableName, record, user);
@@ -613,11 +671,16 @@ class DynamicService {
         errors.push({
           row: i + 1,
           error: err instanceof Error ? err.message : String(err),
-        })
+        });
         continue;
       }
     }
-    return { msg: '操作成功', success: errors.length === 0, count: recordsToCreate.length, errors };
+    return {
+      msg: "操作成功",
+      success: errors.length === 0,
+      count: recordsToCreate.length,
+      errors,
+    };
   }
 }
 

@@ -216,6 +216,20 @@ class CacheService {
     return table ? (table.get({ plain: true }) as TableWithColumns) : undefined;
   }
 
+  public getTableAkDkByName(name: string): { ak: string; dk: string } {
+    let tableConfig = this.tables.byName.get(name);
+
+    const akColumn = tableConfig.columns.find((col) => col.ak === true);
+    const dkColumn = tableConfig.columns.find((col) => col.dk === true);
+
+    const ak = akColumn ? akColumn.name : "name";
+    const dk = dkColumn ? dkColumn.name : ak;
+    return {
+      ak,
+      dk
+    }
+  }
+
   public async getTableByAliasName(
     aliasName: string
   ): Promise<TableWithColumns | undefined> {

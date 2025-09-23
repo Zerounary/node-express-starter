@@ -86,7 +86,7 @@ export default class DynamicController {
     try {
       const { tableName } = req.params;
       const body = await req.json();
-      const instance = await DynamicService.create(tableName, body, req.user, req);
+      const instance = await DynamicService.create(tableName, body, req.user, {req});
       return ok(instance);
     } catch (error) {
       logError(error);

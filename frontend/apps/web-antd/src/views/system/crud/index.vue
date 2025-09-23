@@ -86,6 +86,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
         await importData(table.table, file, {
           mode: options.mode || 'insertTop',
         });
+        onRefresh();
       },
     },
     exportConfig: {
