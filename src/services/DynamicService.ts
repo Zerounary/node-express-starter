@@ -451,7 +451,7 @@ class DynamicService {
       let row: any = {};
       const updatableColumns = new Set(
         tableConfig.columns
-          .filter((c) => isCreatable(c.ui?.mask))
+          .filter((c) => isUpdatable(c.ui?.mask))
           .map((c) => c.name)
       );
 
