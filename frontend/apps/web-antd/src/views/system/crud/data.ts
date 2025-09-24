@@ -109,6 +109,7 @@ const mapToListSchemaColumn = (col) => {
     // 布尔类型要改成使用下拉选择
     return {
       ...col,
+      defaultValue: null,
       component: 'Select',
       componentProps: {
         allowClear: true,
@@ -122,6 +123,7 @@ const mapToListSchemaColumn = (col) => {
   }
   return {
     ...col,
+    defaultValue: null,
   };
 };
 
