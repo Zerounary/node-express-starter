@@ -39,6 +39,17 @@ export async function beforeCreate(data) {
       },
       ...data.ui
     }
+  } else if(data.dataType == ColumnDataTypes.DATERANGE){
+    data.ui = {
+      mask: "1111111111",
+      component: "RangePicker",
+      componentProps: {
+        showTime: true,
+        valueFormat: 'YYYY-MM-DD HH:mm:ss'
+      },
+      ...data.ui
+    }
+
   } else if(data.dataType == ColumnDataTypes.BOOLEAN) {
     data.ui = {
       mask: "1111111111",

@@ -5,6 +5,7 @@ export const ColumnDataTypes = {
   DATENUMBER: "DATENUMBER",
   DATE: 'DATE',
   DATETIME: 'DATE',
+  DATERANGE: 'JSON',
   QTY: 'QTY',
   AMT: 'AMT',
   STRING: 'STRING',
