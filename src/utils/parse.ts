@@ -81,13 +81,17 @@ function parseJSONValue(str: string): unknown | undefined {
 function fallbackDefault(column: DynamicColumn) {
   switch (column.dataType) {
     case ColumnDataTypes.ID:
-      return undefined;
+      return null;
     case ColumnDataTypes.DOCNO:
-      return "";
+      return null;
     case ColumnDataTypes.DATENUMBER:
       return 0; // 或使用当天 yyyymmdd
     case ColumnDataTypes.DATE:
-      return new Date();
+      if(column.defaultValue == 'now') {
+        // "2025-09-24T08:50:06.000Z" 字符串
+        return new Date().toISOString();
+      }
+      return null;
     case ColumnDataTypes.QTY:
     case ColumnDataTypes.INTEGER:
       return 0;
@@ -98,7 +102,7 @@ function fallbackDefault(column: DynamicColumn) {
       return 0n;
     case ColumnDataTypes.STRING:
     case ColumnDataTypes.TEXT:
-      return "";
+      return null;
     case ColumnDataTypes.ENUM:
       return null;
     case ColumnDataTypes.JSON:
@@ -108,9 +112,9 @@ function fallbackDefault(column: DynamicColumn) {
     case ColumnDataTypes.BOOLEAN:
       return false;
     case ColumnDataTypes.VIRTUAL:
-      return undefined;
+      return null;
     default:
-      return undefined;
+      return null;
   }
 }
 

@@ -3,6 +3,7 @@ import { DynamicColumn } from "@/db/models";
 import CacheService from "@/services/CacheService";
 import DynamicDataService from "@/services/DynamicDataService";
 import { AppError } from "@/utils";
+import { getDefaultValue } from "@/utils/parse";
 
 export async function beforeCreate(data) {
   data.alias_name = data.alias_name || data.name;
@@ -144,6 +145,7 @@ export async function getTableConfigById(tableId: number) {
         required: col.required,
         sortable: col.sortable,
         dataType: col.dataType,
+        defaultValue: getDefaultValue(col),
         relatedToTableId: col.relatedToTableId,
         relatedToTableName: relatedTables[col.relatedToTableId],
         rules,
