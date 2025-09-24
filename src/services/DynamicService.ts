@@ -623,13 +623,16 @@ class DynamicService {
     // TODO 待优化性能问题
     const lines = csv.split("\r\n");
 
-    const headerCols = lines[0].split(",");
-    const newHeaderCols = headerCols.map((col) =>
-      columnMap.get(col) ? `"${columnMap.get(col)}"` : col
-    );
-    lines[0] = newHeaderCols.join(",");
-    csv = lines.join("\r\n");
-
+    const nlIndex = csv.indexOf("\r\n");
+    if (nlIndex !== -1) {
+      const headerLine = csv.slice(0, nlIndex);
+      const headerCols = headerLine.split(",");
+      const newHeaderCols = headerCols.map((col) =>
+        columnMap.get(col) ? `"${columnMap.get(col)}"` : col
+      );
+      const newHeaderLine = newHeaderCols.join(",");
+      csv = newHeaderLine + csv.slice(nlIndex);
+    }
     return "\uFEFF" + csv;
   }
 
