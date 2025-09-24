@@ -54,7 +54,11 @@
               </a-select>
             </a-form-item>
             <a-form-item label="UI组件">
-              <a-select v-model:value="model.component" :options="componentTypes" style="width: 100%">
+              <a-select
+                v-model:value="model.component"
+                :options="componentTypes"
+                style="width: 100%"
+              >
               </a-select>
             </a-form-item>
 
@@ -453,7 +457,10 @@ const componentTypes = ref<SelectProps['options']>([
   },
   {
     label: '时间',
-    options: [{ value: 'DatePicker', label: '日期选择器' }],
+    options: [
+      { value: 'DatePicker', label: '日期选择器' },
+      { value: 'RangePicker', label: '日期范围选择器' },
+    ],
   },
   {
     label: '选择',
@@ -483,7 +490,7 @@ const componentTypes = ref<SelectProps['options']>([
   //   { value: 'ColumnTypeInput', label: '字段类型选择器' },
   //   { value: 'PermissionPicker', label: '权限选择器' },
   //   { value: 'MetaInput', label: '元数据输入' },
-]) ;
+]);
 
 const filterOps = [
   { value: 'like', label: '包含' },

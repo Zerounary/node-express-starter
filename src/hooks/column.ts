@@ -23,8 +23,22 @@ export async function beforeCreate(data) {
     data.ui = {
       mask: "1111111111",
       component: "DatePicker",
+      componentProps: {
+        showTime: false,
+        valueFormat: 'YYYY-MM-DD HH:mm:ss'
+      },
       ...data.ui
     };
+  } else if(data.dataType == ColumnDataTypes.DATETIME) {
+    data.ui = {
+      mask: "1111111111",
+      component: "DatePicker",
+      componentProps: {
+        showTime: true,
+        valueFormat: 'YYYY-MM-DD HH:mm:ss'
+      },
+      ...data.ui
+    }
   } else if(data.dataType == ColumnDataTypes.BOOLEAN) {
     data.ui = {
       mask: "1111111111",
@@ -39,6 +53,14 @@ export async function beforeCreate(data) {
       ...data.ui
     };
   }
+  // 如果组是分隔的话
+  if(data.component == 'Divider') {
+    data.ui = {
+      ...data.ui,
+      mask: "0010000000",
+      dataType: ColumnDataTypes.VIRTUAL,
+    }
+  }
 }
 
 export async function afterCreate(instance) {
@@ -48,6 +70,14 @@ export async function afterCreate(instance) {
 export async function beforeUpdate(id, data) {
   console.log("beforeUpdate hook for demo table", id, data);
   data.updatedAt = new Date();
+
+  if(data.component == 'Divider') {
+    data.ui = {
+      ...data.ui,
+      mask: "0010000000",
+      dataType: ColumnDataTypes.VIRTUAL,
+    }
+  }
   return data;
 }
 

@@ -20,9 +20,8 @@ import { ApiComponent, globalShareState, IconPicker } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
-import PermissionPicker from './PermissionPicker.vue'
-import Text from './Text.vue'
-import DatePicker from './DatePicker.vue'
+import PermissionPicker from './PermissionPicker.vue';
+import Text from './Text.vue';
 import RichText from './RichText.vue';
 import QRCode from './QRCode.vue';
 import ColumnTypeInput from './ColumnTypeInput.vue';
@@ -31,21 +30,11 @@ import Divider from './Divider.vue';
 import ActionButtonGroup from './ActionButtonGroup.vue';
 
 // 所有使用 vben 组件的需异步使用。
-const MediaPicker = defineAsyncComponent(
-  () => import('./MediaPicker.vue'),
-);
-const FkPicker = defineAsyncComponent(
-  () => import('./FkPicker.vue'),
-);
-const UIInput = defineAsyncComponent(
-  () => import('./UIInput.vue'),
-);
-const MetaInput = defineAsyncComponent(
-  () => import('./MetaInput.vue'),
-);
-const Items = defineAsyncComponent(
-  () => import('./Items.vue'),
-);
+const MediaPicker = defineAsyncComponent(() => import('./MediaPicker.vue'));
+const FkPicker = defineAsyncComponent(() => import('./FkPicker.vue'));
+const UIInput = defineAsyncComponent(() => import('./UIInput.vue'));
+const MetaInput = defineAsyncComponent(() => import('./MetaInput.vue'));
+const Items = defineAsyncComponent(() => import('./Items.vue'));
 const AutoComplete = defineAsyncComponent(
   () => import('ant-design-vue/es/auto-complete'),
 );
@@ -70,6 +59,9 @@ const Mentions = defineAsyncComponent(
 const Radio = defineAsyncComponent(() => import('ant-design-vue/es/radio'));
 const RadioGroup = defineAsyncComponent(() =>
   import('ant-design-vue/es/radio').then((res) => res.RadioGroup),
+);
+const DatePicker = defineAsyncComponent(
+  () => import('ant-design-vue/es/date-picker'),
 );
 const RangePicker = defineAsyncComponent(() =>
   import('ant-design-vue/es/date-picker').then((res) => res.RangePicker),

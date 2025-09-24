@@ -4,6 +4,7 @@ export const ColumnDataTypes = {
   DOCNO: "DOCNO",
   DATENUMBER: "DATENUMBER",
   DATE: 'DATE',
+  DATETIME: 'DATE',
   QTY: 'QTY',
   AMT: 'AMT',
   STRING: 'STRING',
