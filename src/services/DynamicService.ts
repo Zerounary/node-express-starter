@@ -327,7 +327,7 @@ class DynamicService {
     if (!tableConfig) {
       throw new Error("表配置未找到");
     }
-    let { ak, dk } = CacheService.getTableAkDkByName(tableName);
+    let { ak, dk } = CacheService.getTableAkDkByAliasName(tableName);
 
     const where: any = { tenantId: user.tenantId };
     if (keyword) {
@@ -378,7 +378,7 @@ class DynamicService {
       tableName,
       tenantId
     );
-    const { ak } = CacheService.getTableAkDkByName(tableName);
+    const { ak } = CacheService.getTableAkDkByAliasName(tableName);
     let result: any = await Model.findOne({
       attributes: ["id"],
       where: { [ak]: akValue, tenantId },
@@ -392,7 +392,7 @@ class DynamicService {
       tableName,
       tenantId
     );
-    const { dk } = CacheService.getTableAkDkByName(tableName);
+    const { dk } = CacheService.getTableAkDkByAliasName(tableName);
     let result: any = await Model.findOne({
       attributes: [dk],
       where: { id, tenantId },
@@ -459,7 +459,7 @@ class DynamicService {
               col.relatedToTableId
             );
             let refId = await this.queryIdByAk(
-              refTableConfig.name,
+              refTableConfig.alias_name || refTableConfig.name,
               body[fieldName],
               user.tenantId
             );

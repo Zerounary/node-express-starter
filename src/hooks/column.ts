@@ -7,29 +7,30 @@ export async function beforeCreate(data) {
     let refTable = await CacheService.getTableById(data.relatedToTableId)
     data.ui = {
       mask: "1111111111",
-      
       component: "FkPicker",
       componentProps: {
         table: refTable.alias_name
-      }
+      },
+      ...data.ui
     }
   } else if(data.dataType == ColumnDataTypes.ENUM) {
     data.ui = {
       mask: "1111111111",
-      
       component: "Select",
+      ...data.ui
     };
   } else if(data.dataType == ColumnDataTypes.DATE) {
     data.ui = {
       mask: "1111111111",
-      
       component: "DatePicker",
+      ...data.ui
     };
   } else {
     data.ui = {
       mask: "1111111111",
       filterOp: 'llike',
       component: "Input",
+      ...data.ui
     };
   }
 }
