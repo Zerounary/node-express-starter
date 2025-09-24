@@ -25,10 +25,16 @@ export async function beforeCreate(data) {
       component: "DatePicker",
       ...data.ui
     };
+  } else if(data.dataType == ColumnDataTypes.BOOLEAN) {
+    data.ui = {
+      mask: "1111111111",
+      component: "Checkbox",
+      ...data.ui
+    };
   } else {
     data.ui = {
       mask: "1111111111",
-      filterOp: 'llike',
+      filterOp: 'like',
       component: "Input",
       ...data.ui
     };

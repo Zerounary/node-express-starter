@@ -495,6 +495,8 @@ class DynamicService {
               } else {
                 row[fieldName] = val;
               }
+            } else {
+                row[fieldName] = val;
             }
           } else if (
             [ColumnDataTypes.REGION, ColumnDataTypes.JSON].includes(
