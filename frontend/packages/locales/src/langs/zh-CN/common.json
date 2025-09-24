@@ -20,5 +20,8 @@
   "yes": "是",
   "no": "否",
   "showSearchPanel": "显示搜索面板",
-  "hideSearchPanel": "隐藏搜索面板"
+  "hideSearchPanel": "隐藏搜索面板",
+  "true": "是",
+  "false": "否",
+  "all": "全部"
 }

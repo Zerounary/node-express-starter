@@ -5,7 +5,7 @@ import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SystemTableApi } from '#/api';
 
 import { $t } from '#/locales';
-import { applyDependencies } from '#/utils';
+import { applyDependencies, ColumnDataTypes } from '#/utils';
 import { useAccess } from '@vben/access';
 
 export const isCreateVisable = (col) => col.mask?.charAt(0) == '1';
@@ -105,6 +105,21 @@ const mapToCreateSchemaColumn = (col) => {
 };
 
 const mapToListSchemaColumn = (col) => {
+  if(col.dataType === ColumnDataTypes.BOOLEAN) {
+    // 布尔类型要改成使用下拉选择
+    return {
+      ...col,
+      component: 'Select',
+      componentProps: {
+        allowClear: true,
+        options: [
+          { label: $t('common.all'), value: null },
+          { label: $t('common.true'), value: true },
+          { label: $t('common.false'), value: false },
+        ],
+      }
+    }
+  }
   return {
     ...col,
   };
