@@ -466,34 +466,46 @@ class DynamicService {
             if (refId) {
               row[fieldName] = refId;
             }
-          } else if( col.dataType == ColumnDataTypes.ENUM ) {
-            let val = body[fieldName]
-            let option = col.ui?.componentProps?.options?.find(e => e.value == val);
-            if(!option) {
-              option = col.ui?.componentProps?.options?.find(e => e.label == val);
-            } 
-            if(option) {
+          } else if (col.dataType == ColumnDataTypes.ENUM) {
+            let val = body[fieldName];
+            let option = col.ui?.componentProps?.options?.find(
+              (e) => e.value == val
+            );
+            if (!option) {
+              option = col.ui?.componentProps?.options?.find(
+                (e) => e.label == val
+              );
+            }
+            if (option) {
               row[fieldName] = option.value;
             } else {
               row[fieldName] = body[fieldName];
             }
-          } else if(col.dataType == ColumnDataTypes.BOOLEAN) {
+          } else if (col.dataType == ColumnDataTypes.BOOLEAN) {
             let val = body[fieldName];
-            if(typeof val === 'string') {
-              if(val.toLowerCase() === 'true' || val === '1' || val === '是') {
+            if (typeof val === "string") {
+              if (val.toLowerCase() === "true" || val === "1" || val === "是") {
                 row[fieldName] = true;
-              } else if(val.toLowerCase() === 'false' || val === '0' || val === '否') {
+              } else if (
+                val.toLowerCase() === "false" ||
+                val === "0" ||
+                val === "否"
+              ) {
                 row[fieldName] = false;
               } else {
                 row[fieldName] = val;
               }
             }
-          } else if([ColumnDataTypes.REGION, ColumnDataTypes.JSON].includes(col.dataType)) {
+          } else if (
+            [ColumnDataTypes.REGION, ColumnDataTypes.JSON].includes(
+              col.dataType
+            )
+          ) {
             // JSON 类型，且传入的是字符串，则尝试转换
-            if(body[fieldName] && typeof body[fieldName] === 'string') {
+            if (body[fieldName] && typeof body[fieldName] === "string") {
               try {
                 row[fieldName] = JSON.parse(body[fieldName]);
-              } catch(e) {
+              } catch (e) {
                 row[fieldName] = body[fieldName];
               }
             } else {
@@ -618,8 +630,8 @@ class DynamicService {
     );
     let csv = Papa.unparse(data, {
       header: true,
-      newline: '\r\n',
-    } );
+      newline: "\r\n",
+    });
     // TODO 待优化性能问题
     const lines = csv.split("\r\n");
 
@@ -709,18 +721,26 @@ class DynamicService {
         col.ui.componentProps.options.length > 0
       ) {
         const optionsMap = new Map(
-          col.ui.componentProps.options.map((opt: any) => [opt.value, opt.label])
+          col.ui.componentProps.options.map((opt: any) => [
+            opt.value,
+            opt.label,
+          ])
         );
         const caseQueryParts = [];
         caseQueryParts.push(`CASE ${mainTableName}.${col.name}`);
         for (const [value, label] of optionsMap.entries()) {
           caseQueryParts.push(
-            `WHEN ${sequelize.escape((value as string))} THEN ${sequelize.escape((label as string))}`
+            `WHEN ${sequelize.escape(value as string)} THEN ${sequelize.escape(
+              label as string
+            )}`
           );
         }
         caseQueryParts.push(`ELSE ${mainTableName}.${col.name} END`);
 
-        attributesInclude.push([sequelize.literal(caseQueryParts.join(" ")), col.name])
+        attributesInclude.push([
+          sequelize.literal(caseQueryParts.join(" ")),
+          col.name,
+        ]);
         includeColumns.push(col.name);
       }
     }
@@ -735,22 +755,25 @@ class DynamicService {
       caseQueryParts.push(`WHEN true THEN '是'`);
       caseQueryParts.push(`WHEN false THEN '否'`);
       caseQueryParts.push(`ELSE '' END`);
-      attributesInclude.push([sequelize.literal(caseQueryParts.join(" ")), col.name])
+      attributesInclude.push([
+        sequelize.literal(caseQueryParts.join(" ")),
+        col.name,
+      ]);
       includeColumns.push(col.name);
     }
 
     // 处理 JSON 类型字段
-    const jsonColumns = tableConfig.columns.filter(
-      (c: any) => [ColumnDataTypes.JSON, ColumnDataTypes.REGION].includes(c.dataType)
+    const jsonColumns = tableConfig.columns.filter((c: any) =>
+      [ColumnDataTypes.JSON, ColumnDataTypes.REGION].includes(c.dataType)
     );
 
     for (const col of jsonColumns) {
       // 转成字符串
       const jsonQuery = `COALESCE(CAST(${mainTableName}.${col.name} AS CHAR), '')`;
-      attributesInclude.push([sequelize.literal(jsonQuery), col.name])
+      attributesInclude.push([sequelize.literal(jsonQuery), col.name]);
       includeColumns.push(col.name);
     }
-  
+
     const data = await Model.findAll({
       where,
       attributes: { include: attributesInclude },
@@ -775,10 +798,19 @@ class DynamicService {
     const columnMap = new Map(
       tableConfig.columns.map((col) => [col.description, col.name])
     );
-    const { data } = Papa.parse(csvBody, { header: true, transformHeader: h => {
-      let key = columnMap.get(h)
-      return key || h;
-    } });
+    const { data } = Papa.parse(csvBody, {
+      header: true,
+      transformHeader: (h) => {
+        let key = columnMap.get(h);
+        return key || h;
+      },
+      transform: (value, header) => {
+        if(value === '' || value === undefined) {
+           return null;
+        }
+        return value;
+      }
+    });
 
     if (!data || data.length === 0) {
       return { success: true, count: 0 };
