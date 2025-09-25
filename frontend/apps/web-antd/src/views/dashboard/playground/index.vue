@@ -68,6 +68,56 @@
         </div>
       </ACard>
 
+      <ACard title="日期/时间选择 Playground" class="component-card">
+        <AForm :model="formState" layout="vertical">
+          <AFormItem label="日期（年月日）">
+            <ADatePicker
+              v-model:value="formState.date"
+              valueFormat='YYYY-MM-DD HH:mm:ss'
+              format="YYYY-MM-DD"
+              style="width: 100%"
+            />
+            <div>{{ formState.date}}</div>
+          </AFormItem>
+
+          <AFormItem label="日期时间">
+            <ADatePicker
+              v-model:value="formState.dateTime"
+              show-time
+              format="YYYY-MM-DD HH:mm:ss"
+              valueFormat='YYYY-MM-DD HH:mm:ss'
+              style="width: 100%"
+            />
+            <div>{{ formState.dateTime}}</div>
+          </AFormItem>
+
+          <AFormItem label="时间">
+            <ATimePicker
+              v-model:value="formState.time"
+              format="HH:mm:ss"
+              valueFormat='YYYY-MM-DD HH:mm:ss'
+              style="width: 100%"
+            />
+            <div>{{ formState.time}}</div>
+          </AFormItem>
+
+          <AFormItem label="时间范围">
+            <ADatePicker.RangePicker
+              v-model:value="formState.timeRange"
+              show-time
+              format="YYYY-MM-DD HH:mm:ss"
+              valueFormat='YYYY-MM-DD HH:mm:ss'
+              style="width: 100%"
+            />
+            <div>
+              {{
+                formState.timeRange
+              }}
+            </div>
+          </AFormItem>
+        </AForm>
+      </ACard>
+
       <div class="right-column">
         <ACard title="QRCode Playground" class="component-card">
           <AFormItem label="QR Code Content">
@@ -205,6 +255,7 @@
 
 <script setup lang="ts">
 import { reactive, onMounted } from 'vue';
+import dayjs from 'dayjs';
 import { UploadOutlined } from '@ant-design/icons-vue';
 import {
   Card as ACard,
@@ -213,6 +264,8 @@ import {
   Button as AButton,
   Input as AInput,
   Space as ASpace,
+  DatePicker as ADatePicker,
+  TimePicker as ATimePicker,
   message,
 } from 'ant-design-vue';
 import MediaPicker, {
@@ -276,6 +329,11 @@ const formState = reactive({
     address: [] as string[],
     detailAddress: '',
   },
+  // 日期/时间相关
+  date: null as any,
+  dateTime: null as any,
+  time: null as any,
+  timeRange: ["2025-09-10 00:00:00", "2025-10-17 00:00:00"] as any[],
 });
 
 const rawDependencySchemas = [

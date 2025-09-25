@@ -63,6 +63,8 @@ const wrappItemClass = (col, component) => {
         label: col.label,
       }
     }
+  } else {
+    col.formItemClass = col.wrapperClass
   }
 }
 

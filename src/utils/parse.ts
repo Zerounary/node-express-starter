@@ -85,12 +85,14 @@ function fallbackDefault(column: DynamicColumn) {
     case ColumnDataTypes.DOCNO:
       return null;
     case ColumnDataTypes.DATENUMBER:
-      return 0; // 或使用当天 yyyymmdd
+      return null; // 或使用当天 yyyymmdd
     case ColumnDataTypes.DATE:
       if(column.defaultValue == 'now') {
         // "2025-09-24T08:50:06.000Z" 字符串
         return new Date().toISOString();
       }
+      return null;
+    case ColumnDataTypes.DATERANGE:
       return null;
     case ColumnDataTypes.QTY:
     case ColumnDataTypes.INTEGER:
@@ -106,11 +108,11 @@ function fallbackDefault(column: DynamicColumn) {
     case ColumnDataTypes.ENUM:
       return null;
     case ColumnDataTypes.JSON:
-      return {};
+      return null;
     case ColumnDataTypes.REGION:
-      return [];
+      return null;
     case ColumnDataTypes.BOOLEAN:
-      return false;
+      return null;
     case ColumnDataTypes.VIRTUAL:
       return null;
     default:
