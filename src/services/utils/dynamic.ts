@@ -1,6 +1,5 @@
 import { DynamicTable } from "@/db/models";
 import sequelize from "@/db/sequelize";
-import SchemaService from "../SchemaService";
 import { logError } from "@/logger";
 import { ok } from "@/router/api";
 import { fail } from "assert";

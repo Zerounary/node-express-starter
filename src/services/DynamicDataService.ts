@@ -69,6 +69,12 @@ class DynamicDataService {
         return DataTypes.INTEGER;
       case ColumnDataTypes.AMT:
         return DataTypes.DECIMAL;
+      case ColumnDataTypes.DATETIME:
+        return DataTypes.DATE;
+      case ColumnDataTypes.DATERANGE:
+        return DataTypes.JSON;
+      case ColumnDataTypes.REGION:
+        return DataTypes.JSON;
       default:
         let defaultType = DataTypes[ColumnDataTypes[dataType.toUpperCase()]];
         if (!defaultType) {
