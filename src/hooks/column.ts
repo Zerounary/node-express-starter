@@ -62,7 +62,7 @@ export async function beforeCreate(data) {
       component: "LocatePicker",
       ...data.ui
     };
-  }  else if (data.dataType == ColumnDataTypes.QTY) {
+  }  else if (data.dataType == ColumnDataTypes.QTY || data.dataType == ColumnDataTypes.AMT) {
     data.ui = {
       mask: "1111111111",
       component: "InputNumber",
