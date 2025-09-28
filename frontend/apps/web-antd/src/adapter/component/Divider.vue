@@ -1,5 +1,5 @@
 <template>
-  <divider orientation="left">{{ label }}</divider>
+  <divider orientation="left"><span class="text-blue-500">{{ label }}</span></divider>
 </template>
 
 <script setup lang="ts">
