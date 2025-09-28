@@ -135,7 +135,7 @@ export async function getTableConfigById(tableId: number) {
     defaultSort: table.defaultSort,
     actions,
     columns: columns.map((col) => {
-      let rules = col.ui.rules || (col.required ? 'required' : null);
+      let rules = col.ui.rules?.length ? col.ui.rules : (col.required ? 'required' : null);
       return {
         id: col.id,
         fieldName: col.name,
@@ -148,8 +148,8 @@ export async function getTableConfigById(tableId: number) {
         defaultValue: getDefaultValue(col),
         relatedToTableId: col.relatedToTableId,
         relatedToTableName: relatedTables[col.relatedToTableId],
-        rules,
         ...col.ui,
+        rules,
       };
     }),
   };
