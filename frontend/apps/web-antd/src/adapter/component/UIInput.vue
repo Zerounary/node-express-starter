@@ -463,6 +463,12 @@ const componentTypes = ref<SelectProps['options']>([
     ],
   },
   {
+    label: '地点',
+    options: [
+      { value: 'LocatePicker', label: '地点选择器' },
+    ],
+  },
+  {
     label: '选择',
     options: [
       { value: 'Select', label: '下拉选择器' },
