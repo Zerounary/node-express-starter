@@ -70,7 +70,6 @@ const fieldNames = {
 
 // 根据初始值加载对应的数据层级
 const loadInitialData = async (initialValues: string[] = []) => {
-  if (isInitializing.value || !initialValues.length) return;
   isInitializing.value = true;
   loading.value = true;
 
