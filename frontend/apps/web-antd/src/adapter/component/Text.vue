@@ -28,7 +28,13 @@ const Textof = (val, dataType) => {
     case ColumnDataTypes.DATENUMBER:
       return dayjs(val).format('YYYY-MM-DD');
     case ColumnDataTypes.DATE:
+    case ColumnDataTypes.DATETIME:
       return (val && dayjs(val).format('YYYY-MM-DD HH:mm:ss')) || val;
+    case ColumnDataTypes.DATERANGE:
+      const [start, end] = val || [];
+      const startStr = (start && dayjs(start).format('YYYY-MM-DD')) || '';
+      const endStr = (end && dayjs(end).format('YYYY-MM-DD')) || '';
+      return startStr && endStr ? `${startStr} ~ ${endStr}` : '';
     case ColumnDataTypes.BOOLEAN:
       return val ? '是' : '否';
     case ColumnDataTypes.ENUM:
