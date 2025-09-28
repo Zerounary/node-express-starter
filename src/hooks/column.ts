@@ -56,6 +56,12 @@ export async function beforeCreate(data) {
       component: "Checkbox",
       ...data.ui
     };
+  } else if (data.dataType == ColumnDataTypes.REGION) {
+    data.ui = {
+      mask: "1111111111",
+      component: "LocatePicker",
+      ...data.ui
+    };
   } else {
     data.ui = {
       mask: "1111111111",
