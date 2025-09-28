@@ -88,7 +88,7 @@ export async function beforeUpdate(id, data) {
   console.log("beforeUpdate hook for demo table", id, data);
   data.updatedAt = new Date();
 
-  if(data.component == 'Divider') {
+  if(data.ui?.component == 'Divider') {
     data.ui = {
       ...data.ui,
       mask: "0010000000",
