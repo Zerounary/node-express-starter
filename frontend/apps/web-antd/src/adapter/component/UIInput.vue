@@ -67,12 +67,13 @@
               v-if="!['Items', 'Select'].includes(model.component)"
               label="组件属性 (JSON)"
             >
-              <a-textarea
-                v-model:value="componentPropsString"
-                :rows="5"
-                @blur="handlePropsChange"
+              <JsonEditor
+                v-model:json="model.componentProps"
+                :rows="10"
               />
-              <div class="mt-1 text-xs text-gray-500">请输入合法的JSON格式</div>
+              <div class="mt-1 text-xs text-gray-500">
+                支持 JSONC（注释与尾逗号），实时校验与格式化，右侧可折叠视图
+              </div>
             </a-form-item>
 
             <!-- Specific UI for 'Select' component options -->
@@ -355,6 +356,7 @@ import {
   type SelectProps,
 } from 'ant-design-vue';
 import FkPicker from './FkPicker.vue';
+import JsonEditor from './JsonEditor.vue';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue';
 import { z } from '@vben/common-ui';
 
@@ -376,6 +378,10 @@ interface ColumnUI {
     | 'InputNumber'
     | 'InputPassword'
     | 'DatePicker'
+    | 'RangePicker'
+    | 'LocatePicker'
+    | 'Select'
+    | 'Checkbox'
     | 'FkPicker'
     | 'RadioGroup'
     | 'UIInput'
@@ -688,36 +694,9 @@ const triggerFields = computed<string[]>({
   },
 });
 
-// Computed property to handle JSON conversion for componentProps
-const componentPropsString = computed({
-  get() {
-    try {
-      return model.value.componentProps
-        ? JSON.stringify(model.value.componentProps, null, 2)
-        : '';
-    } catch (e) {
-      return '';
-    }
-  },
-  set(val: string) {
-    try {
-      if (val.trim()) {
-        model.value.componentProps = JSON.parse(val);
-      } else {
-        model.value.componentProps = {};
-      }
-    } catch (e) {
-      console.error('Invalid JSON format for componentProps', e);
-      // Optionally, handle the error in the UI
-    }
-  },
-});
 
-// Update the model on blur event from the textarea
-const handlePropsChange = (e: Event) => {
-  const target = e.target as HTMLTextAreaElement;
-  componentPropsString.value = target.value;
-};
+
+
 
 // Zod Rules Configuration
 const validationTypes = [
