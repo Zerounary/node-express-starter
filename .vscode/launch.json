@@ -16,6 +16,14 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "start"],
       "outputCapture": "std"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Node: mocha-test",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "test"],
+      "outputCapture": "std"
     }
   ]
 }
