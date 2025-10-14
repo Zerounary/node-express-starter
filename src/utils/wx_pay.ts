@@ -4,6 +4,12 @@ import https from "https";
 import path from "path";
 import crypto from "crypto";
 
+const wx_pay_config = {
+  appid: "wx72638e25f4a37963", // 公众号ID
+  mchid: "1498998302", // 商户号
+  key: "SCJHTwxpay202004159002562867fk6y", // APIv3密钥
+};
+
 /**
  * 生成v2签名
  * @param params 参与签名的参数
@@ -23,18 +29,21 @@ export function signV2(params: Record<string, any>): string {
   return sign;
 }
 
-const wx_pay_config = {
-  appid: "wx72638e25f4a37963", // 公众号ID
-  mchid: "1498998302", // 商户号
-  key: "SCJHTwxpay202004159002562867fk6y", // APIv3密钥
-};
-
 const easy_pay = new Pay({
   mch_id: wx_pay_config.mchid,
   v2_secret_key: wx_pay_config.key,
   certificate: "./cert/apiclient_cert.pem",
   private_key: "./cert/apiclient_key.pem",
 });
+
+const getBaseParams = () => {
+  const nonce_str = Math.random().toString(36).substr(2, 15);
+  return {
+    mch_id: wx_pay_config.mchid,
+    appid: wx_pay_config.appid,
+    nonce_str,
+  };
+};
 
 /**
  * 订单查询
@@ -55,15 +64,6 @@ export async function orderquery(params: {
   return res;
 }
 
-const getBaseParams = () => {
-  const nonce_str = Math.random().toString(36).substr(2, 15);
-  return {
-    mch_id: wx_pay_config.mchid,
-    appid: wx_pay_config.appid,
-    nonce_str,
-  };
-};
-
 export async function sendredpack(params: {
   mch_billno: string;
   send_name: string;
@@ -81,7 +81,6 @@ export async function sendredpack(params: {
     wxappid: wx_pay_config.appid,
     ...params,
   };
-  console.log('sign', signV2(data))
   let res = await client.post( "mmpaymkttransfers/sendredpack", {
     data,
     httpsAgent: new https.Agent({
@@ -90,7 +89,5 @@ export async function sendredpack(params: {
       rejectUnauthorized: true,
     }),
   });
-  // @ts-ignore
-  console.log('req', res?.response?.config.data)
   return res;
 }
