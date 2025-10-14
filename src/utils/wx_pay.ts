@@ -1,9 +1,27 @@
-import WxPay from "wechatpay-node-v3"; // 支持使用require
-import fs from "fs";
-import request from "superagent";
-import { jsonToXml } from "./xml";
-
 import { Pay } from "node-easywechat";
+import fs from "fs";
+import https from "https";
+import path from "path";
+import crypto from "crypto";
+
+/**
+ * 生成v2签名
+ * @param params 参与签名的参数
+ * @returns sign
+ */
+export function signV2(params: Record<string, any>): string {
+  const sortedKeys = Object.keys(params).sort();
+  let stringA = sortedKeys
+    .filter(
+      (key) =>
+        params[key] !== undefined && params[key] !== null && params[key] !== ""
+    )
+    .map((key) => `${key}=${params[key]}`)
+    .join("&");
+  stringA = `${stringA}&key=${wx_pay_config.key}`;
+  const sign = crypto.createHash("md5").update(stringA).digest("hex").toUpperCase();
+  return sign;
+}
 
 const wx_pay_config = {
   appid: "wx72638e25f4a37963", // 公众号ID
@@ -17,15 +35,6 @@ const easy_pay = new Pay({
   certificate: "./cert/apiclient_cert.pem",
   private_key: "./cert/apiclient_key.pem",
 });
-
-const getBaseParams = () => {
-  const nonce_str = Math.random().toString(36).substr(2, 15);
-  return {
-    mch_id: wx_pay_config.mchid,
-    appid: wx_pay_config.appid,
-    nonce_str,
-  };
-};
 
 /**
  * 订单查询
@@ -46,6 +55,15 @@ export async function orderquery(params: {
   return res;
 }
 
+const getBaseParams = () => {
+  const nonce_str = Math.random().toString(36).substr(2, 15);
+  return {
+    mch_id: wx_pay_config.mchid,
+    appid: wx_pay_config.appid,
+    nonce_str,
+  };
+};
+
 export async function sendredpack(params: {
   mch_billno: string;
   send_name: string;
@@ -53,17 +71,26 @@ export async function sendredpack(params: {
   total_amount: number;
   total_num: number;
   wishing: string;
-  client_ip: string;
+  client_ip?: string;
   act_name: string;
   remark: string;
 }) {
   let client = easy_pay.getClient();
-  let res = await client.post("mmpaymkttransfers/sendredpack", {
-    data: {
-      ...getBaseParams(),
-      wxappid: wx_pay_config.appid,
-      ...params,
-    },
+  let data = {
+    ...getBaseParams(),
+    wxappid: wx_pay_config.appid,
+    ...params,
+  };
+  console.log('sign', signV2(data))
+  let res = await client.post( "mmpaymkttransfers/sendredpack", {
+    data,
+    httpsAgent: new https.Agent({
+      cert: fs.readFileSync("./cert/apiclient_cert.pem"),
+      key: fs.readFileSync("./cert/apiclient_key.pem"),
+      rejectUnauthorized: true,
+    }),
   });
+  // @ts-ignore
+  console.log('req', res?.response?.config.data)
   return res;
 }
