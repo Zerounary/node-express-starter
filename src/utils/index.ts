@@ -52,8 +52,14 @@ class AppError extends Error {
   }
 }
 
+const isListable = (mask: string) => {
+  return mask?.charAt(4) == '1'
+}
 const isCreatable = (mask: string) => {
   return mask?.charAt(1) == '1'
+}
+const isUpdateVisable = (mask: string) => {
+  return mask?.charAt(2) == '1'
 }
 const isUpdatable = (mask: string) => {
   return mask?.charAt(3) == '1'
@@ -62,7 +68,9 @@ export {
   get_app_name,
   ColumnDataTypes,
   listToTree,
+  isListable,
   isCreatable,
+  isUpdateVisable,
   isUpdatable,
   AppError,
 }

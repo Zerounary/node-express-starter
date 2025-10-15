@@ -8,7 +8,7 @@ import { computed, defineProps, ref } from 'vue';
 import { useVbenDrawer } from '@vben/common-ui';
 
 import { useVbenForm } from '#/adapter/form';
-import { create, update } from '#/api/system/crud';
+import { create, update, getById } from '#/api/system/crud';
 import { $t } from '#/locales';
 
 import {
@@ -88,12 +88,14 @@ const [Drawer, drawerApi] = useVbenDrawer({
         formApi.setFieldValue(data._parentKey, data._parentId);
       }
       if (data?.id) {
-        formData.value = data;
-        id.value = data.id;
-        formApi.setState({
-          schema: useFormUpdateSchema(props.table, { formApi, data }),
+        getById(tableName.value, data.id).then(detail => {
+          formData.value = detail;
+          id.value = detail.id;
+          formApi.setState({
+            schema: useFormUpdateSchema(props.table, { formApi, data: detail }),
+          });
+          formApi.setValues(detail);
         });
-        formApi.setValues(data);
       } else {
         id.value = undefined;
         formApi.setState({

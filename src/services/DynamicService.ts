@@ -1,6 +1,6 @@
 import { Op } from "sequelize";
 import { logError } from "../logger";
-import { ColumnDataTypes, isCreatable, isUpdatable } from "@/utils";
+import { ColumnDataTypes, isCreatable, isListable, isUpdatable, isUpdateVisable } from "@/utils";
 import CacheService from "@/services/CacheService";
 import DataScopeService from "./DataScopeService";
 import DynamicDataService from "./DynamicDataService";
@@ -254,7 +254,8 @@ class DynamicService {
       user.tenantId
     );
 
-    const data = await Model.findAll({ where, order });
+    let attributes = tableConfig.columns.filter((c => isListable(c.ui?.mask))).map(c => c.name);
+    const data = await Model.findAll({ attributes: ["id", ...attributes], where, order });
     const jsonData = data.map((item) => item.toJSON());
 
     return await this.populateRelatedData(
@@ -290,7 +291,9 @@ class DynamicService {
       user.tenantId
     );
 
+    let attributes = tableConfig.columns.filter((c => isListable(c.ui?.mask))).map(c => c.name);
     const { count, rows } = await Model.findAndCountAll({
+      attributes: ["id", ...attributes],
       where,
       order,
       limit: pageSize,
@@ -411,8 +414,9 @@ class DynamicService {
       tableName,
       user.tenantId
     );
-
+    let attributes = tableConfig.columns.filter((c => isUpdateVisable(c.ui?.mask))).map(c => c.name);
     const instance = await Model.findOne({
+      attributes: ["id", ...attributes],
       where: { id, tenantId: user.tenantId },
     });
 
