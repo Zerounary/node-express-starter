@@ -454,6 +454,7 @@ const componentTypes = ref<SelectProps['options']>([
     label: '文本',
     options: [
       { value: 'Input', label: '单行文本框' },
+      { value: 'Textarea', label: '多行文本框' },
       { value: 'InputPassword', label: '密码框' },
     ],
   },
