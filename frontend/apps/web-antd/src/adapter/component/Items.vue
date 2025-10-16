@@ -65,7 +65,7 @@ watch(activeKey, (key) => {
 </script>
 
 <template>
-  <div class="items-wrapper">
+  <div class="items-wrapper mt-6">
     <Tabs v-model:activeKey="activeKey" :tabBarStyle="{ marginBottom: '0' }">
       <Tabs.TabPane v-for="tab in tabs" :key="tab.key" :tab="tabState[tab.key]?.config?.name || tab.title || tab.table">
         <div v-if="tabState[tab.key]?.loading" class="p-4 text-gray-400">Loading...</div>

@@ -32,12 +32,13 @@ const [Form, formApi] = useVbenForm({
   compact: true,
   commonConfig: {
     colon: true,
-    labelClass: 'justify-start',
-    controlClass: 'w-full',
-    labelWidth: 100,
+    labelClass: 'justify-start text-[13px] bg-gray-100 px-3 py-2 rounded text-slate-700',
+    controlClass: 'w-full ',
+    labelWidth: 140,
+    formItemClass: 'pb-[1px]'
   },
   wrapperClass:
-    'md:border md:rounded-md grid-cols-1 md:grid-cols-2 md:gap-x-2 lg:grid-cols-4 lg:gap-x-5 lg:gap-y-3 lg:p-5 ',
+    'md:border md:rounded-md grid-cols-1 md:grid-cols-2 md:gap-x-2 md:p-3 xl:grid-cols-3 xl:gap-x-3 xl:p-3 2xl:grid-cols-4 2xl:gap-x-4 2xl:p-4',
 });
 
 const id = ref();

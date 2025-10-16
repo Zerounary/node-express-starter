@@ -55,7 +55,7 @@ const columnRulesInit = (col) => {
 
 const wrappItemClass = (col, component) => {
   if(['Items', 'MetaInput', 'UIInput', 'Divider'].includes(component)) {
-    col.formItemClass = col.formItemClass || 'col-span-1 md:col-span-2 lg:col-span-4'
+    col.formItemClass = col.formItemClass || 'col-span-1 md:col-span-2 xl:col-span-3 2xl:col-span-4';
     col.hideLabel = true;
     if(component === 'Divider') {
       col.componentProps = {
