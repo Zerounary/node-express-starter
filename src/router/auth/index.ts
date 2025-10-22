@@ -4,6 +4,7 @@ import { fail } from '../api';
 const NO_AUTH = process.env.NODE_ENV === 'development';
 const ALLOWED_PATHS = [
   '/api/demo/*',
+  '/api/wx/*',
   '/api/auth/login',
   '/api/auth/register',
 ];
