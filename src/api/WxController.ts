@@ -1,4 +1,4 @@
-import { Controller, Get } from "@/utils/routeDecorators";
+import { Controller, Get, Post } from "@/utils/routeDecorators";
 import { Request, Response } from "hyper-express";
 import { WeChatH5Auth } from "@/utils/wx/h5auth";
 
@@ -34,7 +34,7 @@ export default class WxController {
     }
 
     try {
-      const userInfo = await wechatAuth.getUserInfo(code);
+      const userInfo = await wechatAuth.getUserInfoFromCode(code);
 
       // 在这里，你可以根据获取到的用户信息（userInfo）进行后续操作，
       // 比如：检查用户是否已存在于你的数据库中，如果不存在则创建新用户，然后生成一个token返回给前端，完成登录。
@@ -42,6 +42,27 @@ export default class WxController {
       res.json(userInfo);
     } catch (error) {
       console.error("Error handling WeChat callback:", error.message);
+      res.status(500).json({ error: "Internal Server Error", message: error.message });
+    }
+  }
+
+  /**
+   * @summary 批量获取用户信息
+   * @description 根据 openid 列表批量获取用户信息
+   */
+  @Post("/users")
+  public async batchGetUserInfo(req: Request, res: Response) {
+    const { openids } = await req.json();
+
+    if (!Array.isArray(openids) || openids.length === 0) {
+      return res.status(400).json({ error: "openids must be a non-empty array" });
+    }
+
+    try {
+      const userInfoList = await wechatAuth.batchGetUserInfo(openids);
+      res.json(userInfoList);
+    } catch (error) {
+      console.error("Error batch getting user info:", error.message);
       res.status(500).json({ error: "Internal Server Error", message: error.message });
     }
   }
