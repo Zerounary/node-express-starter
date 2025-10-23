@@ -281,7 +281,7 @@ const onExport = async () => {};
             :codes="getTableAccessCodes(tableName, 'create')"
             type="code"
           >
-            <Button type="primary" @click="onCreate">
+            <Button v-if="table.mask?.includes('A')" type="primary" @click="onCreate">
               <Plus class="size-5" />
               {{ $t('ui.actionTitle.create', []) }}
             </Button>
@@ -305,7 +305,7 @@ const onExport = async () => {};
             type="code"
           >
             <Button
-              v-show="selectionIds.length"
+              v-show="table.mask?.includes('D') && selectionIds.length"
               danger
               @click="onDeleteBySelect"
             >

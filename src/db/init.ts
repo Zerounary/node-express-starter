@@ -335,6 +335,24 @@ export const systemTables = [
         },
       },
       {
+        name: "mask",
+        dataType: ColumnDataTypes.STRING,
+        required: true,
+        description: "操作标识",
+        relatedToTableId: undefined,
+        ak: true,
+        dk: true,
+
+        ui: {
+          mask: "1111111111",
+          
+          component: "Input",
+          rules: [
+            { type: 'tablemask', message: '只能是QAMDSVU的代码'}
+          ]
+        },
+      },
+      {
         name: "hideMenu",
         dataType: ColumnDataTypes.BOOLEAN,
         required: false,

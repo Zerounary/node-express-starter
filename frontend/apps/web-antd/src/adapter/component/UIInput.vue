@@ -1,5 +1,5 @@
 <template>
-  <div class="ui-input rounded-md border bg-white p-4 dark:bg-gray-800">
+  <div class="ui-input rounded-md border bg-white my-6 p-4 dark:bg-gray-800">
     <a-tabs default-active-key="general">
       <!-- General Settings -->
       <a-tab-pane key="general" tab="通用设置">

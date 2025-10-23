@@ -131,6 +131,7 @@ export async function getTableConfigById(tableId: number) {
     id: table.id,
     table: table.alias_name || table.name,
     name: table.description,
+    mask: table.mask || 'QAMD',
     hideMenu: table.hideMenu,
     defaultSort: table.defaultSort,
     actions,

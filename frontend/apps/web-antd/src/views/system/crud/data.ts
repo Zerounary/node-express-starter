@@ -166,7 +166,11 @@ export function useColumns<T = SystemTableApi.SystemTable>(
 
   const { hasAccessByTable } = useAccess();
   let options = ['update', 'delete'].filter(perm => {
-    return hasAccessByTable(table.table, perm)
+    const tableMaskMap = {
+      'update': 'M',
+      'delete': 'D',
+    }
+    return hasAccessByTable(table.table, perm) && table.mask.includes(tableMaskMap[perm])
   });
   return [
     ...dynColumns,

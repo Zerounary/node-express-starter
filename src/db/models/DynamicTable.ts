@@ -13,6 +13,7 @@ class DynamicTable extends Model {
   public name!: string;
   public hideMenu?: boolean | null;
   public alias_name!: string;
+  public mask!: string;
   public description!: string | null;
   public defaultSort?: string;
   public created!: string;
@@ -68,6 +69,11 @@ DynamicTable.init({
   description: {
     type: new DataTypes.STRING(255),
     allowNull: true,
+  },
+  mask: {
+    type: new DataTypes.STRING(255),
+    allowNull: true,
+    defaultValue: 'QAMD'
   },
   defaultSort: {
     type: new DataTypes.STRING(255),

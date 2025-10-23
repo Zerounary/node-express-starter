@@ -128,6 +128,7 @@ export class TableConfigBuilder {
   name?: string;
   table: string;
   hideMenu?: boolean;
+  mask: string
   defaultSort?: string
   columns: any[] = [];
   actions: any[] = [];
@@ -142,6 +143,7 @@ export class TableConfigBuilder {
     this.table = tableConfig.table
     this.hideMenu = tableConfig.hideMenu
     this.defaultSort = tableConfig.defaultSort
+    this.mask = tableConfig.mask;
     this.columns = tableConfig.columns || [];
     this.actions = tableConfig.actions || [];
     this.ak = this.columns.find(col => col.ak)

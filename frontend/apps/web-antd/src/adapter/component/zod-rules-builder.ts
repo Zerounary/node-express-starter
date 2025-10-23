@@ -74,6 +74,19 @@ export function buildZodSchemaFromRules(
       return; // Continue to the next rule
     }
 
+    if (methodName === 'tablemask') {
+      // 只能是QAMDSVU中的代码
+      const identifierRegex = /^[QAMDSVU]{1,7}$/;
+      const identifierArgs: any[] = [identifierRegex];
+      if (message) {
+        identifierArgs.push(message);
+      }
+      schema = (schema as z.ZodString).regex(
+        ...(identifierArgs as [RegExp, string?]),
+      );
+      return; // Continue to the next rule
+    }
+
     // --- Argument Formatting ---
     if (value !== undefined && value !== null && value !== '') {
       args.push(value);
