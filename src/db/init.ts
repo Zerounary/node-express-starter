@@ -353,6 +353,17 @@ export const systemTables = [
         },
       },
       {
+        name: "openFront",
+        dataType: ColumnDataTypes.BOOLEAN,
+        required: false,
+        description: "开放前端访问",
+        relatedToTableId: undefined,
+
+        ui: {
+          component: "Checkbox",
+        },
+      },
+      {
         name: "hideMenu",
         dataType: ColumnDataTypes.BOOLEAN,
         required: false,
@@ -1030,6 +1041,10 @@ export const initSystemData = async () => {
         categoryId: table.categoryId || null,
         defaultSort: table.defaultSort || null,
         hideMenu: table.hideMenu || false,
+        // @ts-ignore
+        mask: table?.mask || 'ADMQ',
+        // @ts-ignore
+        openFront: table?.openFront || false,
         createdAt: new Date(),
         updatedAt: new Date(),
       });

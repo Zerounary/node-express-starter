@@ -12,6 +12,7 @@ class DynamicTable extends Model {
   public categoryId!: number | null;
   public name!: string;
   public hideMenu?: boolean | null;
+  public openFront?: boolean | null;
   public alias_name!: string;
   public mask!: string;
   public description!: string | null;
@@ -50,6 +51,11 @@ DynamicTable.init({
         key: 'id'
     },
     comment: '表类别ID，关联到表分类表'
+  },
+  openFront: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+    defaultValue: false,
   },
   hideMenu: {
     type: DataTypes.BOOLEAN,

@@ -20,6 +20,7 @@ import { DataScope } from "./db/models/DataScope";
 import { initDynamicTables } from "./services/utils/dynamic";
 import Region from "./db/models/Region";
 import { TableAction } from "./db/models/TableAction";
+import Member from "./db/models/Member";
 
 
 async function bootstrap() {
@@ -50,6 +51,7 @@ async function bootstrap() {
         // 同步核心模型
         await Tenant.sync({ alter: true });
         await User.sync({ alter: true });
+        await Member.sync({ alter: true });
         await ActionLog.sync({ alter: true });
         await TableCategory.sync({ alter: true });
         await DynamicTable.sync({ alter: true });

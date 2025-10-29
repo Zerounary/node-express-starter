@@ -51,6 +51,11 @@ class PermissionService {
         return permissions;
     }
 
+    public async hasVipPermission(memberId: number, tableName: string): Promise<boolean> {
+        const table = await CacheService.getTableByName(tableName)
+        return table.openFront
+    }
+
     public async hasPermission(userId: number, requiredAction: string): Promise<boolean> {
         const actions = await this.getAllUserPermissions(userId);
 

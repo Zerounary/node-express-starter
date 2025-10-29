@@ -1,6 +1,8 @@
 import { Controller, Get, Post } from "@/utils/routeDecorators";
 import { Request, Response } from "hyper-express";
 import { WeChatH5Auth } from "@/utils/wx/h5auth";
+import Member from "@/db/models/Member";
+import AuthService from "@/services/AuthService";
 
 // TODO: 请替换为你的AppID和AppSecret
 const APP_ID = "wx72638e25f4a37963";
@@ -17,8 +19,10 @@ export default class WxController {
    */
   @Get("/auth")
   public async redirectToWeChatAuth(req: Request, res: Response) {
+    // TODO 认证时按租户ID进行归属
+    const tenantId: string = (req.query?.tenantId as string) || '1';
     const redirectUri = `https://${YOUR_DOMAIN}/api/wx/callback`;
-    const url = wechatAuth.getAuthorizationUrl(redirectUri);
+    const url = wechatAuth.getAuthorizationUrl(redirectUri, tenantId);
     res.redirect(url);
   }
 
@@ -29,17 +33,36 @@ export default class WxController {
   @Get("/callback")
   public async handleWeChatCallback(req: Request, res: Response) {
     const code = req.query.code as string;
+    const tenantId = req.query.state as string;
     if (!code) {
       return res.status(400).json({ error: "Code is missing" });
     }
 
     try {
       const userInfo = await wechatAuth.getUserInfoFromCode(code);
+      const openid = userInfo.openid;
+      const nickname = userInfo.nickname;
+      const sex = userInfo.sex;
+      const headimgurl = userInfo.headimgurl;
 
       // 在这里，你可以根据获取到的用户信息（userInfo）进行后续操作，
       // 比如：检查用户是否已存在于你的数据库中，如果不存在则创建新用户，然后生成一个token返回给前端，完成登录。
+      let [member] = await Member.findOrCreate({
+        where: {openid},
+        defaults: { openid, tenantId, nickname, sex, headimgurl }
+      })
 
-      res.json(userInfo);
+      const token = AuthService.generateVipToken(member);
+
+      res.json({
+        id: member.id,
+        tenantId: member.tenantId,
+        openid: member.openid,
+        headimgurl: member.headimgurl,
+        sex: member.sex,
+        nickname: member.nickname,
+        token
+      });
     } catch (error) {
       console.error("Error handling WeChat callback:", error.message);
       res.status(500).json({ error: "Internal Server Error", message: error.message });
