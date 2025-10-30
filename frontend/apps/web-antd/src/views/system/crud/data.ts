@@ -15,58 +15,65 @@ export const isUpdateEditable = (col) => col.mask?.charAt(3) == '1';
 export const isListVisable = (col) => col.mask?.charAt(4) == '1';
 export const isFilterVisable = (col) => col.mask?.charAt(5) == '1';
 
-
-export function useFormCreateSchema(table, { formApi, data }): VbenFormSchema[] {
+export function useFormCreateSchema(
+  table,
+  { formApi, data },
+): VbenFormSchema[] {
   const dynColumns = (table.columns || [])
     .filter(isCreateVisable)
     .map(mapToCreateSchemaColumn)
-    .map(col => applyDependencies(col)) // Apply dependencies
-    .map(col => columnRulesInit(col))
+    .map((col) => applyDependencies(col)) // Apply dependencies
+    .map((col) => columnRulesInit(col))
     .map(enhanceComponentProps(formApi, data));
   return [...dynColumns];
 }
 
-export function useFormUpdateSchema(table, { formApi, data }): VbenFormSchema[] {
+export function useFormUpdateSchema(
+  table,
+  { formApi, data },
+): VbenFormSchema[] {
   const dynColumns = (table.columns || [])
     .filter(isUpdateVisable)
     .map(mapToUpdateSchemaColumn)
-    .map(col => applyDependencies(col)) // Apply dependencies
-    .map(col => columnRulesInit(col))
+    .map((col) => applyDependencies(col)) // Apply dependencies
+    .map((col) => columnRulesInit(col))
     .map(enhanceComponentProps(formApi, data));
   return [...dynColumns];
 }
 
 const columnRulesInit = (col) => {
   // 如果col.rules不是数组，直接返回
-  if(!Array.isArray(col.rules)) return col;
+  if (!Array.isArray(col.rules)) return col;
   let colRules = [...col.rules];
-  if(!col.required && colRules.length) {
+  if (!col.required && colRules.length) {
     colRules.push({
-      type: 'optional'
-    })
+      type: 'optional',
+    });
   }
   let rules = buildZodSchemaFromRules(colRules, col.defaultValue);
-  console.log("🚀 ~ columnRulesInit ~ rules:", col.fieldName, rules)
-  return  {
+  console.log('🚀 ~ columnRulesInit ~ rules:', col.fieldName, rules);
+  return {
     ...col,
     rules,
-  }
-}
+  };
+};
 
 const wrappItemClass = (col, component) => {
-  if(['Items', 'MetaInput', 'UIInput', 'Divider'].includes(component)) {
-    col.formItemClass = col.formItemClass || 'col-span-1 md:col-span-2 xl:col-span-3 2xl:col-span-4';
+  if (['Items', 'MetaInput', 'UIInput', 'Divider'].includes(component)) {
+    col.formItemClass =
+      col.formItemClass ||
+      'col-span-1 md:col-span-2 xl:col-span-3 2xl:col-span-4';
     col.hideLabel = true;
-    if(component === 'Divider') {
+    if (component === 'Divider') {
       col.componentProps = {
         ...col.componentProps,
         label: col.label,
-      }
+      };
     }
   } else {
-    col.formItemClass = col.wrapperClass
+    col.formItemClass = col.wrapperClass;
   }
-}
+};
 
 const enhanceComponentProps = (formApi, data) => {
   const fn = (col) => {
@@ -79,12 +86,12 @@ const enhanceComponentProps = (formApi, data) => {
       },
     };
   };
-    return fn;
-  };
+  return fn;
+};
 
 const mapToUpdateSchemaColumn = (col) => {
   let component = col.component;
-  if(!isUpdateEditable(col) && component !== 'Divider') {
+  if (!isUpdateEditable(col) && component !== 'Divider') {
     component = 'Text';
   }
   wrappItemClass(col, component);
@@ -96,7 +103,7 @@ const mapToUpdateSchemaColumn = (col) => {
 
 const mapToCreateSchemaColumn = (col) => {
   let component = col.component;
-  if(!isCreateEditable(col) && component !== 'Divider') {
+  if (!isCreateEditable(col) && component !== 'Divider') {
     component = 'Text';
   }
   wrappItemClass(col, component);
@@ -107,7 +114,7 @@ const mapToCreateSchemaColumn = (col) => {
 };
 
 const mapToListSchemaColumn = (col) => {
-  if(col.dataType === ColumnDataTypes.BOOLEAN) {
+  if (col.dataType === ColumnDataTypes.BOOLEAN) {
     // 布尔类型要改成使用下拉选择
     return {
       ...col,
@@ -120,8 +127,8 @@ const mapToListSchemaColumn = (col) => {
           { label: $t('common.true'), value: true },
           { label: $t('common.false'), value: false },
         ],
-      }
-    }
+      },
+    };
   }
   return {
     ...col,
@@ -130,16 +137,21 @@ const mapToListSchemaColumn = (col) => {
 };
 
 const mapToGridColumn = (col) => {
-    return ({
-        cellRender: {
-            name: 'CellText', props: {
-                schema: col,
-            }
-        },
-        ...col,
-        field: col.fieldName,
-        title: col.label,
-    });
+  let name = 'CellText';
+  if (col.component == 'MediaPicker') {
+    name = 'CellImage';
+  }
+  return {
+    cellRender: {
+      name,
+      props: {
+        schema: col,
+      },
+    },
+    ...col,
+    field: col.fieldName,
+    title: col.label,
+  };
 };
 
 const mapToOpFilterColumn = (col) => ({
@@ -165,30 +177,37 @@ export function useColumns<T = SystemTableApi.SystemTable>(
     .map(mapToGridColumn);
 
   const { hasAccessByTable } = useAccess();
-  let options = ['update', 'delete'].filter(perm => {
+  let options = ['update', 'delete'].filter((perm) => {
     const tableMaskMap = {
-      'update': 'M',
-      'delete': 'D',
-    }
-    return hasAccessByTable(table.table, perm) && table.mask.includes(tableMaskMap[perm])
+      update: 'M',
+      delete: 'D',
+    };
+    return (
+      hasAccessByTable(table.table, perm) &&
+      table.mask.includes(tableMaskMap[perm])
+    );
   });
   return [
     ...dynColumns,
-    ...(onActionClick && options.length ? [{
-      align: 'center',
-      cellRender: {
-        options,
-        attrs: {
-          nameField: 'name',
-          nameTitle: $t('system.table.name'),
-          onClick: onActionClick,
-        },
-        name: 'CellOperation',
-      },
-      field: 'operation',
-      fixed: 'right',
-      title: $t('system.table.operation'),
-      width: 130,
-    }] : [])
+    ...(onActionClick && options.length
+      ? [
+          {
+            align: 'center',
+            cellRender: {
+              options,
+              attrs: {
+                nameField: 'name',
+                nameTitle: $t('system.table.name'),
+                onClick: onActionClick,
+              },
+              name: 'CellOperation',
+            },
+            field: 'operation',
+            fixed: 'right',
+            title: $t('system.table.operation'),
+            width: 130,
+          },
+        ]
+      : []),
   ];
 }

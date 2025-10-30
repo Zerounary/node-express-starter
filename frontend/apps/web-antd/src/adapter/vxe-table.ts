@@ -68,7 +68,7 @@ setupVbenVxeTable({
     vxeUI.renderer.add('CellImage', {
       renderTableDefault(_renderOpts, params) {
         const { column, row } = params;
-        return h(Image, { src: row[column.field] });
+        return h(Image, { width: 48, src: row[column.field] });
       },
     });
 
