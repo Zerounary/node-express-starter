@@ -369,7 +369,7 @@ export const systemTables = [
         required: false,
         description: "隐藏菜单",
         relatedToTableId: undefined,
-
+        defaultValue: '0',
         ui: {
           component: "Checkbox",
         },

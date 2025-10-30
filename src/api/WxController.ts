@@ -41,6 +41,7 @@ export default class WxController {
     try {
       const userInfo = await wechatAuth.getUserInfoFromCode(code);
       const openid = userInfo.openid;
+      const unionid = userInfo.unionid;
       const nickname = userInfo.nickname;
       const sex = userInfo.sex;
       const headimgurl = userInfo.headimgurl;
@@ -49,7 +50,7 @@ export default class WxController {
       // 比如：检查用户是否已存在于你的数据库中，如果不存在则创建新用户，然后生成一个token返回给前端，完成登录。
       let [member] = await Member.findOrCreate({
         where: {openid},
-        defaults: { openid, tenantId, nickname, sex, headimgurl }
+        defaults: { openid, unionid, tenantId, nickname, sex, headimgurl: [headimgurl] }
       })
 
       const token = AuthService.generateVipToken(member);
@@ -61,6 +62,7 @@ export default class WxController {
         headimgurl: member.headimgurl,
         sex: member.sex,
         nickname: member.nickname,
+        unionid: member.unionid,
         token
       });
     } catch (error) {

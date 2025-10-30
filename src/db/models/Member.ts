@@ -7,6 +7,7 @@ class Member extends Model {
   public id!: number;
   public tenantId!: number;
   public openid?: string;
+  public unionid?: string;
   public sex?: number;
   public headimgurl?: string;
   public nickname?: string;
@@ -35,6 +36,10 @@ Member.init({
     type: DataTypes.STRING,
     allowNull: true,
   },
+  unionid: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   username: {
     type: DataTypes.STRING,
     allowNull: true,
@@ -52,7 +57,7 @@ Member.init({
     allowNull: true,
   },
   headimgurl: {
-    type: DataTypes.TEXT,
+    type: DataTypes.JSON,
     allowNull: true,
   },
   sex: {
