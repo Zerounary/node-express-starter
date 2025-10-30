@@ -135,7 +135,7 @@ class CacheService {
   }
 
   public async reloadTableByIds(tableIds: number[]) {
-    for(let tableId of tableIds ) {
+    for (let tableId of tableIds) {
       await this.reloadTableById(tableId);
     }
   }
@@ -153,7 +153,18 @@ class CacheService {
         const table = await DynamicTable.findOne({
           where: { name: tableName },
           include: [
-            { model: DynamicColumn, as: "columns", order: [["orderno", "ASC"]] },
+            {
+              model: DynamicColumn,
+              as: "columns",
+              include: [
+                {
+                  model: DynamicTable,
+                  as: "relatedToTable",
+                  attributes: ["id", "name"],
+                },
+              ],
+              order: [["orderno", "ASC"]],
+            },
             { model: TableAction, as: "actions" },
           ],
         });
@@ -203,7 +214,7 @@ class CacheService {
   public async getTableByName(
     name: string
   ): Promise<TableWithColumns | undefined> {
-    if (this.enabled) {
+    if (this.enabled && this.tables.byName.get(name)) {
       return this.tables.byName.get(name);
     }
     logInfo(`Cache disabled, fetching table by name '${name}' from DB.`);
@@ -220,21 +231,21 @@ class CacheService {
   public getTableAkDkByAliasName(name: string): { ak: string; dk: string } {
     let tableConfig = this.tables.byAlias.get(name);
 
-    const akColumn = tableConfig.columns.find((col) => col.ak === true);
-    const dkColumn = tableConfig.columns.find((col) => col.dk === true);
+    const akColumn = tableConfig?.columns?.find((col) => col.ak === true);
+    const dkColumn = tableConfig?.columns?.find((col) => col.dk === true);
 
     const ak = akColumn ? akColumn.name : "name";
     const dk = dkColumn ? dkColumn.name : ak;
     return {
       ak,
-      dk
-    }
+      dk,
+    };
   }
 
   public async getTableByAliasName(
     aliasName: string
   ): Promise<TableWithColumns | undefined> {
-    if (this.enabled) {
+    if (this.enabled && this.tables.byAlias.get(aliasName)) {
       return this.tables.byAlias.get(aliasName);
     }
     logInfo(
@@ -251,7 +262,7 @@ class CacheService {
   }
 
   public async getTableById(id: number): Promise<TableWithColumns | undefined> {
-    if (this.enabled) {
+    if (this.enabled && this.tables.byId.get(id)) {
       return this.tables.byId.get(id);
     }
     logInfo(`Cache disabled, fetching table by id ${id} from DB.`);
