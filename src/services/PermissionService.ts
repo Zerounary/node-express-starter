@@ -52,7 +52,7 @@ class PermissionService {
     }
 
     public async hasVipPermission(memberId: number, tableName: string): Promise<boolean> {
-        const table = await CacheService.getTableByName(tableName)
+        const table = await CacheService.getTableByAliasName(tableName)
         return table.openFront
     }
 
