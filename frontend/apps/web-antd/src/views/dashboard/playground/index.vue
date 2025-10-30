@@ -14,6 +14,7 @@
           <AFormItem label="Multiple Images (URL)">
             <MediaPicker
               v-model="formState.gallery"
+              urltype="image"
               multiple
               :max="9"
               value-key="url"
@@ -43,6 +44,13 @@
             </MediaPicker>
           </AFormItem>
         </AForm>
+        {{ {
+          cover: formState.cover,
+          gallery: formState.gallery,
+          video: formState.video,
+          disabledAsset: formState.disabledAsset,
+          customTriggerAsset: formState.customTriggerAsset,
+        } }}
       </ACard>
 
       <ACard title="FkPicker外键选择">
@@ -286,29 +294,12 @@ const itemsTabs = [
 
 const formState = reactive({
   cover: null,
-  gallery: [],
+  gallery: ["https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTL4xN419GbgxNkEbV8lia4dZeRar2SvQQHpWwvbkp36Kr3p7kBgrfppPD5xHS6IqcdWEziavETOvmaQ/132"],
   video: null,
   disabledAsset: {
-    id: 18,
-    tenantId: 1,
     type: 'image',
-    url: 'https://jhtcdn-1252100135.cos.ap-chengdu.myqcloud.com/uploads/t_1/u_1/1756364691881-454053845.png',
-    thumbUrl: null,
-    name: 'ç½åçè.png',
-    size: 89705,
-    width: null,
-    height: null,
-    duration: null,
-    tags: null,
-    meta: null,
-    categoryId: 1,
-    linkedEntityName: null,
-    linkedEntityUrl: null,
-    createdAt: '2025-08-28T07:04:52.000Z',
-    updatedAt: '2025-08-28T07:04:52.000Z',
-    createdBy: null,
-    updatedBy: null,
-    isActive: true,
+    url: 'https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTL4xN419GbgxNkEbV8lia4dZeRar2SvQQHpWwvbkp36Kr3p7kBgrfppPD5xHS6IqcdWEziavETOvmaQ/132',
+    // url: 'https://jhtcdn-1252100135.cos.ap-chengdu.myqcloud.com/uploads/t_1/u_1/1756364691881-454053845.png',
   },
   customTriggerAsset: null,
   qrCodeValue: 'https://www.tencent.com',
