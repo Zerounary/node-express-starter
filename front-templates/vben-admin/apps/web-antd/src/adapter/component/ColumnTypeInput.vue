@@ -26,7 +26,7 @@ import {
   Select as ASelect,
   SelectOption as ASelectOption,
 } from 'ant-design-vue';
-import { ColumnDataTypes } from '../../../../../../shared/ColumnDataTypes';
+import { ColumnDataTypes } from '@shared/ColumnDataTypes';
 
 withDefaults(
   defineProps<{

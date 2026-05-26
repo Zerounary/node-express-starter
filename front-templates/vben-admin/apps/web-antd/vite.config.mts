@@ -1,10 +1,16 @@
 import { defineConfig } from '@vben/vite-config';
+import path from 'node:path';
 
 export default defineConfig(async () => {
   return {
     application: {},
     vite: {
       base: './',
+      resolve: {
+        alias: {
+          '@shared': path.resolve(__dirname, '../../../../shared'),
+        },
+      },
       server: {
         proxy: {
           '/api': {
