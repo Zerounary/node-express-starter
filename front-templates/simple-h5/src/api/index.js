@@ -17,8 +17,9 @@ http.interceptors.request.use((config) => {
 http.interceptors.response.use(
   (res) => {
     const data = res.data
+    // 后端返回格式: { code: 0, data } 或 { code, error }
     if (data.code !== undefined && data.code !== 0) {
-      return Promise.reject(new Error(data.message || '请求失败'))
+      return Promise.reject(new Error(data.error || '请求失败'))
     }
     return data
   },
@@ -38,7 +39,8 @@ http.interceptors.response.use(
       const target = `${loginPath}?redirect=${encodeURIComponent(redirect)}`
       window.location.href = target
     }
-    const msg = err.response?.data?.message || err.message || '网络异常'
+    // 后端错误响应格式: { code, error }
+    const msg = err.response?.data?.error || err.message || '网络异常'
     return Promise.reject(new Error(msg))
   },
 )

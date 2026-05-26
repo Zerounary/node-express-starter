@@ -52,12 +52,12 @@ export default defineConfig(({ mode }) => {
         : undefined,
       proxy: {
         '/api/ws': {
-          target: 'ws://127.0.0.1:3000',
+          target: 'ws://127.0.0.1:80',
           ws: true,
           changeOrigin: true,
         },
         '/api': {
-          target: 'http://127.0.0.1:3000',
+          target: 'http://127.0.0.1:80',
           changeOrigin: true,
         },
       },

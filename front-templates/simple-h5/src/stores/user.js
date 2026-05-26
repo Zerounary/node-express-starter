@@ -17,7 +17,7 @@ export const useUserStore = defineStore(
     async function login(form) {
       const res = await apiLogin(form)
       const d = res.data
-      token.value = d.token
+      token.value = d.token || d.accessToken
       username.value = d.username
       realName.value = d.real_name
       role.value = d.role
